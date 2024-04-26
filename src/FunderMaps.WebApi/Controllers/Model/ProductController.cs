@@ -15,7 +15,10 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// <summary>
     ///     Request the analysis product.
     /// </summary>
-    [HttpGet("analysis/{id}")]
+    /// <remarks>
+    ///   Cache response for 12 hours. Analysis will not change often.
+    /// </remarks>
+    [HttpGet("analysis/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<AnalysisProduct> GetAnalysisAsync(string id)
         => modelService.GetAnalysisAsync(id, TenantId);
 
@@ -23,7 +26,10 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// <summary>
     ///     Request the statistics product.
     /// </summary>
-    [HttpGet("statistics/{id}")]
+    /// <remarks>
+    ///   Cache response for 12 hours. Statistics will not change often.
+    /// </remarks>
+    [HttpGet("statistics/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
         => modelService.GetStatisticsAsync(id, TenantId);
 }

@@ -17,7 +17,7 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     ///     Get address by identifier.
     /// </summary>
     /// <remarks>
-    ///     Cache response for 8 hours. Addresses will not change often.
+    ///     Cache response for 12 hours. Addresses will not change often.
     /// </remarks>
     [HttpGet("address/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<Address> GetAddressAsync(string id)
@@ -28,7 +28,7 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     ///     Get building by identifier.
     /// </summary>
     /// <remarks>
-    ///     Cache response for 8 hours. Building will not change often.
+    ///     Cache response for 12 hours. Building will not change often.
     /// </remarks>
     [HttpGet("building/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<Building> GetBuildingAsync(string id)
@@ -50,7 +50,7 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     ///    Get district by identifier.
     /// </summary>
     /// <remarks>
-    ///    Cache response for 8 hours. District will not change often.
+    ///    Cache response for 12 hours. District will not change often.
     /// </remarks>
     [HttpGet("district/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<District> GetDistrictAsync(string id)
@@ -61,7 +61,7 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     ///    Get municipality by identifier.
     /// </summary>
     /// <remarks>
-    ///   Cache response for 8 hours. Municipality will not change often.
+    ///   Cache response for 12 hours. Municipality will not change often.
     /// </remarks>
     [HttpGet("municipality/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<Municipality> GetMunicipalityAsync(string id)
@@ -72,7 +72,7 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     ///   Get state by identifier.
     /// </summary>
     /// <remarks>
-    ///   Cache response for 8 hours. State will not change often.
+    ///   Cache response for 12 hours. State will not change often.
     /// </remarks>
     [HttpGet("state/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<State> GetStateAsync(string id)
@@ -83,7 +83,7 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     ///     Get geocoder information by identifier.
     /// </summary>
     /// <remarks>
-    ///     Cache response for 8 hours. Building will not change often.
+    ///     Cache response for 12 hours. Building will not change often.
     /// </remarks>
     [HttpGet("{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public async Task<GeocoderInfo> GetAsync(string id)
