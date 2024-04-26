@@ -142,7 +142,7 @@ public class GeocoderTranslation(
         GeocoderDatasource.FunderMaps => await buildingRepository.GetByIdAsync(id),
         GeocoderDatasource.NlBagAddress => await buildingRepository.GetByExternalAddressIdAsync(id),
         GeocoderDatasource.NlBagBuilding => await buildingRepository.GetByExternalIdAsync(id),
-        GeocoderDatasource.FundermapsIncidentReport => await buildingRepository.GetByIncidentIdAsync(id),
+        GeocoderDatasource.FundermapsIncidentReport => await buildingRepository.GetByIncidentIdAsync(id), // FUTURE: Maybe just request incident repository?
         _ => throw new EntityNotFoundException("Requested building entity could not be found."),
     };
 
@@ -160,6 +160,7 @@ public class GeocoderTranslation(
         GeocoderDatasource.NlBagAddress => await neighborhoodRepository.GetByExternalAddressIdAsync(id),
         GeocoderDatasource.NlBagBuilding => await neighborhoodRepository.GetByExternalBuildingIdAsync(id),
         GeocoderDatasource.NlCbsNeighborhood => await neighborhoodRepository.GetByExternalIdAsync(id),
+        // TODO: Add Postcode
         _ => throw new EntityNotFoundException("Requested neighborhood entity could not be found."),
     };
 
@@ -170,6 +171,7 @@ public class GeocoderTranslation(
         GeocoderDatasource.NlBagBuilding => await districtRepository.GetByExternalBuildingIdAsync(id),
         GeocoderDatasource.NlCbsNeighborhood => await districtRepository.GetByExternalNeighborhoodIdAsync(id),
         GeocoderDatasource.NlCbsDistrict => await districtRepository.GetByExternalIdAsync(id),
+        // TODO: Add Postcode
         _ => throw new EntityNotFoundException("Requested district entity could not be found."),
     };
 
@@ -181,6 +183,7 @@ public class GeocoderTranslation(
         GeocoderDatasource.NlCbsNeighborhood => await municipalityRepository.GetByExternalNeighborhoodIdAsync(id),
         GeocoderDatasource.NlCbsDistrict => await municipalityRepository.GetByExternalDistrictIdAsync(id),
         GeocoderDatasource.NlCbsMunicipality => await municipalityRepository.GetByExternalIdAsync(id),
+        // TODO: Add Postcode
         _ => throw new EntityNotFoundException("Requested municipality entity could not be found."),
     };
 
@@ -193,6 +196,7 @@ public class GeocoderTranslation(
         GeocoderDatasource.NlCbsDistrict => await stateRepository.GetByExternalDistrictIdAsync(id),
         GeocoderDatasource.NlCbsMunicipality => await stateRepository.GetByExternalMunicipalityIdAsync(id),
         GeocoderDatasource.NlCbsState => await stateRepository.GetByExternalIdAsync(id),
+        // TODO: Add Postcode
         _ => throw new EntityNotFoundException("Requested state entity could not be found."),
     };
 }

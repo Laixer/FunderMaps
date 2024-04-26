@@ -4,11 +4,12 @@
 # Example script to show how to use the Laixer API with curl.
 
 # Get a token
-curl -X POST http://localhost:5000 \
-    -H "Content-Type: application/json" \ 
-    -d '{"username":"", "password": ""}'
+curl -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"email":"", "password": ""}' \
+    http://localhost:5000/api/auth/signin | jq
 
 # Get a single address
 curl -H "Content-Type: application/json" \
     -H 'authorization: Bearer <TOKEN>' \
-    http://localhost:5000/api/geocoder/NL.IMBAG.PAND.XXX
+    http://localhost:5000/api/geocoder/NL.IMBAG.PAND.XXX | jq
