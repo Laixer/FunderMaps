@@ -193,7 +193,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     question_type,
                     meta
             FROM    report.incident
-            WHERE   id = @id
+            WHERE   id = upper(@id)
             LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
@@ -308,7 +308,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     audit_status = @audit_status,
                     question_type = @question_type,
                     meta = @meta
-            WHERE   id = @id";
+            WHERE   id = upper(@id)";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
