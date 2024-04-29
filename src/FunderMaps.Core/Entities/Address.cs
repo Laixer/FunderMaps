@@ -63,5 +63,7 @@ public sealed class Address : IEntityIdentifier<string>
     /// <summary>
     ///     Full address.
     /// </summary>
-    public string FullAddress => $"{Street} {BuildingNumber}, {City}";
+    public string FullAddress => PostalCode is not null
+        ? $"{Street} {BuildingNumber}, {PostalCode} {City}"
+        : $"{Street} {BuildingNumber}, {City}";
 }
