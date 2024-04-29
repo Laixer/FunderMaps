@@ -27,6 +27,11 @@ public sealed class Incident : RecordControl, IEntityIdentifier<string>
     public int ClientId { get; set; }
 
     /// <summary>
+    ///    Client name.
+    /// </summary>
+    public string ClientName { get; set; } = "FunderMaps";
+
+    /// <summary>
     ///     Foundation type.
     /// </summary>
     [EnumDataType(typeof(FoundationType))]
