@@ -47,14 +47,17 @@ public sealed class IncidentController(
     ///    Return all incidents for a building by identifier.
     /// </summary>
     [HttpGet("building/{id}")]
-    public async IAsyncEnumerable<Incident> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
+    public async Task<List<Incident>> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
     {
         var building = await geocoderTranslation.GetBuildingIdAsync(id);
 
+        var incidents = new List<Incident>();
         await foreach (var incident in incidentRepository.ListAllByBuildingIdAsync(building.Id))
         {
-            yield return incident;
+            incidents.Add(incident);
         }
+
+        return incidents;
     }
 
     // GET: api/incident
