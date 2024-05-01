@@ -57,7 +57,7 @@ public sealed class InquirySampleController(
         }
     }
 
-    // POST: api/inquiry/{id}/sample/{id}
+    // POST: api/inquiry/{id}/sample
     /// <summary>
     ///     Create inquiry sample.
     /// </summary>
