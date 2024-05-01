@@ -323,7 +323,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
             WHERE   s.building = @building
-            AND     a.owner = @tenant
             GROUP BY i.id, a.reviewer, a.creator, a.owner, a.contractor
             ORDER BY coalesce(i.update_date, i.create_date) DESC";
 
@@ -332,7 +331,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("building", id);
-        context.AddParameterWithValue("tenant", tenantId);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {

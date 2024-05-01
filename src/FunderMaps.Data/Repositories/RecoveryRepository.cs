@@ -295,7 +295,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             JOIN    report.recovery AS r ON r.id = s.recovery
             JOIN    application.attribution AS a ON a.id = r.attribution
             WHERE   s.building = @building
-            AND     a.owner = @tenant
             GROUP BY r.id, a.reviewer, a.creator, a.owner, a.contractor
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
@@ -304,7 +303,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("building", id);
-        context.AddParameterWithValue("tenant", tenantId);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
