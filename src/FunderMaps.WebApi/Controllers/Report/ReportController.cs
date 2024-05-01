@@ -9,11 +9,11 @@ namespace FunderMaps.WebApi.Controllers.Report;
 
 public record ReportDto
 {
-    public List<Incident> Incidents { get; init; }
-    public List<Inquiry> Inquiries { get; init; }
-    public List<InquirySample> InquirySamples { get; init; }
-    public List<Recovery> Recoveries { get; init; }
-    public List<RecoverySample> RecoverySamples { get; init; }
+    public List<Incident> Incidents { get; init; } = [];
+    public List<Inquiry> Inquiries { get; init; } = [];
+    public List<InquirySample> InquirySamples { get; init; } = [];
+    public List<Recovery> Recoveries { get; init; } = [];
+    public List<RecoverySample> RecoverySamples { get; init; } = [];
 }
 
 [Route("api/report")]
@@ -34,14 +34,7 @@ public sealed class ReportController(
     {
         var building = await geocoderTranslation.GetBuildingIdAsync(id);
 
-        var report = new ReportDto()
-        {
-            Incidents = new List<Incident>(),
-            Inquiries = new List<Inquiry>(),
-            InquirySamples = new List<InquirySample>(),
-            Recoveries = new List<Recovery>(),
-            RecoverySamples = new List<RecoverySample>(),
-        };
+        var report = new ReportDto();
 
         await foreach (var incident in incidentRepository.ListAllByBuildingIdAsync(building.Id))
         {
@@ -53,16 +46,18 @@ public sealed class ReportController(
             report.Inquiries.Add(inquiry);
         }
 
+        // TODO: Filter by tenantId
         await foreach (var item in inquirySampleRepository.ListAllByBuildingIdAsync(building.Id))
         {
             report.InquirySamples.Add(item);
         }
 
-        // await foreach (var recovery in recoveryRepository.ListAllByBuildingIdAsync(building.Id))
-        // {
-        //     report.Recoveries.Add(recovery);
-        // }
+        await foreach (var recovery in recoveryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id))
+        {
+            report.Recoveries.Add(recovery);
+        }
 
+        // TODO: Filter by tenantId
         await foreach (var item in recoverySampleRepository.ListAllByBuildingIdAsync(building.Id))
         {
             report.RecoverySamples.Add(item);
