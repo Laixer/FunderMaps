@@ -29,8 +29,8 @@ public sealed class InquirySample : RecordControl, IEntityIdentifier<int>
     /// <summary>
     ///     Building identifier.
     /// </summary>
-    // [Required]
-    public string? Building { get; set; } 
+    [Required]
+    public string Building { get; set; } = default!;
 
     /// <summary>
     ///     Note.
