@@ -9,11 +9,6 @@ namespace FunderMaps.Core.Entities;
 public sealed class RecoverySample : RecordControl, IEntityIdentifier<int>
 {
     /// <summary>
-    ///     Entity identifier.
-    /// </summary>
-    public int Identifier => Id;
-
-    /// <summary>
     ///     Recovery sample identifier.
     /// </summary>
     public int Id { get; set; }
@@ -29,6 +24,7 @@ public sealed class RecoverySample : RecordControl, IEntityIdentifier<int>
     [DataType(DataType.MultilineText)]
     public string? Note { get; set; }
 
+    // TODO; Should return BAG building identifier.
     /// <summary>
     ///     Building identifier.
     /// </summary>

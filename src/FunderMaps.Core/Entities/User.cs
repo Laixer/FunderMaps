@@ -9,11 +9,6 @@ namespace FunderMaps.Core.Entities;
 public class User : IEntityIdentifier<Guid>
 {
     /// <summary>
-    ///     Entity identifier.
-    /// </summary>
-    public Guid Identifier => Id;
-
-    /// <summary>
     ///     Unique identifier.
     /// </summary>
     public Guid Id { get; set; }

@@ -9,11 +9,6 @@ namespace FunderMaps.Core.Entities;
 public sealed class District : IEntityIdentifier<string>
 {
     /// <summary>
-    ///     Entity identifier.
-    /// </summary>
-    public string Identifier => Id;
-
-    /// <summary>
     ///     Unique identifier.
     /// </summary>
     [Required, Geocoder]

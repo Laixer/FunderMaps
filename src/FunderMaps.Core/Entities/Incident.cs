@@ -10,11 +10,6 @@ namespace FunderMaps.Core.Entities;
 public sealed class Incident : RecordControl, IEntityIdentifier<string>
 {
     /// <summary>
-    ///     Entity identifier.
-    /// </summary>
-    public string Identifier => Id;
-
-    /// <summary>
     ///     Unique identifier.
     /// </summary>
     [Incident]
@@ -115,6 +110,7 @@ public sealed class Incident : RecordControl, IEntityIdentifier<string>
     [Required]
     public string Address { get; set; } = default!;
 
+    // TODO; Should return BAG building identifier.
     /// <summary>
     ///     Building identifier.
     /// </summary>

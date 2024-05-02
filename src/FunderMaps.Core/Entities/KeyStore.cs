@@ -8,9 +8,9 @@ namespace FunderMaps.Core.Entities;
 public sealed class KeyStore : IEntityIdentifier<string>
 {
     /// <summary>
-    ///     Entity identifier.
+    ///     Unique identifier.
     /// </summary>
-    public string Identifier => Name;
+    public string Id => Name;
 
     /// <summary>
     ///     Unique identifier.

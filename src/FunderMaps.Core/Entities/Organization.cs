@@ -8,11 +8,6 @@ namespace FunderMaps.Core.Entities;
 public sealed class Organization : IEntityIdentifier<Guid>
 {
     /// <summary>
-    ///     Entity identifier.
-    /// </summary>
-    public Guid Identifier => Id;
-
-    /// <summary>
     ///     Unique identifier.
     /// </summary>
     public Guid Id { get; set; }

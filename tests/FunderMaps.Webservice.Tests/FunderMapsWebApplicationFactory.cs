@@ -19,9 +19,9 @@ internal class MemoryRepositoryBase<TEntity, TEntityPrimaryKey> : IAsyncReposito
 
     public Task<TEntityPrimaryKey> AddAsync(TEntity entity)
     {
-        memory.Add(entity.Identifier, entity);
+        memory.Add(entity.Id, entity);
 
-        return Task.FromResult(entity.Identifier);
+        return Task.FromResult(entity.Id);
     }
 
     public Task<long> CountAsync()
@@ -42,7 +42,7 @@ internal class MemoryRepositoryBase<TEntity, TEntityPrimaryKey> : IAsyncReposito
 
     public Task UpdateAsync(TEntity entity)
     {
-        memory[entity.Identifier] = entity;
+        memory[entity.Id] = entity;
 
         return Task.CompletedTask;
     }

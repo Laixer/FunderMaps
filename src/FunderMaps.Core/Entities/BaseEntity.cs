@@ -8,5 +8,5 @@ public interface IEntityIdentifier<T>
     /// <summary>
     ///     Unique identifier.
     /// </summary>
-    T Identifier { get; }
+    T Id { get; }
 }

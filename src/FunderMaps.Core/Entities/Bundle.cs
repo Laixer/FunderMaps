@@ -8,9 +8,9 @@ namespace FunderMaps.Core.Entities;
 public sealed class Bundle : IEntityIdentifier<string>
 {
     /// <summary>
-    ///     Entity identifier.
+    ///     Unique identifier.
     /// </summary>
-    public string Identifier => Tileset;
+    public string Id => Tileset;
 
     /// <summary>
     ///     Tileset name.

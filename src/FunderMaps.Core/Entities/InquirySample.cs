@@ -8,8 +8,6 @@ namespace FunderMaps.Core.Entities;
 /// </summary>
 public sealed class InquirySample : RecordControl, IEntityIdentifier<int>
 {
-    public int Identifier => Id;
-
     /// <summary>
     ///     Unique identifier.
     /// </summary>
@@ -20,12 +18,14 @@ public sealed class InquirySample : RecordControl, IEntityIdentifier<int>
     /// </summary>
     public int Inquiry { get; set; }
 
+    // TODO: Remove, only used in frontend for requesting the geocoder/address/{id}.
     /// <summary>
     ///     An address identifier.
     /// </summary>
     [Required]
     public string Address { get; set; } = default!;
 
+    // TODO; Should return BAG building identifier.
     /// <summary>
     ///     Building identifier.
     /// </summary>

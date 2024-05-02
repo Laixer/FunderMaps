@@ -10,11 +10,6 @@ namespace FunderMaps.Core.Entities;
 public sealed class Recovery : IEntityIdentifier<int>
 {
     /// <summary>
-    ///     Entity identifier.
-    /// </summary>
-    public int Identifier => Id;
-
-    /// <summary>
     ///     Unique identifier.
     /// </summary>
     public int Id { get; set; }

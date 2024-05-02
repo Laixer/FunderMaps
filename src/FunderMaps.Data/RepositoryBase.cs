@@ -35,7 +35,7 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     /// </summary>
     protected TEntity CacheEntity(TEntity value)
     {
-        if (value.Identifier is null)
+        if (value.Id is null)
         {
             return value;
         }
@@ -44,7 +44,7 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
             .SetSlidingExpiration(TimeSpan.FromMinutes(10))
             .SetAbsoluteExpiration(TimeSpan.FromMinutes(90));
 
-        Cache.Set(value.Identifier, value, options);
+        Cache.Set(value.Id, value, options);
         return value;
     }
 
@@ -63,7 +63,7 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     ///     Remove entity from cache.
     /// </summary>
     protected void ResetCacheEntity(TEntity value)
-        => ResetCacheEntity(value.Identifier);
+        => ResetCacheEntity(value.Id);
 
     #endregion Cache
 

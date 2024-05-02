@@ -9,8 +9,6 @@ namespace FunderMaps.Core.Entities;
 /// </summary>
 public class Inquiry : IEntityIdentifier<int>
 {
-    public int Identifier => Id;
-
     /// <summary>
     ///     Unique identifier.
     /// </summary>
