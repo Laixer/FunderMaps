@@ -170,30 +170,31 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         }
 
         var sql = @"
-            SELECT  id,
-                    foundation_type,
-                    chained_building,
-                    owner,
-                    foundation_recovery,
-                    neightbor_recovery,
-                    foundation_damage_cause,
-                    document_file,
-                    note,
-                    internal_note,
-                    contact,
-                    contact_name,
-                    contact_phone_number,
-                    create_date,
-                    update_date,
-                    delete_date,
-                    foundation_damage_characteristics,
-                    environment_damage_characteristics,
-                    building,
-                    audit_status,
-                    question_type,
-                    meta
-            FROM    report.incident
-            WHERE   id = upper(@id)
+            SELECT  i.id,
+                    i.foundation_type,
+                    i.chained_building,
+                    i.owner,
+                    i.foundation_recovery,
+                    i.neightbor_recovery,
+                    i.foundation_damage_cause,
+                    i.document_file,
+                    i.note,
+                    i.internal_note,
+                    i.contact,
+                    i.contact_name,
+                    i.contact_phone_number,
+                    i.create_date,
+                    i.update_date,
+                    i.delete_date,
+                    i.foundation_damage_characteristics,
+                    i.environment_damage_characteristics,
+                    b.external_id,
+                    i.audit_status,
+                    i.question_type,
+                    i.meta
+            FROM    report.incident AS i
+            JOIN    geocoder.building b ON b.id = i.building
+            WHERE   i.id = upper(@id)
             LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
@@ -226,12 +227,13 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     i.delete_date,
                     i.foundation_damage_characteristics,
                     i.environment_damage_characteristics,
-                    i.building,
+                    b.external_id,
                     i.audit_status,
                     i.question_type,
                     i.meta
             FROM    report.incident AS i
-            WHERE   i.building = @building";
+            WHERE   i.building = @building
+            JOIN    geocoder.building b ON b.id = i.building";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -250,29 +252,30 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
     public override async IAsyncEnumerable<Incident> ListAllAsync(Navigation navigation)
     {
         var sql = @"
-            SELECT  id,
-                    foundation_type,
-                    chained_building,
-                    owner,
-                    foundation_recovery,
-                    neightbor_recovery,
-                    foundation_damage_cause,
-                    document_file,
-                    note,
-                    internal_note,
-                    contact,
-                    contact_name,
-                    contact_phone_number,
-                    create_date,
-                    update_date,
-                    delete_date,
-                    foundation_damage_characteristics,
-                    environment_damage_characteristics,
-                    building,
-                    audit_status,
-                    question_type,
-                    meta
-            FROM    report.incident";
+            SELECT  i.id,
+                    i.foundation_type,
+                    i.chained_building,
+                    i.owner,
+                    i.foundation_recovery,
+                    i.neightbor_recovery,
+                    i.foundation_damage_cause,
+                    i.document_file,
+                    i.note,
+                    i.internal_note,
+                    i.contact,
+                    i.contact_name,
+                    i.contact_phone_number,
+                    i.create_date,
+                    i.update_date,
+                    i.delete_date,
+                    i.foundation_damage_characteristics,
+                    i.environment_damage_characteristics,
+                    b.external_id,
+                    i.audit_status,
+                    i.question_type,
+                    i.meta
+            FROM    report.incident
+            JOIN    geocoder.building b ON b.id = i.building";
 
         sql = ConstructNavigation(sql, navigation);
 

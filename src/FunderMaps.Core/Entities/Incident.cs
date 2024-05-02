@@ -110,7 +110,6 @@ public sealed class Incident : RecordControl, IEntityIdentifier<string>
     [Required]
     public string Address { get; set; } = default!;
 
-    // TODO; Should return BAG building identifier.
     /// <summary>
     ///     Building identifier.
     /// </summary>
