@@ -24,7 +24,6 @@ public sealed class RecoverySample : RecordControl, IEntityIdentifier<int>
     [DataType(DataType.MultilineText)]
     public string? Note { get; set; }
 
-    // TODO; Should return BAG building identifier.
     /// <summary>
     ///     Building identifier.
     /// </summary>

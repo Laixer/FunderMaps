@@ -164,7 +164,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    s.building,
+                    b.external_id,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -178,7 +178,8 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
                     s.permit_date,
                     s.recovery_date
             FROM    report.recovery_sample AS s
-            WHERE   id = @id
+            JOIN    geocoder.building b ON b.id = s.building
+            WHERE   s.id = @id
             LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
@@ -196,7 +197,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    s.building,
+                    b.external_id,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -212,6 +213,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             FROM    report.recovery_sample AS s
             JOIN    report.recovery AS r ON r.id = s.recovery
             JOIN    application.attribution AS a ON a.id = r.attribution
+            JOIN    geocoder.building b ON b.id = s.building
             WHERE   s.building = @building
             ORDER BY s.create_date DESC";
 
@@ -240,7 +242,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    s.building,
+                    b.external_id,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -256,6 +258,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             FROM    report.recovery_sample AS s
             JOIN    report.recovery AS r ON r.id = s.recovery
             JOIN    application.attribution AS a ON a.id = r.attribution
+            JOIN    geocoder.building b ON b.id = s.building
             WHERE   a.owner = @tenant
             ORDER BY s.create_date DESC";
 
@@ -281,7 +284,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    s.building,
+                    b.external_id,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -297,6 +300,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             FROM    report.recovery_sample AS s
             JOIN    report.recovery AS r ON r.id = s.recovery
             JOIN    application.attribution AS a ON a.id = r.attribution
+            JOIN    geocoder.building b ON b.id = s.building
             WHERE   a.owner = @tenant
             AND     r.id = @id
             ORDER BY s.create_date DESC";
