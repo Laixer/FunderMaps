@@ -59,14 +59,10 @@ public sealed class InquiryController(
     ///    Return all inquiries by building id.
     /// </summary>
     [HttpGet("building/{id}")]
-    public async IAsyncEnumerable<Inquiry> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
+    public async Task<IEnumerable<Inquiry>> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
     {
         var building = await geocoderTranslation.GetBuildingIdAsync(id);
-
-        await foreach (var inquiry in inquiryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id))
-        {
-            yield return inquiry;
-        }
+        return await inquiryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id).ToListAsync();
     }
 
     // GET: api/inquiry
@@ -74,13 +70,8 @@ public sealed class InquiryController(
     ///     Return all inquiries.
     /// </summary>
     [HttpGet]
-    public async IAsyncEnumerable<Inquiry> GetAllAsync([FromQuery] PaginationDto pagination)
-    {
-        await foreach (var inquiry in inquiryRepository.ListAllAsync(pagination.Navigation, TenantId))
-        {
-            yield return inquiry;
-        }
-    }
+    public async Task<IEnumerable<Inquiry>> GetAllAsync([FromQuery] PaginationDto pagination)
+        => await inquiryRepository.ListAllAsync(pagination.Navigation, TenantId).ToListAsync();
 
     // POST: api/inquiry
     /// <summary>

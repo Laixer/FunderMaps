@@ -34,35 +34,13 @@ public sealed class ReportController(
     {
         var building = await geocoderTranslation.GetBuildingIdAsync(id);
 
-        var report = new ReportDto();
-
-        await foreach (var incident in incidentRepository.ListAllByBuildingIdAsync(building.Id))
+        return new ReportDto
         {
-            report.Incidents.Add(incident);
-        }
-
-        await foreach (var inquiry in inquiryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id))
-        {
-            report.Inquiries.Add(inquiry);
-        }
-
-        // TODO: Filter by tenantId
-        await foreach (var item in inquirySampleRepository.ListAllByBuildingIdAsync(building.Id))
-        {
-            report.InquirySamples.Add(item);
-        }
-
-        await foreach (var recovery in recoveryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id))
-        {
-            report.Recoveries.Add(recovery);
-        }
-
-        // TODO: Filter by tenantId
-        await foreach (var item in recoverySampleRepository.ListAllByBuildingIdAsync(building.Id))
-        {
-            report.RecoverySamples.Add(item);
-        }
-
-        return report;
+            Incidents = await incidentRepository.ListAllByBuildingIdAsync(building.Id).ToListAsync(),
+            Inquiries = await inquiryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id).ToListAsync(),
+            InquirySamples = await inquirySampleRepository.ListAllByBuildingIdAsync(building.Id).ToListAsync(),
+            Recoveries = await recoveryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id).ToListAsync(),
+            RecoverySamples = await recoverySampleRepository.ListAllByBuildingIdAsync(building.Id).ToListAsync(),
+        };
     }
 }

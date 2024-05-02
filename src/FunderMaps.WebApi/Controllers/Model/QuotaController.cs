@@ -15,11 +15,6 @@ public sealed class QuotaController(ITelemetryRepository telemetryRepository) : 
     /// <summary>
     ///     Request product quota usage.
     /// </summary>
-    public async IAsyncEnumerable<ProductTelemetry> GetQuotaUsageAsync()
-    {
-        await foreach (var telemetry in telemetryRepository.ListAllUsageAsync(TenantId))
-        {
-            yield return telemetry;
-        }
-    }
+    public async Task<IEnumerable<ProductTelemetry>> GetQuotaUsageAsync()
+        => await telemetryRepository.ListAllUsageAsync(TenantId).ToListAsync();
 }

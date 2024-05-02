@@ -24,10 +24,11 @@ public class GeocoderTranslation(
     private static GeocoderDatasource FromIdentifier(string input)
         => input switch
         {
+            // TODO: Add Verblijfsobject
             string when input.StartsWith("gfm-", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FunderMaps,
             string when input.StartsWith("FIR", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FundermapsIncidentReport,
-            string when input.StartsWith("FQR", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FundermapsInquiryReport,
-            string when input.StartsWith("FRR", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FundermapsRecoveryReport,
+            string when input.StartsWith("FQR", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FundermapsInquiryReport, // TODO: InquirySample
+            string when input.StartsWith("FRR", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FundermapsRecoveryReport, // TODO: RecoverySample
             string when input.Length == 6 && char.IsLetter(input[4]) && char.IsLetter(input[4]) => GeocoderDatasource.NlPostcode,
             string when input.Length == ("NL.IMBAG.PAND.".Length + 16) && input.StartsWith("NL.IMBAG.PAND.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
             string when input.Length == ("NL.IMBAG.LIGPLAATS.".Length + 16) && input.StartsWith("NL.IMBAG.LIGPLAATS.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBerth,

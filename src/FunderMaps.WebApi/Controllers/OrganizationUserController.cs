@@ -27,13 +27,8 @@ public class OrganizationUserController(
     ///     Get all users in the session organization.
     /// </summary>
     [HttpGet]
-    public async IAsyncEnumerable<OrganizationUser> GetAllUserAsync([FromQuery] PaginationDto pagination)
-    {
-        await foreach (var user in organizationUserRepository.ListAllAsync(TenantId, pagination.Navigation))
-        {
-            yield return user;
-        }
-    }
+    public async Task<IEnumerable<OrganizationUser>> GetAllUserAsync([FromQuery] PaginationDto pagination)
+        => await organizationUserRepository.ListAllAsync(TenantId, pagination.Navigation).ToListAsync();
 
     // PUT: organization/user/{id}
     /// <summary>

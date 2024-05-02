@@ -48,8 +48,8 @@ public sealed class OrganizationUserAdminController(
     ///     Get all users in the organization.
     /// </summary>
     [HttpGet]
-    public IAsyncEnumerable<OrganizationUser> GetAllUserAsync(Guid id, [FromQuery] PaginationDto pagination)
-        => organizationUserRepository.ListAllAsync(id, pagination.Navigation);
+    public async Task<IEnumerable<OrganizationUser>> GetAllUserAsync(Guid id, [FromQuery] PaginationDto pagination)
+        => await organizationUserRepository.ListAllAsync(id, pagination.Navigation).ToListAsync();
 
     // PUT: api/admin/organization/{id}/user/{id}
     /// <summary>

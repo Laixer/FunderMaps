@@ -52,8 +52,8 @@ public sealed class OrganizationAdminController(IOrganizationRepository organiza
     ///     Return all organizations.
     /// </summary>
     [HttpGet]
-    public IAsyncEnumerable<Organization> GetAllAsync([FromQuery] PaginationDto pagination)
-        => organizationRepository.ListAllAsync(pagination.Navigation);
+    public async Task<IEnumerable<Organization>> GetAllAsync([FromQuery] PaginationDto pagination)
+        => await organizationRepository.ListAllAsync(pagination.Navigation).ToListAsync();
 
     // PUT: api/admin/organization/{id}
     /// <summary>

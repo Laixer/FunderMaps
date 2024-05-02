@@ -48,13 +48,8 @@ public sealed class RecoverySampleController(
     ///     Return all recovery samples.
     /// </summary>
     [HttpGet]
-    public async IAsyncEnumerable<RecoverySample> GetAllAsync(int recoveryId, [FromQuery] PaginationDto pagination)
-    {
-        await foreach (var recoverySample in recoverySampleRepository.ListAllAsync(recoveryId, pagination.Navigation, TenantId))
-        {
-            yield return recoverySample;
-        }
-    }
+    public async Task<IEnumerable<RecoverySample>> GetAllAsync(int recoveryId, [FromQuery] PaginationDto pagination)
+        => await recoverySampleRepository.ListAllAsync(recoveryId, pagination.Navigation, TenantId).ToListAsync();
 
     // POST: api/recovery/{id}/sample/{id}
     /// <summary>

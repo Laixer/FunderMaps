@@ -59,14 +59,10 @@ public sealed class RecoveryController(
     ///    Return all recoveries for a building by identifier.
     /// </summary>
     [HttpGet("building/{id}")]
-    public async IAsyncEnumerable<Recovery> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
+    public async Task<IEnumerable<Recovery>> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
     {
         var building = await geocoderTranslation.GetBuildingIdAsync(id);
-
-        await foreach (var recovery in recoveryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id))
-        {
-            yield return recovery;
-        }
+        return await recoveryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id).ToListAsync();
     }
 
     // GET: api/recovery
@@ -74,13 +70,8 @@ public sealed class RecoveryController(
     ///     Return all recoveries.
     /// </summary>
     [HttpGet]
-    public async IAsyncEnumerable<Recovery> GetAllAsync([FromQuery] PaginationDto pagination)
-    {
-        await foreach (var recovery in recoveryRepository.ListAllAsync(pagination.Navigation, TenantId))
-        {
-            yield return recovery;
-        }
-    }
+    public async Task<IEnumerable<Recovery>> GetAllAsync([FromQuery] PaginationDto pagination)
+        => await recoveryRepository.ListAllAsync(pagination.Navigation, TenantId).ToListAsync();
 
     // POST: api/recovery
     /// <summary>

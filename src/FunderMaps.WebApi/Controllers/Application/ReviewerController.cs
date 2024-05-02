@@ -26,12 +26,16 @@ public sealed class ReviewerController(
     ///     Return all reviewers.
     /// </summary>
     [HttpGet("reviewer"), ResponseCache(Duration = 60 * 60, VaryByHeader = "Authorization", Location = ResponseCacheLocation.Client)]
-    public async IAsyncEnumerable<User> GetAllAsync([FromQuery] PaginationDto pagination)
+    public async Task<IEnumerable<User>> GetAllAsync([FromQuery] PaginationDto pagination)
     {
+        var users = new List<User>();
+
         var roles = new OrganizationRole[] { OrganizationRole.Verifier, OrganizationRole.Superuser };
-        await foreach (var user in organizationUserRepository.ListAllByRoleAsync(TenantId, roles, pagination.Navigation))
+        await foreach (var userId in organizationUserRepository.ListAllByRoleAsync(TenantId, roles, pagination.Navigation))
         {
-            yield return await userRepository.GetByIdAsync(user);
+            users.Add(await userRepository.GetByIdAsync(userId));
         }
+
+        return users;
     }
 }

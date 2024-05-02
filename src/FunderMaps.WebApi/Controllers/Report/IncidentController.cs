@@ -47,17 +47,10 @@ public sealed class IncidentController(
     ///    Return all incidents for a building by identifier.
     /// </summary>
     [HttpGet("building/{id}")]
-    public async Task<List<Incident>> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
+    public async Task<IEnumerable<Incident>> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
     {
         var building = await geocoderTranslation.GetBuildingIdAsync(id);
-
-        var incidents = new List<Incident>();
-        await foreach (var incident in incidentRepository.ListAllByBuildingIdAsync(building.Id))
-        {
-            incidents.Add(incident);
-        }
-
-        return incidents;
+        return await incidentRepository.ListAllByBuildingIdAsync(building.Id).ToListAsync();
     }
 
     // GET: api/incident
@@ -65,13 +58,8 @@ public sealed class IncidentController(
     ///     Return all incidents.
     /// </summary>
     [HttpGet]
-    public async IAsyncEnumerable<Incident> GetAllAsync([FromQuery] PaginationDto pagination)
-    {
-        await foreach (var incident in incidentRepository.ListAllAsync(pagination.Navigation))
-        {
-            yield return incident;
-        }
-    }
+    public async Task<IEnumerable<Incident>> GetAllAsync([FromQuery] PaginationDto pagination)
+        => await incidentRepository.ListAllAsync(pagination.Navigation).ToListAsync();
 
     // POST: api/incident
     /// <summary>
