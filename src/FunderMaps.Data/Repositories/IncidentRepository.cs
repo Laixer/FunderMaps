@@ -232,8 +232,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     i.question_type,
                     i.meta
             FROM    report.incident AS i
-            WHERE   i.building = @building
-            JOIN    geocoder.building b ON b.id = i.building";
+            JOIN    geocoder.building b ON b.id = i.building
+            WHERE   i.building = @building";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -274,7 +274,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     i.audit_status,
                     i.question_type,
                     i.meta
-            FROM    report.incident
+            FROM    report.incident AS i
             JOIN    geocoder.building b ON b.id = i.building";
 
         sql = ConstructNavigation(sql, navigation);
