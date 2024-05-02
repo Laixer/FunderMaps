@@ -396,7 +396,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     s.id,
                     s.inquiry,
                     s.address,
-                    s.building,
+                    b.external_id,
                     s.note,
                     s.create_date,
                     s.update_date,
@@ -473,6 +473,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN    geocoder.building b ON b.id = s.building
             WHERE   s.id = @id
             AND     a.owner = @tenant
             LIMIT   1";
@@ -494,7 +495,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     s.id,
                     s.inquiry,
                     s.address,
-                    s.building,
+                    b.external_id,
                     s.note,
                     s.create_date,
                     s.update_date,
@@ -571,6 +572,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN    geocoder.building b ON b.id = s.building
             WHERE   s.building = @building
             ORDER BY s.create_date DESC";
 
@@ -601,7 +603,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     s.id,
                     s.inquiry,
                     s.address,
-                    s.building,
+                    b.external_id,
                     s.note,
                     s.create_date,
                     s.update_date,
@@ -678,6 +680,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN    geocoder.building b ON b.id = s.building
             WHERE   a.owner = @tenant
             ORDER BY s.create_date DESC";
 
@@ -704,7 +707,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     s.id,
                     s.inquiry,
                     s.address,
-                    s.building,
+                    b.external_id,
                     s.note,
                     s.create_date,
                     s.update_date,
@@ -781,6 +784,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN    geocoder.building b ON b.id = s.building
             WHERE   a.owner = @tenant
             AND     i.id = @id
             ORDER BY s.create_date DESC";

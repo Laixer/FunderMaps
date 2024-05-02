@@ -25,7 +25,6 @@ public sealed class InquirySample : RecordControl, IEntityIdentifier<int>
     [Required]
     public string Address { get; set; } = default!;
 
-    // TODO; Should return BAG building identifier.
     /// <summary>
     ///     Building identifier.
     /// </summary>
