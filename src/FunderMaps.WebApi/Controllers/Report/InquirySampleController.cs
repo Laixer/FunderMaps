@@ -64,10 +64,8 @@ public sealed class InquirySampleController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<InquirySample> CreateAsync(int inquiryId, [FromBody] InquirySample inquirySample)
     {
-        var address = await geocoderTranslation.GetAddressIdAsync(inquirySample.Address);
-
-        inquirySample.Address = address.Id;
-        inquirySample.Building = address.BuildingId ?? throw new InvalidOperationException();
+        inquirySample.Address = inquirySample.Address;
+        inquirySample.Building = inquirySample.Building;
         inquirySample.Inquiry = inquiryId;
 
         var inquiry = await inquiryRepository.GetByIdAsync(inquirySample.Inquiry, TenantId);
