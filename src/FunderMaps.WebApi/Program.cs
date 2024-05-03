@@ -63,7 +63,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors();
 }
 
-app.UseFileServer();
+app.UseStaticFiles();
 
 app.UseRouting();
 
@@ -77,6 +77,5 @@ app.MapHealthChecks("/health", new HealthCheckOptions()
 {
     Predicate = healthCheck => healthCheck.Tags.Contains("extern")
 }).WithMetadata(new AllowAnonymousAttribute());
-app.MapFallbackToFile("/index.html");
 
 app.Run();
