@@ -32,12 +32,6 @@ public sealed class Address : IEntityIdentifier<string>
     public string Street { get; set; } = default!;
 
     /// <summary>
-    ///     Address is active or not.
-    /// </summary>
-    [Required]
-    public bool IsActive { get; set; } = true;
-
-    /// <summary>
     ///     External data source id.
     /// </summary>
     [Required]

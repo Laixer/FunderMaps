@@ -39,7 +39,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
                     a.building_number,
                     a.postal_code,
                     a.street,
-                    a.is_active,
                     a.external_id,
                     a.city,
                     a.building_id
@@ -66,7 +65,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
                     a.building_number,
                     a.postal_code,
                     a.street,
-                    a.is_active,
                     a.external_id,
                     a.city,
                     a.building_id
@@ -100,7 +98,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
                     a.building_number,
                     a.postal_code,
                     a.street,
-                    a.is_active,
                     a.external_id,
                     a.city,
                     a.building_id
@@ -126,7 +123,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
                     a.building_number,
                     a.postal_code,
                     a.street,
-                    a.is_active,
                     a.external_id,
                     a.city,
                     a.building_id
