@@ -103,6 +103,13 @@ public sealed class Incident : RecordControl, IEntityIdentifier<string>
     [StringLength(16)]
     public string? PhoneNumber { get; set; }
 
+    // TODO: Remove this property, replaced by building. Only being used by incidentService.
+    /// <summary>
+    ///     An address identifier.
+    /// </summary>
+    [Required]
+    public string Address { get; set; } = default!;
+
     /// <summary>
     ///     Building identifier.
     /// </summary>
