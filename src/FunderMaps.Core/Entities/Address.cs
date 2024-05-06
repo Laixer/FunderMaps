@@ -8,6 +8,7 @@ namespace FunderMaps.Core.Entities;
 /// </summary>
 public sealed class Address : IEntityIdentifier<string>
 {
+    // TODO: Replace with BAG id.
     /// <summary>
     ///     Unique identifier.
     /// </summary>
