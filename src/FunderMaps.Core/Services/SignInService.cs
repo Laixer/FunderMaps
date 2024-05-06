@@ -75,6 +75,17 @@ public class SignInService(
 
             await userRepository.ResetAccessFailed(user.Id);
             await userRepository.ResetResetKey(user.Id);
+
+            await emailService.SendAsync(new EmailMessage
+            {
+                ToAddresses = [new EmailAddress(user.Email, user.ToString())],
+                Subject = "FunderMaps - Wachtwoord is gewijzigd",
+                Template = "reset-password-done",
+                Varaibles = new Dictionary<string, object>
+                {
+                    { "creatorName", user.ToString() },
+                }
+            });
         }
         catch (EntityNotFoundException)
         {
