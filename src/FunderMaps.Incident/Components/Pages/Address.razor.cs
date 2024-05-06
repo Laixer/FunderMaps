@@ -61,7 +61,7 @@ public partial class Address : ComponentBase, IAsyncDisposable
 
         var address = await GeocoderTranslation.GetAddressIdAsync(doc.nummeraanduiding_id);
 
-        State.Model.Address = address.Id;
+        State.Model.Address = address.ExternalId ?? throw new ArgumentNullException(nameof(address.ExternalId));
         State.Model.Building = address.BuildingId ?? throw new ArgumentNullException(nameof(address.BuildingId));
 
         State.DisableNavNext = false;
