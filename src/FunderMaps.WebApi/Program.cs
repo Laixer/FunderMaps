@@ -54,11 +54,6 @@ if (!app.Environment.IsDevelopment())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseCookiePolicy(new CookiePolicyOptions()
-    {
-        Secure = CookieSecurePolicy.Always,
-    });
-
     app.UseDeveloperExceptionPage();
     app.UseCors();
 }

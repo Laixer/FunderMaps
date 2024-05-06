@@ -7,7 +7,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Options;
 using FunderMaps.Core.Services;
 using FunderMaps.Extensions;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Configuration;
@@ -98,14 +97,11 @@ public static class FunderMapsCoreServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services, Action<FunderMapsAuthenticationOptions>? configureOptions = null)
+    public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services)
     {
         services.AddTransient<PasswordHasher>();
         services.AddTransient<JwtSecurityTokenService>();
         services.AddScoped<SignInService>(); // TODO: Should be transient?
-
-        var options = new FunderMapsAuthenticationOptions();
-        configureOptions?.Invoke(options);
 
         var serviceProvider = services.BuildServiceProvider();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
@@ -131,20 +127,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
             })
             .AddScheme<AuthKeyAuthenticationOptions, AuthKeyAuthenticationHandler>(AuthKeyAuthenticationOptions.DefaultScheme, options => { });
 
-        if (options.CookieAuthentication)
-        {
-            authBuilder.AddFunderMapsScheme(CookieAuthenticationDefaults.AuthenticationScheme);
-            authBuilder.AddCookie(options =>
-            {
-                options.SlidingExpiration = true;
-                options.Cookie.Name = configuration["Authentication:Cookie:Name"];
-                options.Cookie.Domain = configuration["Authentication:Cookie:Domain"];
-            });
-        }
-        else
-        {
-            authBuilder.AddFunderMapsScheme(AuthKeyAuthenticationOptions.DefaultScheme);
-        }
+        authBuilder.AddFunderMapsScheme(AuthKeyAuthenticationOptions.DefaultScheme);
 
         services.AddAuthorization(options =>
         {

@@ -8,10 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFunderMapsCoreServices();
 builder.Services.AddFunderMapsDataServices();
-builder.Services.AddFunderMapsAuthServices(options =>
-{
-    options.CookieAuthentication = false;
-});
+builder.Services.AddFunderMapsAuthServices();
 
 builder.Services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)));
 
@@ -51,11 +48,6 @@ if (!app.Environment.IsDevelopment())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseCookiePolicy(new CookiePolicyOptions()
-    {
-        Secure = CookieSecurePolicy.Always,
-    });
-
     app.UseDeveloperExceptionPage();
     app.UseCors();
 }
