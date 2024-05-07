@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Services;
 public class GeocoderTranslation(
     IAddressRepository addressRepository,
     IBuildingRepository buildingRepository,
+    IResidenceRepository residenceRepository,
     INeighborhoodRepository neighborhoodRepository,
     IDistrictRepository districtRepository,
     IMunicipalityRepository municipalityRepository,
@@ -24,7 +25,6 @@ public class GeocoderTranslation(
     private static GeocoderDatasource FromIdentifier(string input)
         => input switch
         {
-            // TODO: Add Verblijfsobject
             string when input.StartsWith("gfm-", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FunderMaps,
             string when input.StartsWith("FIR", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FundermapsIncidentReport,
             string when input.StartsWith("FQR", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FundermapsInquiryReport, // TODO: InquirySample
@@ -33,6 +33,7 @@ public class GeocoderTranslation(
             string when input.Length == ("NL.IMBAG.PAND.".Length + 16) && input.StartsWith("NL.IMBAG.PAND.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
             string when input.Length == ("NL.IMBAG.LIGPLAATS.".Length + 16) && input.StartsWith("NL.IMBAG.LIGPLAATS.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBerth,
             string when input.Length == ("NL.IMBAG.STANDPLAATS.".Length + 16) && input.StartsWith("NL.IMBAG.STANDPLAATS.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagPosting,
+            string when input.Length == ("NL.IMBAG.VERBLIJFSOBJECT.".Length + 16) && input.StartsWith("NL.IMBAG.VERBLIJFSOBJECT.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagResidence,
             string when input.Length == ("NL.IMBAG.NUMMERAANDUIDING.".Length + 16) && input.StartsWith("NL.IMBAG.NUMMERAANDUIDING.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagAddress,
             string when input.Length == 10 && input.StartsWith("BU", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlCbsNeighborhood,
             string when input.Length == 8 && input.StartsWith("WK", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlCbsDistrict,
@@ -49,6 +50,7 @@ public class GeocoderTranslation(
             _ => GeocoderDatasource.Unknown,
         };
 
+    // TODO: Add residence
     /// <summary>
     ///     Identify the geocoder datasource from the input and return repaired identifier.
     /// </summary>
@@ -140,10 +142,18 @@ public class GeocoderTranslation(
     /// <returns>If found returns the <see cref="Building"/> entity.</returns>
     public async Task<Building> GetBuildingIdAsync(string input) => FromIdentifier(input, out string id) switch
     {
-        GeocoderDatasource.FunderMaps => await buildingRepository.GetByIdAsync(id),
+        GeocoderDatasource.FunderMaps => await buildingRepository.GetByIdAsync(id), // FUTURE: This can never be requested.
         GeocoderDatasource.NlBagAddress => await buildingRepository.GetByExternalAddressIdAsync(id),
         GeocoderDatasource.NlBagBuilding => await buildingRepository.GetByExternalIdAsync(id),
         GeocoderDatasource.FundermapsIncidentReport => await buildingRepository.GetByIncidentIdAsync(id), // FUTURE: Maybe just request incident repository?
+        _ => throw new EntityNotFoundException("Requested building entity could not be found."),
+    };
+
+    public async Task<Residence> GetResidenceIdAsync(string input) => FromIdentifier(input, out string id) switch
+    {
+        GeocoderDatasource.NlBagResidence => await residenceRepository.GetByIdAsync(id),
+        GeocoderDatasource.NlBagAddress => await residenceRepository.GetByExternalAddressIdAsync(id),
+        GeocoderDatasource.NlBagBuilding => await residenceRepository.GetByExternalBuildingIdAsync(id),
         _ => throw new EntityNotFoundException("Requested building entity could not be found."),
     };
 

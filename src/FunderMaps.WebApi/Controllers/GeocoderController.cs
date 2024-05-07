@@ -34,6 +34,18 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     public Task<Building> GetBuildingAsync(string id)
         => geocoderTranslation.GetBuildingIdAsync(id);
 
+
+    // GET: api/geocoder/residence/{id}
+    /// <summary>
+    ///     Get residence by identifier.
+    /// </summary>
+    /// <remarks>
+    ///     Cache response for 12 hours. Building will not change often.
+    /// </remarks>
+    [HttpGet("residence/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
+    public Task<Residence> GetResidenceAsync(string id)
+        => geocoderTranslation.GetResidenceIdAsync(id);
+
     // GET: api/geocoder/neighborhood/{id}
     /// <summary>
     ///     Get neighborhood by identifier.
@@ -90,6 +102,7 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     {
         var building = await geocoderTranslation.GetBuildingIdAsync(id);
         var address = await geocoderTranslation.GetAddressIdAsync(building.ExternalId);
+        var residence = await geocoderTranslation.GetResidenceIdAsync(building.ExternalId);
         var neighborhood = building.NeighborhoodId is not null
             ? await geocoderTranslation.GetNeighborhoodIdAsync(building.NeighborhoodId)
             : null;
@@ -107,6 +120,7 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
         {
             Building = building,
             Address = address,
+            Residence = residence,
             Neighborhood = neighborhood,
             District = district,
             Municipality = municipality,

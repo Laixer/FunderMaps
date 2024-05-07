@@ -31,6 +31,11 @@ public enum GeocoderDatasource
     NlBagBerth = 4,
 
     /// <summary>
+    ///     Basisregistratie Adressen en Gebouwen (BAG) residence identifier.
+    /// </summary>
+    NlBagResidence = 5,
+
+    /// <summary>
     ///     Basisregistratie Adressen en Gebouwen (BAG) legacy building identifier.
     /// </summary>
     NlBagLegacyBuilding = 8,

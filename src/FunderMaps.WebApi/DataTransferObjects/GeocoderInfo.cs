@@ -18,6 +18,11 @@ public class GeocoderInfo
     public Address Address { get; set; } = default!;
 
     /// <summary>
+    ///    Residence information.
+    /// </summary>
+    public Residence Residence { get; set; } = default!;
+
+    /// <summary>
     ///     Neighborhood information.
     /// </summary>
     public Neighborhood? Neighborhood { get; set; }
