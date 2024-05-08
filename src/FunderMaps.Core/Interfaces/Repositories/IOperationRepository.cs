@@ -11,22 +11,32 @@ public interface IOperationRepository
     Task<bool> IsAliveAsync();
 
     /// <summary>
-    ///    Refresh data models.
+    ///     Refresh data models.
     /// </summary>
     Task RefreshModelAsync();
 
     /// <summary>
-    ///   Refresh statistics.
+    ///     Refresh statistics.
     /// </summary>
     Task RefreshStatisticsAsync();
 
     /// <summary>
-    ///   Cleanup BAG data.
+    ///     Cleanup BAG data.
     /// </summary>
     Task CleanupBAGAsync();
 
     /// <summary>
-    ///   Copy BAG data to building table.
+    ///     Load building data from BAG.
     /// </summary>
-    Task CopyPandToBuildingAsync();
+    Task LoadBuildingAsync();
+
+    /// <summary>
+    ///     Load address data from BAG.
+    /// </summary>
+    Task LoadAddressAsync();
+
+    /// <summary>
+    ///     Load residence data from BAG.
+    /// </summary>
+    Task LoadResidenceAsync();
 }

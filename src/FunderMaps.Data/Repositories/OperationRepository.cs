@@ -89,9 +89,9 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
     }
 
     /// <summary>
-    ///     Copy BAG data to building table.
+    ///     Load building data from BAG.
     /// </summary>
-    public async Task CopyPandToBuildingAsync()
+    public async Task LoadBuildingAsync()
     {
         {
             var sql = @"
@@ -103,15 +103,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
 
                 UPDATE public.standplaats SET identificatie = concat('NL.IMBAG.STANDPLAATS.', identificatie);
                 CREATE INDEX standplaats_identificatie_idx ON public.standplaats USING btree (identificatie);";
-
-            // UPDATE public.verblijfsobject SET nummeraanduiding_hoofdadres_identificatie = concat('NL.IMBAG.NUMMERAANDUIDING.', nummeraanduiding_hoofdadres_identificatie);
-            // CREATE INDEX verblijfsobject_nummeraanduiding_hoofdadres_identificatie_idx ON public.verblijfsobject USING btree (nummeraanduiding_hoofdadres_identificatie);
-
-            // UPDATE public.verblijfsobject SET pand_identificatie = concat('NL.IMBAG.PAND.', pand_identificatie);
-            // CREATE INDEX verblijfsobject_pand_identificatie_idx ON public.verblijfsobject USING btree (pand_identificatie);
-
-            // UPDATE public.verblijfsobject SET identificatie = concat('NL.IMBAG.VERBLIJFSOBJECT.', identificatie);
-            // CREATE INDEX verblijfsobject_identificatie_idx ON public.verblijfsobject USING btree (identificatie);";
 
             await using var connection = DbContextFactory.DbProvider.ConnectionScope();
             await connection.ExecuteAsync(sql, commandTimeout: 10800);
@@ -136,9 +127,9 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                     'house',
                     null,
                     (
-                            SELECT 
+                        SELECT
                             array_agg(
-                                CASE goals
+                                CASE zone_function
                                     when 'bijeenkomstfunctie' then 'assembly'::geocoder.zone_function
                                     when 'sportfunctie' then 'sport'::geocoder.zone_function
                                     when 'celfunctie' then 'prison'::geocoder.zone_function
@@ -151,9 +142,9 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                                     when 'woonfunctie' then 'residential'::geocoder.zone_function
                                     else 'other'::geocoder.zone_function
                                 END
-                            ) as my_enum_array
+                            )
                         FROM (
-                            SELECT pa.identificatie, unnest(string_to_array(pa.gebruiksdoel, ',')) as goals
+                            SELECT pa.identificatie, unnest(string_to_array(pa.gebruiksdoel, ',')) AS zone_function
                             FROM public.pand pa
                             WHERE pa.identificatie = p.identificatie
                         )
@@ -216,63 +207,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
 
         {
             var sql = @"
-                INSERT INTO geocoder.address(building_number, postal_code, street, external_id, city, building_id)
-                SELECT
-                    concat(v.huisnummer, v.huisletter, v.toevoeging),
-                    v.postcode,
-                    v.openbare_ruimte_naam,
-                    concat('NL.IMBAG.NUMMERAANDUIDING.', v.nummeraanduiding_hoofdadres_identificatie),
-                    v.woonplaats_naam,
-                    b.id
-                FROM public.verblijfsobject v
-                JOIN geocoder.building b ON b.external_id = concat('NL.IMBAG.PAND.', v.pand_identificatie)
-                ON CONFLICT (external_id)
-                DO UPDATE
-                    SET building_number = excluded.building_number,
-                    postal_code = excluded.postal_code,
-                    street = excluded.street,
-                    city = excluded.city;
-                    
-                INSERT INTO geocoder.address(building_number, postal_code, street, external_id, city, building_id)
-                SELECT
-                    concat(l.huisnummer, l.huisletter, l.toevoeging),
-                    l.postcode,
-                    l.openbare_ruimte_naam,
-                    concat('NL.IMBAG.NUMMERAANDUIDING.', l.nummeraanduiding_hoofdadres_identificatie),
-                    l.woonplaats_naam,
-                    b.id
-                FROM public.ligplaats l
-                JOIN geocoder.building b ON b.external_id = concat('NL.IMBAG.LIGPLAATS.', l.identificatie)
-                ON CONFLICT (external_id)
-                DO UPDATE
-                    SET building_number = excluded.building_number,
-                    postal_code = excluded.postal_code,
-                    street = excluded.street,
-                    city = excluded.city;
-   
-                INSERT INTO geocoder.address(building_number, postal_code, street, external_id, city, building_id)
-                SELECT
-                    concat(s.huisnummer, s.huisletter, s.toevoeging),
-                    s.postcode,
-                    s.openbare_ruimte_naam,
-                    concat('NL.IMBAG.NUMMERAANDUIDING.', s.nummeraanduiding_hoofdadres_identificatie),
-                    s.woonplaats_naam,
-                    b.id
-                FROM public.standplaats s
-                JOIN geocoder.building b ON b.external_id = concat('NL.IMBAG.STANDPLAATS.', s.identificatie)
-                ON CONFLICT (external_id)
-                DO UPDATE
-                    SET building_number = excluded.building_number,
-                    postal_code = excluded.postal_code,
-                    street = excluded.street,
-                    city = excluded.city;";
-
-            // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-            // await connection.ExecuteAsync(sql, commandTimeout: 10800);
-        }
-
-        {
-            var sql = @"
                 UPDATE geocoder.building
                 SET neighborhood_id = n.id
                 FROM geocoder.neighborhood n
@@ -289,12 +223,96 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
             await using var connection = DbContextFactory.DbProvider.ConnectionScope();
             await connection.ExecuteAsync(sql, commandTimeout: 3600);
         }
+    }
+
+    /// <summary>
+    ///     Load address data from BAG.
+    /// </summary>
+    public async Task LoadAddressAsync()
+    {
+        {
+            var sql = @"
+                INSERT INTO geocoder.address(building_number, postal_code, street, external_id, city, building_id)
+                SELECT
+                    concat(v.huisnummer, v.huisletter, v.toevoeging),
+                    v.postcode,
+                    v.openbare_ruimte_naam,
+                    v.nummeraanduiding_hoofdadres_identificatie,
+                    v.woonplaats_naam,
+                    b.id
+                FROM public.verblijfsobject v
+                JOIN geocoder.building b ON b.external_id = v.pand_identificatie
+                ON CONFLICT (external_id)
+                DO UPDATE
+                    SET building_number = excluded.building_number,
+                    postal_code = excluded.postal_code,
+                    street = excluded.street,
+                    city = excluded.city;
+                    
+                INSERT INTO geocoder.address(building_number, postal_code, street, external_id, city, building_id)
+                SELECT
+                    concat(l.huisnummer, l.huisletter, l.toevoeging),
+                    l.postcode,
+                    l.openbare_ruimte_naam,
+                    concat('NL.IMBAG.NUMMERAANDUIDING.', l.nummeraanduiding_hoofdadres_identificatie),
+                    l.woonplaats_naam,
+                    b.id
+                FROM public.ligplaats l
+                JOIN geocoder.building b ON b.external_id = l.identificatie
+                ON CONFLICT (external_id)
+                DO UPDATE
+                    SET building_number = excluded.building_number,
+                    postal_code = excluded.postal_code,
+                    street = excluded.street,
+                    city = excluded.city;
+   
+                INSERT INTO geocoder.address(building_number, postal_code, street, external_id, city, building_id)
+                SELECT
+                    concat(s.huisnummer, s.huisletter, s.toevoeging),
+                    s.postcode,
+                    s.openbare_ruimte_naam,
+                    concat('NL.IMBAG.NUMMERAANDUIDING.', s.nummeraanduiding_hoofdadres_identificatie),
+                    s.woonplaats_naam,
+                    b.id
+                FROM public.standplaats s
+                JOIN geocoder.building b ON b.external_id = s.identificatie
+                ON CONFLICT (external_id)
+                DO UPDATE
+                    SET building_number = excluded.building_number,
+                    postal_code = excluded.postal_code,
+                    street = excluded.street,
+                    city = excluded.city;";
+
+            await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+            await connection.ExecuteAsync(sql, commandTimeout: 10800);
+        }
 
         {
             var sql = @"REINDEX TABLE CONCURRENTLY geocoder.address;";
 
-            // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-            // await connection.ExecuteAsync(sql, commandTimeout: 3600);
+            await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+            await connection.ExecuteAsync(sql, commandTimeout: 3600);
+        }
+    }
+
+    /// <summary>
+    ///     Load residence data from BAG.
+    /// </summary>
+    public async Task LoadResidenceAsync()
+    {
+        {
+            var sql = @"
+                UPDATE public.verblijfsobject SET nummeraanduiding_hoofdadres_identificatie = concat('NL.IMBAG.NUMMERAANDUIDING.', nummeraanduiding_hoofdadres_identificatie);
+                CREATE INDEX verblijfsobject_nummeraanduiding_hoofdadres_identificatie_idx ON public.verblijfsobject USING btree (nummeraanduiding_hoofdadres_identificatie);
+
+                UPDATE public.verblijfsobject SET pand_identificatie = concat('NL.IMBAG.PAND.', pand_identificatie);
+                CREATE INDEX verblijfsobject_pand_identificatie_idx ON public.verblijfsobject USING btree (pand_identificatie);
+
+                UPDATE public.verblijfsobject SET identificatie = concat('NL.IMBAG.VERBLIJFSOBJECT.', identificatie);
+                CREATE INDEX verblijfsobject_identificatie_idx ON public.verblijfsobject USING btree (identificatie);";
+
+            await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+            await connection.ExecuteAsync(sql, commandTimeout: 10800);
         }
     }
 }
