@@ -18,6 +18,7 @@ internal sealed class LoadBagTask(
     ILogger<LoadBagTask> logger) : ITaskService
 {
     private const string FileUrl = "https://service.pdok.nl/lv/bag/atom/downloads/bag-light.gpkg";
+    private const int MinimumFileSize = 1024 * 1024; // 1 MB
 
     private readonly DbProviderOptions _dbProviderOptions = dbProviderOptions?.Value ?? throw new ArgumentNullException(nameof(dbProviderOptions));
 
@@ -49,13 +50,15 @@ internal sealed class LoadBagTask(
                 await fileStream.FlushAsync(cancellationToken);
             }
 
+            logger.LogInformation("Storing BAG file");
+
             DateTime currentDate = DateTime.Now;
             string dateString = currentDate.ToString("yyyy-MM-dd");
 
             await blobStorageService.StoreFileAsync($"lvbag/archive/{dateString}/bag-light.gpkg", destinationPath);
 
             var fileInfo = new FileInfo(destinationPath);
-            if (fileInfo.Exists && fileInfo.Length > 1048576) // 1 MB
+            if (fileInfo.Exists && fileInfo.Length > MinimumFileSize)
             {
                 logger.LogInformation("Processing BAG file");
 
@@ -67,7 +70,9 @@ internal sealed class LoadBagTask(
 
                 logger.LogInformation("Copying BAG file to building table");
 
-                await operationRepository.CopyPandToBuildingAsync();
+                await operationRepository.LoadBuildingAsync();
+                await operationRepository.LoadResidenceAsync();
+                await operationRepository.LoadAddressAsync();
             }
             else
             {
