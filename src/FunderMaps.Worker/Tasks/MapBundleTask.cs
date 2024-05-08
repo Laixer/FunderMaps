@@ -35,7 +35,7 @@ internal sealed class MapBundleTask(
             {
                 if (!await bundleRepository.RunPreconditionAsync(bundle.Tileset, bundle.Precondition))
                 {
-                    logger.LogInformation("Precondition for bundle '{Tileset}' failed, skipping", bundle.Tileset);
+                    logger.LogInformation("Precondition for bundle '{Tileset}' not met, skipping", bundle.Tileset);
                     return;
                 }
             }

@@ -39,7 +39,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                 CALL data.model_risk_manifest();";
 
             await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
             await connection.ExecuteAsync(sql, commandTimeout: 10800);
         }
 
@@ -47,7 +46,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
             var sql = @"REINDEX TABLE CONCURRENTLY data.model_risk_static;";
 
             await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
             await connection.ExecuteAsync(sql, commandTimeout: 3600);
         }
     }
@@ -71,7 +69,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
             REFRESH MATERIALIZED VIEW CONCURRENTLY data.statistics_postal_code_foundation_risk;";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
         await connection.ExecuteAsync(sql, commandTimeout: 3600);
     }
 
@@ -88,18 +85,41 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
             DROP TABLE IF EXISTS public.standplaats;";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
         await connection.ExecuteAsync(sql, commandTimeout: 10800);
     }
 
     /// <summary>
-    ///   Copy BAG data to building table.
+    ///     Copy BAG data to building table.
     /// </summary>
     public async Task CopyPandToBuildingAsync()
     {
         {
             var sql = @"
-                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, external_source, building_type, neighborhood_id, mutation_date)
+                UPDATE public.pand SET identificatie = concat('NL.IMBAG.PAND.', identificatie);
+                CREATE INDEX pand_identificatie_idx ON public.pand USING btree (identificatie);
+                
+                UPDATE public.ligplaats SET identificatie = concat('NL.IMBAG.LIGPLAATS.', identificatie);
+                CREATE INDEX ligplaats_identificatie_idx ON public.ligplaats USING btree (identificatie);
+
+                UPDATE public.standplaats SET identificatie = concat('NL.IMBAG.STANDPLAATS.', identificatie);
+                CREATE INDEX standplaats_identificatie_idx ON public.standplaats USING btree (identificatie);";
+
+            // UPDATE public.verblijfsobject SET nummeraanduiding_hoofdadres_identificatie = concat('NL.IMBAG.NUMMERAANDUIDING.', nummeraanduiding_hoofdadres_identificatie);
+            // CREATE INDEX verblijfsobject_nummeraanduiding_hoofdadres_identificatie_idx ON public.verblijfsobject USING btree (nummeraanduiding_hoofdadres_identificatie);
+
+            // UPDATE public.verblijfsobject SET pand_identificatie = concat('NL.IMBAG.PAND.', pand_identificatie);
+            // CREATE INDEX verblijfsobject_pand_identificatie_idx ON public.verblijfsobject USING btree (pand_identificatie);
+
+            // UPDATE public.verblijfsobject SET identificatie = concat('NL.IMBAG.VERBLIJFSOBJECT.', identificatie);
+            // CREATE INDEX verblijfsobject_identificatie_idx ON public.verblijfsobject USING btree (identificatie);";
+
+            await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+            await connection.ExecuteAsync(sql, commandTimeout: 10800);
+        }
+
+        {
+            var sql = @"
+                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, external_source, building_type, neighborhood_id, zone_function)
                 SELECT
                     case
                         when p.bouwjaar > 2099 then null
@@ -111,52 +131,91 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                         else true
                     end,
                     ST_Multi(ST_Transform(p.geom, 4326)),
-                    concat('NL.IMBAG.PAND.', p.identificatie),
+                    p.identificatie,
                     'nl_bag',
                     'house',
                     null,
-                    null
+                    (
+                            SELECT 
+                            array_agg(
+                                CASE goals
+                                    when 'bijeenkomstfunctie' then 'assembly'::geocoder.zone_function
+                                    when 'sportfunctie' then 'sport'::geocoder.zone_function
+                                    when 'celfunctie' then 'prison'::geocoder.zone_function
+                                    when 'gezondheidszorgfunctie' then 'medical'::geocoder.zone_function
+                                    when 'industriefunctie' then 'industry'::geocoder.zone_function
+                                    when 'kantoorfunctie' then 'office'::geocoder.zone_function
+                                    when 'logiesfunctie' then 'accommodation'::geocoder.zone_function
+                                    when 'onderwijsfunctie' then 'education'::geocoder.zone_function
+                                    when 'winkelfunctie' then 'retail'::geocoder.zone_function
+                                    when 'woonfunctie' then 'residential'::geocoder.zone_function
+                                    else 'other'::geocoder.zone_function
+                                END
+                            ) as my_enum_array
+                        FROM (
+                            SELECT pa.identificatie, unnest(string_to_array(pa.gebruiksdoel, ',')) as goals
+                            FROM public.pand pa
+                            WHERE pa.identificatie = p.identificatie
+                        )
+                    )
                 FROM public.pand p
                 ON CONFLICT (external_id)
                 DO UPDATE
                     SET built_year = excluded.built_year,
                     is_active = excluded.is_active,
-                    geom = excluded.geom;
+                    geom = excluded.geom,
+                    zone_function = excluded.zone_function;
 
-                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, external_source, building_type, neighborhood_id, mutation_date)
+                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, external_source, building_type, neighborhood_id)
                 SELECT
                     null,
                     true,
                     ST_Multi(ST_Transform(l.geom, 4326)),
-                    concat('NL.IMBAG.LIGPLAATS.', l.identificatie),
+                    l.identificatie,
                     'nl_bag',
                     'houseboat',
-                    null,
                     null
                 FROM public.ligplaats l
                 ON CONFLICT (external_id)
                 DO UPDATE
                     SET geom = excluded.geom;
                     
-                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, external_source, building_type, neighborhood_id, mutation_date)
+                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, external_source, building_type, neighborhood_id)
                 SELECT
                     null,
                     true,
                     ST_Multi(ST_Transform(s.geom, 4326)),
-                    concat('NL.IMBAG.STANDPLAATS.', s.identificatie),
+                    s.identificatie,
                     'nl_bag',
                     'mobile_home',
-                    null,
                     null
                 FROM public.standplaats s
                 ON CONFLICT (external_id)
                 DO UPDATE
-                    SET geom = excluded.geom;
+                    SET geom = excluded.geom;";
 
-                --
-                -- Update address table
-                --
+            await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+            await connection.ExecuteAsync(sql, commandTimeout: 10800);
+        }
 
+        {
+            var sql = @"
+                UPDATE geocoder.building
+                SET is_active = false
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM public.pand
+                    WHERE public.pand.identificatie = geocoder.building.external_id
+                )
+                AND geocoder.building.is_active = true
+                AND geocoder.building.external_id like 'NL.IMBAG.PAND.%';";
+
+            await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+            await connection.ExecuteAsync(sql, commandTimeout: 10800);
+        }
+
+        {
+            var sql = @"
                 INSERT INTO geocoder.address(building_number, postal_code, street, external_id, city, building_id)
                 SELECT
                     concat(v.huisnummer, v.huisletter, v.toevoeging),
@@ -208,9 +267,8 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                     street = excluded.street,
                     city = excluded.city;";
 
-            await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-            await connection.ExecuteAsync(sql, commandTimeout: 10800);
+            // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+            // await connection.ExecuteAsync(sql, commandTimeout: 10800);
         }
 
         {
@@ -222,7 +280,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                 AND neighborhood_id IS NULL;";
 
             await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
             await connection.ExecuteAsync(sql, commandTimeout: 1800);
         }
 
@@ -230,8 +287,14 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
             var sql = @"REINDEX TABLE CONCURRENTLY geocoder.building;";
 
             await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
             await connection.ExecuteAsync(sql, commandTimeout: 3600);
+        }
+
+        {
+            var sql = @"REINDEX TABLE CONCURRENTLY geocoder.address;";
+
+            // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+            // await connection.ExecuteAsync(sql, commandTimeout: 3600);
         }
     }
 }
