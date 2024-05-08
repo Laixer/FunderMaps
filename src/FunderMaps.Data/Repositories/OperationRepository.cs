@@ -93,6 +93,7 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
     /// </summary>
     public async Task LoadBuildingAsync()
     {
+        // TODO: Move this into a prepare method
         {
             var sql = @"
                 UPDATE public.pand SET identificatie = concat('NL.IMBAG.PAND.', identificatie);
@@ -102,7 +103,18 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                 CREATE INDEX ligplaats_identificatie_idx ON public.ligplaats USING btree (identificatie);
 
                 UPDATE public.standplaats SET identificatie = concat('NL.IMBAG.STANDPLAATS.', identificatie);
-                CREATE INDEX standplaats_identificatie_idx ON public.standplaats USING btree (identificatie);";
+                CREATE INDEX standplaats_identificatie_idx ON public.standplaats USING btree (identificatie);
+                
+                --
+                
+                UPDATE public.verblijfsobject SET nummeraanduiding_hoofdadres_identificatie = concat('NL.IMBAG.NUMMERAANDUIDING.', nummeraanduiding_hoofdadres_identificatie);
+                CREATE INDEX verblijfsobject_nummeraanduiding_hoofdadres_identificatie_idx ON public.verblijfsobject USING btree (nummeraanduiding_hoofdadres_identificatie);
+
+                UPDATE public.verblijfsobject SET pand_identificatie = concat('NL.IMBAG.PAND.', pand_identificatie);
+                CREATE INDEX verblijfsobject_pand_identificatie_idx ON public.verblijfsobject USING btree (pand_identificatie);
+
+                UPDATE public.verblijfsobject SET identificatie = concat('NL.IMBAG.VERBLIJFSOBJECT.', identificatie);
+                CREATE INDEX verblijfsobject_identificatie_idx ON public.verblijfsobject USING btree (identificatie);";
 
             await using var connection = DbContextFactory.DbProvider.ConnectionScope();
             await connection.ExecuteAsync(sql, commandTimeout: 10800);
@@ -302,17 +314,25 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
     {
         {
             var sql = @"
-                UPDATE public.verblijfsobject SET nummeraanduiding_hoofdadres_identificatie = concat('NL.IMBAG.NUMMERAANDUIDING.', nummeraanduiding_hoofdadres_identificatie);
-                CREATE INDEX verblijfsobject_nummeraanduiding_hoofdadres_identificatie_idx ON public.verblijfsobject USING btree (nummeraanduiding_hoofdadres_identificatie);
-
-                UPDATE public.verblijfsobject SET pand_identificatie = concat('NL.IMBAG.PAND.', pand_identificatie);
-                CREATE INDEX verblijfsobject_pand_identificatie_idx ON public.verblijfsobject USING btree (pand_identificatie);
-
-                UPDATE public.verblijfsobject SET identificatie = concat('NL.IMBAG.VERBLIJFSOBJECT.', identificatie);
-                CREATE INDEX verblijfsobject_identificatie_idx ON public.verblijfsobject USING btree (identificatie);";
+                INSERT INTO geocoder.residence(id, address_id, building_id, geom)
+                SELECT
+                    v.identificatie,
+                    a.external_id,
+                    b.external_id,
+                    ST_Transform(v.geom, 4326)
+                FROM public.verblijfsobject v
+                join geocoder.address a on a.external_id = v.nummeraanduiding_hoofdadres_identificatie
+                join geocoder.building b on b.external_id = v.pand_identificatie";
 
             await using var connection = DbContextFactory.DbProvider.ConnectionScope();
             await connection.ExecuteAsync(sql, commandTimeout: 10800);
+        }
+
+        {
+            var sql = @"REINDEX TABLE CONCURRENTLY geocoder.residence;";
+
+            await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+            await connection.ExecuteAsync(sql, commandTimeout: 3600);
         }
     }
 }
