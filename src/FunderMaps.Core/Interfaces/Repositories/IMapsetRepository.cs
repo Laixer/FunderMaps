@@ -14,6 +14,11 @@ public interface IMapsetRepository
     Task<Mapset> GetPublicAsync(Guid id);
 
     /// <summary>
+    ///    Gets an analysis product by its name.
+    /// </summary>
+    Task<Mapset> GetPublicByNameAsync(string name);
+
+    /// <summary>
     ///     Gets an analysis product by its internal building id.
     /// </summary>
     /// <param name="id">Internal building id.</param>

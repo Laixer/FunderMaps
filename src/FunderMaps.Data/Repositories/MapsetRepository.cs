@@ -55,6 +55,47 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
     }
 
     /// <summary>
+    ///    Gets an analysis product by its name.
+    /// </summary>
+    public async Task<Mapset> GetPublicByNameAsync(string name)
+    {
+        var sql = @"
+            SELECT  -- Mapset
+                    m.id,
+                    m.name,
+                    LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) AS slug,
+                    m.style,
+                    m.layers,
+                    m.options,
+                    m.public,
+                    m.consent,
+                    m.note,
+                    m.icon,
+                    NULL as fence_municipality,
+                    (
+                        SELECT jsonb_agg(maplayers.layer)
+                        FROM (
+                            SELECT l AS layer
+                            FROM maplayer.layer l
+                            WHERE l.id IN (
+                                SELECT  unnest(m.layers)
+                                FROM    maplayer.mapset m2
+                                WHERE   m2.id = m.id
+                            )
+                        ) AS maplayers
+                    ) AS layerset
+            FROM    maplayer.mapset AS m
+            WHERE   LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) = LOWER(@name)
+            AND     m.public = true
+            LIMIT   1";
+
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        var mapset = await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { name });
+        return mapset is null ? throw new EntityNotFoundException(nameof(mapset)) : mapset;
+    }
+
+    /// <summary>
     ///     Gets an analysis product by its internal building id.
     /// </summary>
     /// <param name="id">Internal building id.</param>

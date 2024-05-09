@@ -11,21 +11,23 @@ namespace FunderMaps.WebApi.Controllers;
 [Route("api/mapset")]
 public sealed class MapsetController(IMapsetRepository mapsetRepository) : FunderMapsController
 {
-    // TODO: This method should accept more than GUID. The id could also be a string.
     // GET: api/mapset/{id}
     /// <summary>
     ///     Return all mapsets the user has access to.
     /// </summary>
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
-    [HttpGet("{id:guid?}")]
-    public async Task<IActionResult> GetAsync(Guid id)
+    [HttpGet("{name}")]
+    public async Task<IActionResult> GetAsync(string name)
     {
         var mapSets = new List<Mapset>();
 
-        // TODO: TryParse
-        if (id != Guid.Empty)
+        if (Guid.TryParse(name, out Guid id))
         {
             mapSets.Add(await mapsetRepository.GetPublicAsync(id));
+        }
+        else
+        {
+            mapSets.Add(await mapsetRepository.GetPublicByNameAsync(name));
         }
 
         if (User.Identity?.IsAuthenticated ?? false)
