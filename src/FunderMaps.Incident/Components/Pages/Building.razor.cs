@@ -34,7 +34,7 @@ public partial class Building : ComponentBase
             {
                 var building = await GeocoderTranslation.GetBuildingIdAsync(Id);
 
-                State.Model.Building = building.Id;
+                State.Model.Building = building.ExternalId;
 
                 if (State.Feedback)
                 {

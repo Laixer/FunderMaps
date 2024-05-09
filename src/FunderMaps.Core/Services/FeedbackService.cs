@@ -28,7 +28,7 @@ public class FeedbackService(
     /// <param name="meta">Optional metadata.</param>
     public async Task<Incident> AddAsync(Incident incident, object? meta = null)
     {
-        var address = await geocoderTranslation.GetAddressIdAsync(incident.Address);
+        var address = await geocoderTranslation.GetAddressIdAsync(incident.Building);
 
         var documentLinkList = new List<string>();
         if (incident.DocumentFile is not null)
