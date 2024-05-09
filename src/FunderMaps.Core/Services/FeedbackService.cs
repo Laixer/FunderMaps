@@ -49,7 +49,7 @@ public class FeedbackService(
             await emailService.SendAsync(new EmailMessage
             {
                 ToAddresses = [new EmailAddress(recipient)],
-                Subject = $"Nieuwe melding: {incident.Id}",
+                Subject = $"Nieuwe feedback: {incident.Id}",
                 Template = "incident-reviewer",
                 Varaibles = new Dictionary<string, object>
                 {
