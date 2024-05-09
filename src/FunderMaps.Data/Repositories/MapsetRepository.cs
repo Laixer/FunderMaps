@@ -22,6 +22,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             SELECT  -- Mapset
                     m.id,
                     m.name,
+                    LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) AS slug,
                     m.style,
                     m.layers,
                     m.options,
@@ -63,6 +64,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             SELECT  -- Mapset
                     m.id,
                     m.name,
+                    LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) AS slug,
                     m.style,
                     m.layers,
                     m.options,

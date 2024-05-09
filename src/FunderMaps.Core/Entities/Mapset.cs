@@ -19,6 +19,12 @@ public sealed class Mapset : IEntityIdentifier<Guid>
     public string Name { get; set; } = default!;
 
     /// <summary>
+    ///     Slug.
+    /// </summary>
+    [Required]
+    public string Slug { get; set; } = default!;
+
+    /// <summary>
     ///     Map style.
     /// </summary>
     [Required]
