@@ -11,24 +11,28 @@ namespace FunderMaps.WebApi.Controllers;
 [Route("api/mapset")]
 public sealed class MapsetController(IMapsetRepository mapsetRepository) : FunderMapsController
 {
-    // GET: api/mapset/{id}
+    // GET: api/mapset/{name}
     /// <summary>
-    ///     Return all mapsets the user has access to.
+    ///     Return all mapsets the user has access to or a specific mapset.
     /// </summary>
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
-    [HttpGet("{name}")]
-    public async Task<IActionResult> GetAsync(string name)
+    [HttpGet("{name?}")]
+    public async Task<IActionResult> GetAsync(string? name)
     {
         var mapSets = new List<Mapset>();
 
-        if (Guid.TryParse(name, out Guid id))
+        try
         {
-            mapSets.Add(await mapsetRepository.GetPublicAsync(id));
+            if (Guid.TryParse(name, out Guid id))
+            {
+                mapSets.Add(await mapsetRepository.GetPublicAsync(id));
+            }
+            else if (!string.IsNullOrWhiteSpace(name))
+            {
+                mapSets.Add(await mapsetRepository.GetPublicByNameAsync(name));
+            }
         }
-        else if (!string.IsNullOrWhiteSpace(name))
-        {
-            mapSets.Add(await mapsetRepository.GetPublicByNameAsync(name));
-        }
+        catch (Core.Exceptions.EntityNotFoundException) { }
 
         if (User.Identity?.IsAuthenticated ?? false)
         {
