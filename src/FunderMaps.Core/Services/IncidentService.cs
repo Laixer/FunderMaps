@@ -154,7 +154,7 @@ public class IncidentService(
             foreach (var file in incident.DocumentFile)
             {
                 Uri link = await blobStorageService.GetAccessLinkAsync(
-                    containerName: Core.Constants.IncidentStorageFolderName,
+                    containerName: Constants.IncidentStorageFolderName,
                     fileName: file,
                     hoursValid: 24 * 7 * 4);
 
@@ -164,10 +164,10 @@ public class IncidentService(
 
         await emailService.SendAsync(new EmailMessage
         {
-            ToAddresses = new[]
-            {
+            ToAddresses =
+            [
                 new EmailAddress(incident.Email, incident.Name)
-            },
+            ],
             Subject = $"Nieuwe melding: {incident.Id}",
             Template = "incident-customer",
             Varaibles = new Dictionary<string, object>
@@ -192,7 +192,7 @@ public class IncidentService(
         {
             await emailService.SendAsync(new EmailMessage
             {
-                ToAddresses = new[] { new EmailAddress(recipient) },
+                ToAddresses = [new EmailAddress(recipient)],
                 Subject = $"Nieuwe melding: {incident.Id}",
                 Template = "incident-reviewer",
                 Varaibles = new Dictionary<string, object>

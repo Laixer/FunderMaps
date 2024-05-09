@@ -1,5 +1,9 @@
+using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Core.Services;
 
@@ -7,8 +11,15 @@ namespace FunderMaps.Core.Services;
 /// <summary>
 ///     Service to the incidents.
 /// </summary>
-public class FeedbackService(ILogger<FeedbackService> logger)
+public class FeedbackService(
+    IOptions<IncidentOptions> options,
+    GeocoderTranslation geocoderTranslation,
+    IEmailService emailService,
+    IBlobStorageService blobStorageService,
+    ILogger<IncidentService> logger)
 {
+    private readonly IncidentOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+
     // FUTURE: split logic, hard to read.
     /// <summary>
     ///     Register a new incident.
@@ -17,79 +28,48 @@ public class FeedbackService(ILogger<FeedbackService> logger)
     /// <param name="meta">Optional metadata.</param>
     public async Task<Incident> AddAsync(Incident incident, object? meta = null)
     {
-        // var address = await geocoderTranslation.GetAddressIdAsync(incident.Address);
+        var address = await geocoderTranslation.GetAddressIdAsync(incident.Address);
 
-        // incident.Meta = meta;
+        var documentLinkList = new List<string>();
+        if (incident.DocumentFile is not null)
+        {
+            foreach (var file in incident.DocumentFile)
+            {
+                Uri link = await blobStorageService.GetAccessLinkAsync(
+                    containerName: Constants.IncidentStorageFolderName,
+                    fileName: file,
+                    hoursValid: 24 * 7 * 4);
 
-        // incident.Id = await _incidentRepository.AddAsync(incident);
-        // incident = await _incidentRepository.GetByIdAsync(incident.Id);
+                documentLinkList.Add(link.ToString());
+            }
+        }
 
-        // var documentLinkList = new List<string>();
-        // if (incident.DocumentFile is not null)
-        // {
-        //     foreach (var file in incident.DocumentFile)
-        //     {
-        //         Uri link = await blobStorageService.GetAccessLinkAsync(
-        //             containerName: Core.Constants.IncidentStorageFolderName,
-        //             fileName: file,
-        //             hoursValid: 24 * 7 * 4);
-
-        //         documentLinkList.Add(link.ToString());
-        //     }
-        // }
-
-        // await emailService.SendAsync(new EmailMessage
-        // {
-        //     ToAddresses = new[]
-        //     {
-        //         new EmailAddress(incident.Email, incident.Name)
-        //     },
-        //     Subject = $"Nieuwe melding: {incident.Id}",
-        //     Template = "incident-customer",
-        //     Varaibles = new Dictionary<string, object>
-        //     {
-        //         { "id", incident.Id },
-        //         { "name", incident.Name ?? throw new ArgumentNullException(nameof(incident.Name)) },
-        //         { "phone", incident.PhoneNumber ?? "-" },
-        //         { "email", incident.Email },
-        //         { "address", address.FullAddress },
-        //         { "note", incident.Note ?? "-" },
-        //         { "foundationType", ToFoundationType(incident.FoundationType) },
-        //         { "chainedBuilding", ToBoolean(incident.ChainedBuilding) },
-        //         { "owner", ToBoolean(incident.Owner) },
-        //         { "neighborRecovery", ToBoolean(incident.NeighborRecovery) },
-        //         { "foundationDamageCause", ToFoundationDamageCause(incident.FoundationDamageCause) },
-        //         { "foundationDamageCharacteristics", ArrayToFoundationDamageCharacteristics(incident.FoundationDamageCharacteristics) },
-        //         { "environmentDamageCharacteristics", ArrayToEnvironmentDamageCharacteristics(incident.EnvironmentDamageCharacteristics) },
-        //     }
-        // });
-
-        // foreach (var recipient in _options.Recipients)
-        // {
-        //     await _emailService.SendAsync(new EmailMessage
-        //     {
-        //         ToAddresses = new[] { new EmailAddress(recipient) },
-        //         Subject = $"Nieuwe melding: {incident.Id}",
-        //         Template = "incident-reviewer",
-        //         Varaibles = new Dictionary<string, object>
-        //         {
-        //             { "id", incident.Id },
-        //             { "name", incident.Name ?? throw new ArgumentNullException(nameof(incident.Name)) },
-        //             { "phone", incident.PhoneNumber ?? "-" },
-        //             { "email", incident.Email },
-        //             { "address", address.FullAddress },
-        //             { "note", incident.Note ?? "-" },
-        //             { "foundationType", ToFoundationType(incident.FoundationType) },
-        //             { "chainedBuilding", ToBoolean(incident.ChainedBuilding) },
-        //             { "owner", ToBoolean(incident.Owner) },
-        //             { "neighborRecovery", ToBoolean(incident.NeighborRecovery) },
-        //             { "foundationDamageCause", ToFoundationDamageCause(incident.FoundationDamageCause) },
-        //             { "foundationDamageCharacteristics", ArrayToFoundationDamageCharacteristics(incident.FoundationDamageCharacteristics) },
-        //             { "environmentDamageCharacteristics", ArrayToEnvironmentDamageCharacteristics(incident.EnvironmentDamageCharacteristics) },
-        //             { "documentLinks", documentLinkList },
-        //         }
-        //     });
-        // }
+        foreach (var recipient in _options.Recipients)
+        {
+            await emailService.SendAsync(new EmailMessage
+            {
+                ToAddresses = [new EmailAddress(recipient)],
+                Subject = $"Nieuwe melding: {incident.Id}",
+                Template = "incident-reviewer",
+                Varaibles = new Dictionary<string, object>
+                {
+                    { "id", incident.Id },
+                    { "name", incident.Name ?? throw new ArgumentNullException(nameof(incident.Name)) },
+                    { "phone", incident.PhoneNumber ?? "-" },
+                    { "email", incident.Email },
+                    { "address", address.FullAddress },
+                    { "note", incident.Note ?? "-" },
+                    { "foundationType", incident.FoundationType },
+                    { "chainedBuilding", incident.ChainedBuilding },
+                    { "owner", incident.Owner },
+                    { "neighborRecovery", incident.NeighborRecovery },
+                    { "foundationDamageCause", incident.FoundationDamageCause },
+                    { "foundationDamageCharacteristics", incident.FoundationDamageCharacteristics },
+                    { "environmentDamageCharacteristics", incident.EnvironmentDamageCharacteristics },
+                    { "documentLinks", documentLinkList },
+                }
+            });
+        }
 
         logger.LogInformation("Feedback was submitted but ignored.");
 
