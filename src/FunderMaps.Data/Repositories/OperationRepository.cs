@@ -122,7 +122,7 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
 
         {
             var sql = @"
-                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, external_source, building_type, neighborhood_id, zone_function)
+                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, building_type, neighborhood_id, zone_function)
                 SELECT
                     case
                         when p.bouwjaar > 2099 then null
@@ -135,7 +135,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                     end,
                     ST_Multi(ST_Transform(p.geom, 4326)),
                     p.identificatie,
-                    'nl_bag',
                     'house',
                     null,
                     (
@@ -169,13 +168,12 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                     geom = excluded.geom,
                     zone_function = excluded.zone_function;
 
-                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, external_source, building_type, neighborhood_id)
+                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, building_type, neighborhood_id)
                 SELECT
                     null,
                     true,
                     ST_Multi(ST_Transform(l.geom, 4326)),
                     l.identificatie,
-                    'nl_bag',
                     'houseboat',
                     null
                 FROM public.ligplaats l
@@ -183,13 +181,12 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                 DO UPDATE
                     SET geom = excluded.geom;
                     
-                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, external_source, building_type, neighborhood_id)
+                INSERT INTO geocoder.building(built_year, is_active, geom, external_id, building_type, neighborhood_id)
                 SELECT
                     null,
                     true,
                     ST_Multi(ST_Transform(s.geom, 4326)),
                     s.identificatie,
-                    'nl_bag',
                     'mobile_home',
                     null
                 FROM public.standplaats s
