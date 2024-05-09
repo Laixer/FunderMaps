@@ -25,7 +25,7 @@ public sealed class MapsetController(IMapsetRepository mapsetRepository) : Funde
         {
             mapSets.Add(await mapsetRepository.GetPublicAsync(id));
         }
-        else
+        else if (!string.IsNullOrWhiteSpace(name))
         {
             mapSets.Add(await mapsetRepository.GetPublicByNameAsync(name));
         }
