@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 
@@ -322,7 +322,9 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                     ST_Transform(v.geom, 4326)
                 FROM public.verblijfsobject v
                 join geocoder.address a on a.external_id = v.nummeraanduiding_hoofdadres_identificatie
-                join geocoder.building b on b.external_id = v.pand_identificatie";
+                join geocoder.building b on b.external_id = v.pand_identificatie
+                ON CONFLICT (id, address_id, building_id)
+                DO NOTHING;";
 
             await using var connection = DbContextFactory.DbProvider.ConnectionScope();
             await connection.ExecuteAsync(sql, commandTimeout: 10800);
