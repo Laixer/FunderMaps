@@ -34,7 +34,6 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     public Task<Building> GetBuildingAsync(string id)
         => geocoderTranslation.GetBuildingIdAsync(id);
 
-
     // GET: api/geocoder/residence/{id}
     /// <summary>
     ///     Get residence by identifier.

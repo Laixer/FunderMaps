@@ -16,7 +16,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     ///     Request the analysis product.
     /// </summary>
     /// <remarks>
-    ///   Cache response for 12 hours. Analysis will not change often.
+    ///     Cache response for 12 hours. Analysis will not change often.
     /// </remarks>
     [HttpGet("analysis/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<AnalysisProduct> GetAnalysisAsync(string id)
@@ -27,7 +27,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     ///     Request the statistics product.
     /// </summary>
     /// <remarks>
-    ///   Cache response for 12 hours. Statistics will not change often.
+    ///     Cache response for 12 hours. Statistics will not change often.
     /// </remarks>
     [HttpGet("statistics/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
@@ -38,7 +38,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     ///     Request the statistics product.
     /// </summary>
     /// <remarks>
-    ///   Cache response for 12 hours. Statistics will not change often.
+    ///     Cache response for 12 hours. Statistics will not change often.
     /// </remarks>
     [HttpGet("statistics/building/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<StatisticsProduct> GetStatistics2Async(string id)

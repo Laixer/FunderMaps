@@ -51,8 +51,8 @@ public sealed class InquiryController(
     ///     Return inquiry by id.
     /// </summary>
     [HttpGet("{id:int}")]
-    public async Task<Inquiry> GetAsync(int id)
-        => await inquiryRepository.GetByIdAsync(id, TenantId);
+    public Task<Inquiry> GetAsync(int id)
+        => inquiryRepository.GetByIdAsync(id, TenantId);
 
     // GET: api/inquiry/building/{id}
     /// <summary>
@@ -70,8 +70,8 @@ public sealed class InquiryController(
     ///     Return all inquiries.
     /// </summary>
     [HttpGet]
-    public async Task<IEnumerable<Inquiry>> GetAllAsync([FromQuery] PaginationDto pagination)
-        => await inquiryRepository.ListAllAsync(pagination.Navigation, TenantId).ToListAsync();
+    public ValueTask<List<Inquiry>> GetAllAsync([FromQuery] PaginationDto pagination)
+        => inquiryRepository.ListAllAsync(pagination.Navigation, TenantId).ToListAsync();
 
     // POST: api/inquiry
     /// <summary>

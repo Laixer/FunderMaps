@@ -18,10 +18,10 @@ public sealed class ContractorController(IContractorRepository contractorReposit
     ///     Return all contractors.
     /// </summary>
     /// <remarks>
-    ///     Cache response for 8 hours. Contractors will not change often.
+    ///     Cache response for 12 hours. Contractors will not change often.
     ///     Contractors are tenant independent.
     /// </remarks>
     [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 12)]
-    public async Task<IEnumerable<Contractor>> GetAllAsync([FromQuery] PaginationDto pagination)
-        => await contractorRepository.ListAllAsync(Navigation.All).ToListAsync();
+    public ValueTask<List<Contractor>> GetAllAsync([FromQuery] PaginationDto pagination)
+        => contractorRepository.ListAllAsync(Navigation.All).ToListAsync();
 }

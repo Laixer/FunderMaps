@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers.Report;
 
+// TOOD: Move
 public record ReportDto
 {
     public List<Incident> Incidents { get; init; } = [];

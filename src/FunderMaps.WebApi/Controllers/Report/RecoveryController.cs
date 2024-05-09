@@ -70,8 +70,8 @@ public sealed class RecoveryController(
     ///     Return all recoveries.
     /// </summary>
     [HttpGet]
-    public async Task<IEnumerable<Recovery>> GetAllAsync([FromQuery] PaginationDto pagination)
-        => await recoveryRepository.ListAllAsync(pagination.Navigation, TenantId).ToListAsync();
+    public ValueTask<List<Recovery>> GetAllAsync([FromQuery] PaginationDto pagination)
+        => recoveryRepository.ListAllAsync(pagination.Navigation, TenantId).ToListAsync();
 
     // POST: api/recovery
     /// <summary>

@@ -49,8 +49,8 @@ public sealed class InquirySampleController(
     ///     Return all inquiry samples.
     /// </summary>
     [HttpGet]
-    public async Task<IEnumerable<InquirySample>> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
-        => await inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation, TenantId).ToListAsync();
+    public ValueTask<List<InquirySample>> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
+        => inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation, TenantId).ToListAsync();
 
     // POST: api/inquiry/{id}/sample
     /// <summary>

@@ -23,6 +23,9 @@ public class ModelService(
     /// <summary>
     ///    Get analysis product.
     /// </summary>
+    /// <remarks>
+    ///     The analysis product is retrieved by any identifier. The identifier is translated to a building id.
+    /// </remarks>
     /// <param name="id">External identifier.</param>
     /// <param name="tenantId">Tenant identifier.</param>
     /// <param name="track_request">Tracker request.</param>
@@ -66,6 +69,9 @@ public class ModelService(
     /// <summary>
     ///    Get statistics product.
     /// </summary>
+    /// <remarks>
+    ///    The statistics product is retrieved by any identifier. The identifier is translated to a neighborhood id.
+    /// </remarks>
     /// <param name="id">External identifier.</param>
     /// <param name="tenantId">Tenant identifier.</param>
     /// <param name="track_request">Tracker request.</param>
