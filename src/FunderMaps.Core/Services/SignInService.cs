@@ -21,7 +21,7 @@ public class SignInService(
     ILogger<SignInService> logger)
 {
     /// <summary>
-    ///   The number of failed access attempts allowed before a user is locked out.
+    ///     The number of failed access attempts allowed before a user is locked out.
     /// </summary>
     private const int MaxFailedAccessAttempts = 10;
 
