@@ -25,13 +25,12 @@ public sealed class MapsetController(IMapsetRepository mapsetRepository) : Funde
         // TODO: TryParse
         if (id != Guid.Empty)
         {
-            var set = await mapsetRepository.GetPublicAsync2(id);
-            mapSets.Add(set);
+            mapSets.Add(await mapsetRepository.GetPublicAsync(id));
         }
 
         if (User.Identity?.IsAuthenticated ?? false)
         {
-            await foreach (var set in mapsetRepository.GetByOrganizationIdAsync2(TenantId))
+            await foreach (var set in mapsetRepository.GetByOrganizationIdAsync(TenantId))
             {
                 mapSets.Add(set);
             }

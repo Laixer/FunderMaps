@@ -69,6 +69,30 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
         return building is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(building);
     }
 
+    /// <summary>
+    ///     Get building by external residence id.
+    /// </summary>
+    /// <param name="id">External residence identifier.</param>
+    /// <returns>A single building.</returns>
+    public async Task<Building> GetByExternalResidenceIdAsync(string id)
+    {
+        var sql = @"
+            SELECT  -- Building
+                    ba.id,
+                    ba.built_year,
+                    ba.external_id,
+                    ba.neighborhood_id
+            FROM    geocoder.building_active AS ba
+            join    geocoder.residence AS r ON r.building_id = ba.external_id
+            WHERE   r.id = upper(@id)
+            LIMIT   1";
+
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id });
+        return building is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(building);
+    }
+
     // TODO: Maybe move this to incident repository?
     public async Task<Building> GetByIncidentIdAsync(string id)
     {

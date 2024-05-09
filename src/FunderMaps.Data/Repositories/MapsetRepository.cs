@@ -16,7 +16,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
     ///     Gets an analysis product by its internal building id.
     /// </summary>
     /// <param name="id">Internal building id.</param>
-    public async Task<Mapset> GetPublicAsync2(Guid id)
+    public async Task<Mapset> GetPublicAsync(Guid id)
     {
         var sql = @"
             SELECT  -- Mapset
@@ -57,7 +57,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
     ///     Gets an analysis product by its internal building id.
     /// </summary>
     /// <param name="id">Internal building id.</param>
-    public async IAsyncEnumerable<Mapset> GetByOrganizationIdAsync2(Guid id)
+    public async IAsyncEnumerable<Mapset> GetByOrganizationIdAsync(Guid id)
     {
         var sql = @"
             SELECT  -- Mapset
