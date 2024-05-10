@@ -21,7 +21,7 @@ internal sealed class LoadBagTask(
 
     private readonly DbProviderOptions _dbProviderOptions = dbProviderOptions?.Value ?? throw new ArgumentNullException(nameof(dbProviderOptions));
 
-    private async Task DownloadFileAsync(string url, string destinationPath, CancellationToken cancellationToken)
+    private static async Task DownloadFileAsync(string url, string destinationPath, CancellationToken cancellationToken)
     {
         using HttpClient client = new();
 

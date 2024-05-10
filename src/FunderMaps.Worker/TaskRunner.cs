@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -28,7 +29,10 @@ public class TaskRunner(
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         // TOOD: Start scope here
-        // TOOD: Start the stopwatch here
+        // TODO: Create task in repository
+
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
 
         try
         {
@@ -120,7 +124,9 @@ public class TaskRunner(
         }
         finally
         {
-            // TOOD: Stop the stopwatch here
+            stopwatch.Stop();
+            logger.LogInformation("Task completed in {Elapsed}", stopwatch.Elapsed);
+
             // TOOD: Stop scope here
             // TODO: Log the run time, success or failure
 
