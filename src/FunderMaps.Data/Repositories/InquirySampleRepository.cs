@@ -375,7 +375,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             SkewedPerpendicularFacade = reader.GetFieldValue<RotationType?>(offset++),
             SettlementSpeed = reader.GetSafeDouble(offset++),
             SkewedWindowFrame = reader.GetSafeBoolean(offset++),
-            FacadeScanRisk = reader.GetFieldValue<FacadeScanRisk?>(offset),
+            FacadeScanRisk = reader.GetFieldValue<FacadeScanRisk?>(offset++),
         };
 
     public override Task<InquirySample> GetByIdAsync(int id)

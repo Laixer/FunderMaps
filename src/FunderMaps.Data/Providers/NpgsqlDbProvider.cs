@@ -41,6 +41,7 @@ internal class NpgsqlDbProvider : DbProvider, IDisposable, IAsyncDisposable
         dataSourceBuilder.MapEnum<EnforcementTerm>();
         dataSourceBuilder.MapEnum<EnvironmentDamageCharacteristics>();
         dataSourceBuilder.MapEnum<Facade>();
+        dataSourceBuilder.MapEnum<FacadeScanRisk>();
         dataSourceBuilder.MapEnum<FoundationDamageCause>();
         dataSourceBuilder.MapEnum<FoundationDamageCharacteristics>();
         dataSourceBuilder.MapEnum<FoundationQuality>();
