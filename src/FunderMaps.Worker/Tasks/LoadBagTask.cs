@@ -12,7 +12,6 @@ namespace FunderMaps.Worker.Tasks;
 /// </summary>
 internal sealed class LoadBagTask(
     IOptions<DbProviderOptions> dbProviderOptions,
-    // IBlobStorageService blobStorageService,
     IGDALService gdalService,
     IOperationRepository operationRepository,
     ILogger<LoadBagTask> logger) : ITaskService
@@ -22,6 +21,19 @@ internal sealed class LoadBagTask(
 
     private readonly DbProviderOptions _dbProviderOptions = dbProviderOptions?.Value ?? throw new ArgumentNullException(nameof(dbProviderOptions));
 
+    private async Task DownloadFileAsync(string url, string destinationPath, CancellationToken cancellationToken)
+    {
+        using HttpClient client = new();
+
+        using HttpResponseMessage response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None);
+        await contentStream.CopyToAsync(fileStream, cancellationToken);
+        await fileStream.FlushAsync(cancellationToken);
+    }
+
     /// <summary>
     ///    Triggered when the application host is ready to start the service.
     /// </summary>
@@ -29,28 +41,21 @@ internal sealed class LoadBagTask(
     {
         try
         {
-            using HttpClient client = new();
-
             var currentDirectory = Directory.GetCurrentDirectory();
 
             FileHelper.DeleteFilesWithExtension(currentDirectory, "gpkg");
             FileHelper.DeleteFilesWithExtension(currentDirectory, "gpkg-journal");
 
-            logger.LogInformation("Downloading BAG file");
+            var fileName = Path.GetFileName(FileUrl);
 
-            using HttpResponseMessage response = await client.GetAsync(FileUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            var destinationPath = Path.GetFileName(FileUrl);
-
+            if (!File.Exists(fileName))
             {
-                using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-                using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None);
-                await contentStream.CopyToAsync(fileStream, cancellationToken);
-                await fileStream.FlushAsync(cancellationToken);
+                logger.LogInformation("Downloading BAG file");
+
+                await DownloadFileAsync(FileUrl, fileName, cancellationToken);
             }
 
-            var fileInfo = new FileInfo(destinationPath);
+            var fileInfo = new FileInfo(fileName);
             if (!fileInfo.Exists)
             {
                 throw new FileNotFoundException("Downloaded BAG file not found", fileInfo.Name);
@@ -67,20 +72,13 @@ internal sealed class LoadBagTask(
 
             var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
             var output = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
-            gdalService.Convert(destinationPath, output);
+            gdalService.Convert(fileName, output);
 
             logger.LogInformation("Copying BAG file to building table");
 
             await operationRepository.LoadBuildingAsync();
             await operationRepository.LoadResidenceAsync();
             await operationRepository.LoadAddressAsync();
-
-            // logger.LogInformation("Storing BAG file");
-
-            // DateTime currentDate = DateTime.Now;
-            // string dateString = currentDate.ToString("yyyy-MM-dd");
-
-            // await blobStorageService.StoreFileAsync($"lvbag/archive/{dateString}/bag-light.gpkg", destinationPath);
         }
         finally
         {
