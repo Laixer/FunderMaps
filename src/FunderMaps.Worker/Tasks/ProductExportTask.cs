@@ -53,8 +53,9 @@ internal sealed class ProductExportTask(
 
                 logger.LogInformation("Uploading product tracker file for {Organization} for {Month}", organization, lastDayOfLastMonth);
 
+                string yearName = lastDayOfLastMonth.ToString("yyyy", System.Globalization.CultureInfo.InvariantCulture);
                 string lastMonthName = lastDayOfLastMonth.ToString("MMMM", System.Globalization.CultureInfo.InvariantCulture);
-                await blobStorageService.StoreFileAsync($"product/export_{lastMonthName.ToLower()}_{organization}.csv", filePath);
+                await blobStorageService.StoreFileAsync($"product/export_{yearName}_{lastMonthName.ToLower()}_{organization}.csv", filePath);
             }
             finally
             {
