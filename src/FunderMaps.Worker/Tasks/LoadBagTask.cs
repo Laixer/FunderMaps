@@ -12,7 +12,7 @@ namespace FunderMaps.Worker.Tasks;
 /// </summary>
 internal sealed class LoadBagTask(
     IOptions<DbProviderOptions> dbProviderOptions,
-    IBlobStorageService blobStorageService,
+    // IBlobStorageService blobStorageService,
     IGDALService gdalService,
     IOperationRepository operationRepository,
     ILogger<LoadBagTask> logger) : ITaskService
@@ -50,34 +50,37 @@ internal sealed class LoadBagTask(
                 await fileStream.FlushAsync(cancellationToken);
             }
 
-            logger.LogInformation("Storing BAG file");
-
-            DateTime currentDate = DateTime.Now;
-            string dateString = currentDate.ToString("yyyy-MM-dd");
-
-            await blobStorageService.StoreFileAsync($"lvbag/archive/{dateString}/bag-light.gpkg", destinationPath);
-
             var fileInfo = new FileInfo(destinationPath);
-            if (fileInfo.Exists && fileInfo.Length > MinimumFileSize)
+            if (!fileInfo.Exists)
             {
-                logger.LogInformation("Processing BAG file");
-
-                await operationRepository.CleanupBAGAsync();
-
-                var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
-                var output = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
-                gdalService.Convert(destinationPath, output);
-
-                logger.LogInformation("Copying BAG file to building table");
-
-                await operationRepository.LoadBuildingAsync();
-                await operationRepository.LoadResidenceAsync();
-                await operationRepository.LoadAddressAsync();
+                throw new FileNotFoundException("Downloaded BAG file not found", fileInfo.Name);
             }
-            else
+
+            if (fileInfo.Length < MinimumFileSize)
             {
-                logger.LogError("Downloaded BAG file '{FileName}' not found", fileInfo.Name);
+                throw new InvalidOperationException("Downloaded BAG file is too small");
             }
+
+            logger.LogInformation("Processing BAG file");
+
+            await operationRepository.CleanupBAGAsync();
+
+            var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
+            var output = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
+            gdalService.Convert(destinationPath, output);
+
+            logger.LogInformation("Copying BAG file to building table");
+
+            await operationRepository.LoadBuildingAsync();
+            await operationRepository.LoadResidenceAsync();
+            await operationRepository.LoadAddressAsync();
+
+            // logger.LogInformation("Storing BAG file");
+
+            // DateTime currentDate = DateTime.Now;
+            // string dateString = currentDate.ToString("yyyy-MM-dd");
+
+            // await blobStorageService.StoreFileAsync($"lvbag/archive/{dateString}/bag-light.gpkg", destinationPath);
         }
         finally
         {
