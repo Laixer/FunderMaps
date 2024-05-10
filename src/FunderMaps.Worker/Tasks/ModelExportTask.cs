@@ -51,7 +51,7 @@ internal sealed class ModelExportTask(
 
             logger.LogInformation("Uploading model export");
 
-            await blobStorageService.StoreFileAsync($"model/export_{dateString}.csv", filePath);
+            await blobStorageService.StoreFileAsync($"model/{dateString}.csv", filePath);
         }
         finally
         {
