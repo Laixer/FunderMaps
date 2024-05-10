@@ -1,5 +1,6 @@
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Worker.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +51,8 @@ public class TaskRunner(
 
                             using var scope = serviceScopeFactory.CreateScope();
                             await ActivatorUtilities.CreateInstance<LoadBagTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+                            await taskRepository.LogRunTimeAsync("loadbag");
                             break;
                         }
 
@@ -59,6 +62,8 @@ public class TaskRunner(
 
                             using var scope = serviceScopeFactory.CreateScope();
                             await ActivatorUtilities.CreateInstance<RefreshDataModelsTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+                            await taskRepository.LogRunTimeAsync("refreshmodels");
                             break;
                         }
 
@@ -68,6 +73,8 @@ public class TaskRunner(
 
                             using var scope = serviceScopeFactory.CreateScope();
                             await ActivatorUtilities.CreateInstance<ModelExportTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+                            await taskRepository.LogRunTimeAsync("modelexport");
                             break;
                         }
 
@@ -77,6 +84,8 @@ public class TaskRunner(
 
                             using var scope = serviceScopeFactory.CreateScope();
                             await ActivatorUtilities.CreateInstance<ProductExportTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+                            await taskRepository.LogRunTimeAsync("productexport");
                             break;
                         }
 
@@ -86,6 +95,8 @@ public class TaskRunner(
 
                             using var scope = serviceScopeFactory.CreateScope();
                             await ActivatorUtilities.CreateInstance<MapBundleTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+                            await taskRepository.LogRunTimeAsync("mapbundle");
                             break;
                         }
 
