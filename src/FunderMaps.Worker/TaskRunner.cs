@@ -28,11 +28,13 @@ public class TaskRunner(
     /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        // TOOD: Start scope here
         // TODO: Create task in repository
+        using var scope = serviceScopeFactory.CreateScope();
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
+
+        var taskName = configuration["Task"]?.ToLowerInvariant() ?? throw new InvalidOperationException("Batch task not specified");
 
         try
         {
@@ -50,16 +52,15 @@ public class TaskRunner(
                     throw new InvalidOperationException("Batch task not specified");
                 }
 
-                switch (configuration["Task"]?.ToLowerInvariant())
+                switch (taskName)
                 {
                     case "loadbag":
                         {
                             logger.LogInformation("Running loading BAG task");
 
-                            using var scope = serviceScopeFactory.CreateScope();
                             await ActivatorUtilities.CreateInstance<LoadBagTask>(scope.ServiceProvider).RunAsync(cancellationToken);
-                            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-                            await taskRepository.LogRunTimeAsync("loadbag");
+                            // var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+                            // await taskRepository.LogRunTimeAsync("loadbag");
                             break;
                         }
 
@@ -67,10 +68,9 @@ public class TaskRunner(
                         {
                             logger.LogInformation("Running refresh data models task");
 
-                            using var scope = serviceScopeFactory.CreateScope();
                             await ActivatorUtilities.CreateInstance<RefreshDataModelsTask>(scope.ServiceProvider).RunAsync(cancellationToken);
-                            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-                            await taskRepository.LogRunTimeAsync("refreshmodels");
+                            // var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+                            // await taskRepository.LogRunTimeAsync("refreshmodels");
                             break;
                         }
 
@@ -78,10 +78,9 @@ public class TaskRunner(
                         {
                             logger.LogInformation("Running model export task");
 
-                            using var scope = serviceScopeFactory.CreateScope();
                             await ActivatorUtilities.CreateInstance<ModelExportTask>(scope.ServiceProvider).RunAsync(cancellationToken);
-                            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-                            await taskRepository.LogRunTimeAsync("modelexport");
+                            // var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+                            // await taskRepository.LogRunTimeAsync("modelexport");
                             break;
                         }
 
@@ -89,10 +88,9 @@ public class TaskRunner(
                         {
                             logger.LogInformation("Running product export task");
 
-                            using var scope = serviceScopeFactory.CreateScope();
                             await ActivatorUtilities.CreateInstance<ProductExportTask>(scope.ServiceProvider).RunAsync(cancellationToken);
-                            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-                            await taskRepository.LogRunTimeAsync("productexport");
+                            // var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+                            // await taskRepository.LogRunTimeAsync("productexport");
                             break;
                         }
 
@@ -100,10 +98,9 @@ public class TaskRunner(
                         {
                             logger.LogInformation("Running map bundle task");
 
-                            using var scope = serviceScopeFactory.CreateScope();
                             await ActivatorUtilities.CreateInstance<MapBundleTask>(scope.ServiceProvider).RunAsync(cancellationToken);
-                            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-                            await taskRepository.LogRunTimeAsync("mapbundle");
+                            // var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+                            // await taskRepository.LogRunTimeAsync("mapbundle");
                             break;
                         }
 
@@ -127,8 +124,9 @@ public class TaskRunner(
             stopwatch.Stop();
             logger.LogInformation("Task completed in {Elapsed}", stopwatch.Elapsed);
 
-            // TOOD: Stop scope here
             // TODO: Log the run time, success or failure
+            var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
+            await taskRepository.LogRunTimeAsync(taskName);
 
             hostApplicationLifetime.StopApplication();
         }
