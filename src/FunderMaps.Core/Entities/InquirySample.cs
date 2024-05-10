@@ -374,4 +374,9 @@ public sealed class InquirySample : RecordControl, IEntityIdentifier<int>
     ///     Skewed window and/or frame.
     /// </summary>
     public bool? SkewedWindowFrame { get; set; }
+
+    /// <summary>
+    ///    Facade scan risk.
+    /// </summary>
+    public FacadeScanRisk? FacadeScanRisk { get; set; }
 }

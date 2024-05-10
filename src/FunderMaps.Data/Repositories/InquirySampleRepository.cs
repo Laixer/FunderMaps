@@ -83,7 +83,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                 skewed_perpendicular,
                 skewed_perpendicular_facade,
                 settlement_speed,
-                skewed_window_frame)
+                skewed_window_frame,
+                facade_scan_risk)
             VALUES (
                 @inquiry,
                 @address,
@@ -147,7 +148,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                 @skewed_perpendicular,
                 @skewed_perpendicular_facade,
                 @settlement_speed,
-                @skewed_window_frame)
+                @skewed_window_frame,
+                @facade_scan_risk)
             RETURNING id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
@@ -300,6 +302,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         context.AddParameterWithValue("skewed_perpendicular_facade", entity.SkewedPerpendicularFacade);
         context.AddParameterWithValue("settlement_speed", entity.SettlementSpeed);
         context.AddParameterWithValue("skewed_window_frame", entity.SkewedWindowFrame);
+        context.AddParameterWithValue("facade_scan_risk", entity.FacadeScanRisk);
     }
 
     private static InquirySample MapFromReader(DbDataReader reader, int offset = 0)
@@ -372,6 +375,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             SkewedPerpendicularFacade = reader.GetFieldValue<RotationType?>(offset++),
             SettlementSpeed = reader.GetSafeDouble(offset++),
             SkewedWindowFrame = reader.GetSafeBoolean(offset++),
+            FacadeScanRisk = reader.GetFieldValue<FacadeScanRisk?>(offset),
         };
 
     public override Task<InquirySample> GetByIdAsync(int id)
@@ -469,7 +473,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     s.skewed_perpendicular,
                     s.skewed_perpendicular_facade,
                     s.settlement_speed,
-                    s.skewed_window_frame
+                    s.skewed_window_frame,
+                    s.facade_scan_risk
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
@@ -568,7 +573,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     s.skewed_perpendicular,
                     s.skewed_perpendicular_facade,
                     s.settlement_speed,
-                    s.skewed_window_frame
+                    s.skewed_window_frame,
+                    s.facade_scan_risk
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
@@ -676,7 +682,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     s.skewed_perpendicular,
                     s.skewed_perpendicular_facade,
                     s.settlement_speed,
-                    s.skewed_window_frame
+                    s.skewed_window_frame,
+                    s.facade_scan_risk
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
@@ -780,7 +787,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     s.skewed_perpendicular,
                     s.skewed_perpendicular_facade,
                     s.settlement_speed,
-                    s.skewed_window_frame
+                    s.skewed_window_frame,
+                    s.facade_scan_risk
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
@@ -887,6 +895,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     skewed_perpendicular_facade = @skewed_perpendicular_facade,
                     settlement_speed = @settlement_speed,
                     skewed_window_frame = @skewed_window_frame
+
+                    facade_scan_risk = @facade_scan_risk
             FROM 	application.attribution AS a, report.inquiry AS i
             WHERE   i.id = s.inquiry
             AND     a.id = i.attribution
