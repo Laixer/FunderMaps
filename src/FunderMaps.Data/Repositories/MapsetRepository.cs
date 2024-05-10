@@ -37,7 +37,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                             SELECT l AS layer
                             FROM maplayer.layer l
                             WHERE l.id IN (
-                                SELECT  unnest(m.layers)
+                                SELECT  unnest(m2.layers)
                                 FROM    maplayer.mapset m2
                                 WHERE   m2.id = m.id
                             )
@@ -78,7 +78,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                             SELECT l AS layer
                             FROM maplayer.layer l
                             WHERE l.id IN (
-                                SELECT  unnest(m.layers)
+                                SELECT  unnest(m2.layers)
                                 FROM    maplayer.mapset m2
                                 WHERE   m2.id = m.id
                             )
@@ -120,7 +120,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                             SELECT l AS layer
                             FROM maplayer.layer l
                             WHERE l.id IN (
-                                SELECT  unnest(m.layers)
+                                SELECT  unnest(m2.layers)
                                 FROM    maplayer.mapset m2
                                 WHERE   m2.id = m.id
                             )
@@ -130,7 +130,8 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             JOIN    maplayer.mapset AS m on m.id = mo.map_id
             JOIN    application.organization o on o.id = mo.organization_id 
             WHERE   mo.organization_id = @id
-            AND     m.public = false";
+            AND     m.public = false
+            ORDER BY m.order ASC";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
