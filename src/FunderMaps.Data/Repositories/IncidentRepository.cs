@@ -213,7 +213,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
     {
         var sql = @"
             SELECT  i.id,
-                    p.name,
+                    coalesce(p.name, 'other'),
                     i.foundation_type,
                     i.chained_building,
                     i.owner,
@@ -237,7 +237,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     i.meta
             FROM    report.incident AS i
             JOIN    geocoder.building b ON b.id = i.building
-            JOIN    application.portal p ON p.id = substring(i.id from 'FIR(\d{2})')::int
+            LEFT JOIN    application.portal p ON p.id = substring(i.id from 'FIR(\d{2})')::int
             WHERE   i.building = @building";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
