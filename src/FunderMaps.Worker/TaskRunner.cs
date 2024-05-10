@@ -115,7 +115,7 @@ public class TaskRunner(
             await emailService.SendAsync(new EmailMessage
             {
                 Subject = "Error while running service",
-                Content = exception.Message,
+                Content = exception.ToString(),
             }, cancellationToken);
         }
         finally

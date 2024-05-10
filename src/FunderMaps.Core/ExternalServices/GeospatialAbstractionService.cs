@@ -58,12 +58,18 @@ internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService
 
         if (!string.IsNullOrEmpty(standardError))
         {
-            logger.LogError("Error output: {standardError}", standardError);
+            logger.LogWarning("Error output: {standardError}", standardError);
         }
 
         if (!string.IsNullOrEmpty(standardOutput))
         {
             logger.LogInformation("Console output: {standardOutput}", standardOutput);
+        }
+
+        if (process.ExitCode != 0)
+        {
+            // TODO: Add exception type
+            throw new InvalidOperationException(standardError);
         }
     }
 }
