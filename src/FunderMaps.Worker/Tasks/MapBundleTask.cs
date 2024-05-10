@@ -31,15 +31,6 @@ internal sealed class MapBundleTask(
                 return;
             }
 
-            if (!string.IsNullOrEmpty(bundle.Precondition))
-            {
-                if (!await bundleRepository.RunPreconditionAsync(bundle.Tileset, bundle.Precondition))
-                {
-                    logger.LogInformation("Precondition for bundle '{Tileset}' not met, skipping", bundle.Tileset);
-                    return;
-                }
-            }
-
             var currentDirectory = Directory.GetCurrentDirectory();
 
             FileHelper.DeleteFilesWithExtension(currentDirectory, "gpkg");
@@ -51,14 +42,7 @@ internal sealed class MapBundleTask(
 
             var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
             var input = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
-
             gdalService.Convert(input, $"{bundle.Tileset}.gpkg", $"maplayer.{bundle.Tileset}");
-            await blobStorageService.StoreFileAsync($"tileset/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
-
-            DateTime currentDate = DateTime.Now;
-            string dateString = currentDate.ToString("yyyy-MM-dd");
-
-            await blobStorageService.StoreFileAsync($"tileset/archive/{dateString}/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
 
             if (bundle.MapEnabled)
             {
@@ -68,6 +52,13 @@ internal sealed class MapBundleTask(
                 tilesetGeneratorService.Generate($"{bundle.Tileset}.geojson", $"{bundle.Tileset}.mbtiles", bundle.Tileset, bundle.MaxZoomLevel, bundle.MinZoomLevel, cancellationToken);
                 await mapboxService.UploadAsync(bundle.Name, bundle.Tileset, $"{bundle.Tileset}.mbtiles");
             }
+
+            logger.LogInformation("Storing tileset '{Tileset}'", bundle.Tileset);
+
+            DateTime currentDate = DateTime.Now;
+            string dateString = currentDate.ToString("yyyy-MM-dd");
+            await blobStorageService.StoreFileAsync($"tileset/archive/{dateString}/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
+            await blobStorageService.StoreFileAsync($"tileset/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
 
             await bundleRepository.LogBuiltTimeAsync(bundle.Tileset);
         }
@@ -89,6 +80,15 @@ internal sealed class MapBundleTask(
     {
         await foreach (var bundle in bundleRepository.ListAllEnabledAsync())
         {
+            if (!string.IsNullOrEmpty(bundle.Precondition))
+            {
+                if (!await bundleRepository.RunPreconditionAsync(bundle.Tileset, bundle.Precondition))
+                {
+                    logger.LogInformation("Precondition for bundle '{Tileset}' not met, skipping", bundle.Tileset);
+                    continue;
+                }
+            }
+
             await GenerateBundleAsync(bundle, cancellationToken);
         }
     }
