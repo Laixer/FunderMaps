@@ -55,54 +55,34 @@ public class TaskRunner(
                 switch (taskName)
                 {
                     case "loadbag":
-                        {
-                            logger.LogInformation("Running loading BAG task");
+                        logger.LogInformation("Running loading BAG task");
 
-                            await ActivatorUtilities.CreateInstance<LoadBagTask>(scope.ServiceProvider).RunAsync(cancellationToken);
-                            // var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-                            // await taskRepository.LogRunTimeAsync("loadbag");
-                            break;
-                        }
+                        await ActivatorUtilities.CreateInstance<LoadBagTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                        break;
 
                     case "refreshmodels":
-                        {
-                            logger.LogInformation("Running refresh data models task");
+                        logger.LogInformation("Running refresh data models task");
 
-                            await ActivatorUtilities.CreateInstance<RefreshDataModelsTask>(scope.ServiceProvider).RunAsync(cancellationToken);
-                            // var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-                            // await taskRepository.LogRunTimeAsync("refreshmodels");
-                            break;
-                        }
+                        await ActivatorUtilities.CreateInstance<RefreshDataModelsTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                        break;
 
                     case "modelexport":
-                        {
-                            logger.LogInformation("Running model export task");
+                        logger.LogInformation("Running model export task");
 
-                            await ActivatorUtilities.CreateInstance<ModelExportTask>(scope.ServiceProvider).RunAsync(cancellationToken);
-                            // var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-                            // await taskRepository.LogRunTimeAsync("modelexport");
-                            break;
-                        }
+                        await ActivatorUtilities.CreateInstance<ModelExportTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                        break;
 
                     case "productexport":
-                        {
-                            logger.LogInformation("Running product export task");
+                        logger.LogInformation("Running product export task");
 
-                            await ActivatorUtilities.CreateInstance<ProductExportTask>(scope.ServiceProvider).RunAsync(cancellationToken);
-                            // var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-                            // await taskRepository.LogRunTimeAsync("productexport");
-                            break;
-                        }
+                        await ActivatorUtilities.CreateInstance<ProductExportTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                        break;
 
                     case "mapbundle":
-                        {
-                            logger.LogInformation("Running map bundle task");
+                        logger.LogInformation("Running map bundle task");
 
-                            await ActivatorUtilities.CreateInstance<MapBundleTask>(scope.ServiceProvider).RunAsync(cancellationToken);
-                            // var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-                            // await taskRepository.LogRunTimeAsync("mapbundle");
-                            break;
-                        }
+                        await ActivatorUtilities.CreateInstance<MapBundleTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                        break;
 
                     default:
                         throw new InvalidOperationException("Invalid batch task");
