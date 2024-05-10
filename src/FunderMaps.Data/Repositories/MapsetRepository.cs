@@ -18,6 +18,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
     /// <param name="id">Internal building id.</param>
     public async Task<Mapset> GetPublicAsync(Guid id)
     {
+        // TODO: Refactor to use a view.
         var sql = @"
             SELECT  -- Mapset
                     m.id,
@@ -59,6 +60,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
     /// </summary>
     public async Task<Mapset> GetPublicByNameAsync(string name)
     {
+        // TODO: Refactor to use a view.
         var sql = @"
             SELECT  -- Mapset
                     m.id,
@@ -101,6 +103,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
     /// <param name="id">Internal building id.</param>
     public async IAsyncEnumerable<Mapset> GetByOrganizationIdAsync(Guid id)
     {
+        // TODO: Refactor to use a view.
         var sql = @"
             SELECT  -- Mapset
                     m.id,

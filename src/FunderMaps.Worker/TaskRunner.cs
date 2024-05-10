@@ -27,6 +27,9 @@ public class TaskRunner(
     /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        // TOOD: Start scope here
+        // TOOD: Start the stopwatch here
+
         try
         {
             var healthReport = await healthCheckService.CheckHealthAsync(cancellationToken);
@@ -117,6 +120,10 @@ public class TaskRunner(
         }
         finally
         {
+            // TOOD: Stop the stopwatch here
+            // TOOD: Stop scope here
+            // TODO: Log the run time, success or failure
+
             hostApplicationLifetime.StopApplication();
         }
     }
