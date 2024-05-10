@@ -894,7 +894,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     skewed_perpendicular = @skewed_perpendicular,
                     skewed_perpendicular_facade = @skewed_perpendicular_facade,
                     settlement_speed = @settlement_speed,
-                    skewed_window_frame = @skewed_window_frame
+                    skewed_window_frame = @skewed_window_frame,
 
                     facade_scan_risk = @facade_scan_risk
             FROM 	application.attribution AS a, report.inquiry AS i
