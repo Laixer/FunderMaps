@@ -106,7 +106,7 @@ public class TaskRunner(
 
             // TODO: Log the run time, success or failure
             var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
-            await taskRepository.LogRunTimeAsync(taskName);
+            await taskRepository.LogRunTimeAsync(taskName, stopwatch.Elapsed);
 
             hostApplicationLifetime.StopApplication();
         }

@@ -8,5 +8,5 @@ public interface ITaskRepository
     /// <summary>
     ///     Log the run time of a task.
     /// </summary>
-    Task LogRunTimeAsync(string id);
+    Task LogRunTimeAsync(string id, TimeSpan runtime);
 }
