@@ -28,7 +28,6 @@ public class TaskRunner(
     /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        // TODO: Create task in repository
         using var scope = serviceScopeFactory.CreateScope();
 
         var stopwatch = new Stopwatch();
@@ -104,7 +103,6 @@ public class TaskRunner(
             stopwatch.Stop();
             logger.LogInformation("Task completed in {Elapsed}", stopwatch.Elapsed);
 
-            // TODO: Log the run time, success or failure
             var taskRepository = scope.ServiceProvider.GetRequiredService<ITaskRepository>();
             await taskRepository.LogRunTimeAsync(taskName, stopwatch.Elapsed);
 

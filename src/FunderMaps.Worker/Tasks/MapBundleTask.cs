@@ -50,6 +50,9 @@ internal sealed class MapBundleTask(
 
                 gdalService.Convert($"{bundle.Tileset}.gpkg", $"{bundle.Tileset}.geojson");
                 tilesetGeneratorService.Generate($"{bundle.Tileset}.geojson", $"{bundle.Tileset}.mbtiles", bundle.Tileset, bundle.MaxZoomLevel, bundle.MinZoomLevel, cancellationToken);
+
+                logger.LogInformation("Uploading tileset to mapbox '{Tileset}'", bundle.Tileset);
+
                 await mapboxService.UploadAsync(bundle.Name, bundle.Tileset, $"{bundle.Tileset}.mbtiles");
             }
 

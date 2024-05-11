@@ -9,6 +9,7 @@ namespace FunderMaps.Core.ExternalServices;
 /// </summary>
 internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService> logger) : IGDALService
 {
+    // TODO: If input is a file, check the file exists. If not throw exception.
     /// <summary>
     ///     Convert geospatial file from one format to another.
     /// </summary>
