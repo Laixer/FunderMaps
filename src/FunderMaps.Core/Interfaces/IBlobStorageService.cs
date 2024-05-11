@@ -17,6 +17,13 @@ public interface IBlobStorageService : IServiceHealthCheck
     Task<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid);
 
     /// <summary>
+    ///    Delete an object from the bucket.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <returns>See <see cref="ValueTask"/>.</returns>
+    Task DeleteFileAsync(string fileName);
+
+    /// <summary>
     ///     Upload an object to the bucket.
     /// </summary>
     /// <param name="fileName">The file name.</param>

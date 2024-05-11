@@ -58,6 +58,17 @@ internal class S3StorageService : IBlobStorageService
         return Task.FromResult(new Uri(url));
     }
 
+    public async Task DeleteFileAsync(string fileName)
+    {
+        var request = new DeleteObjectRequest
+        {
+            BucketName = _options.BucketName,
+            Key = fileName
+        };
+
+        await _s3Client.DeleteObjectAsync(request);
+    }
+
     /// <summary>
     ///     Upload an object to the bucket.
     /// </summary>
