@@ -20,7 +20,7 @@ internal class S3StorageService : IBlobStorageService
 {
     private readonly S3StorageOptions _options;
     private readonly ILogger<S3StorageService> _logger;
-    private readonly IAmazonS3 _s3Client;
+    private readonly AmazonS3Client _s3Client;
 
     /// <summary>
     ///     Create new instance.
