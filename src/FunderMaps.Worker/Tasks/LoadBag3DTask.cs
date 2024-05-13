@@ -50,7 +50,7 @@ internal sealed class LoadBag3DTask(
             var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
             var output = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
             gdalService.Convert(fileName, output, "lod22_2d");
-            // gdalService.Convert(fileName, output, "pand");
+            gdalService.Convert(fileName, output, "pand");
         }
         finally
         {
