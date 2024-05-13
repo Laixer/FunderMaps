@@ -9,6 +9,25 @@ namespace FunderMaps.Core.ExternalServices;
 /// </summary>
 internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService> logger) : IGDALService
 {
+
+    private static (string, bool) GetFormat(string input)
+    {
+        if (input.StartsWith("PG:"))
+        {
+            return ("PostgreSQL", false);
+        }
+        else if (input.EndsWith(".gpkg"))
+        {
+            return ("GPKG", true);
+        }
+        else if (input.EndsWith(".geojson"))
+        {
+            return ("GeoJSONSeq", true);
+        }
+
+        return ("GPKG", true);
+    }
+
     // TODO: If input is a file, check the file exists. If not throw exception.
     /// <summary>
     ///     Convert geospatial file from one format to another.
@@ -18,18 +37,12 @@ internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService
     /// <param name="layer">Layer name.</param>
     public void Convert(string input, string output, string? layer = null)
     {
-        var format = "GPKG";
-        if (output.StartsWith("PG:"))
+        var (_, isInputFile) = GetFormat(input);
+        var (outputFormat, isOutputFile) = GetFormat(output);
+
+        if (isInputFile && !File.Exists(input))
         {
-            format = "PostgreSQL";
-        }
-        else if (output.EndsWith(".gpkg"))
-        {
-            format = "GPKG";
-        }
-        else if (output.EndsWith(".geojson"))
-        {
-            format = "GeoJSONSeq";
+            throw new InvalidOperationException("Input file not found");
         }
 
         var process = new Process();
@@ -37,7 +50,7 @@ internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService
         process.StartInfo.FileName = "ogr2ogr";
 
         process.StartInfo.ArgumentList.Add("-f");
-        process.StartInfo.ArgumentList.Add(format);
+        process.StartInfo.ArgumentList.Add(outputFormat);
         process.StartInfo.ArgumentList.Add(output);
         process.StartInfo.ArgumentList.Add(input);
 
@@ -71,6 +84,11 @@ internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService
         {
             // TODO: Add exception type
             throw new InvalidOperationException(standardError);
+        }
+
+        if (isOutputFile && !File.Exists(output))
+        {
+            throw new InvalidOperationException("Output file not found");
         }
     }
 }
