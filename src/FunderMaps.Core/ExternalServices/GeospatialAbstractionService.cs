@@ -9,7 +9,6 @@ namespace FunderMaps.Core.ExternalServices;
 /// </summary>
 internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService> logger) : IGDALService
 {
-
     private static (string, bool) GetFormat(string input)
     {
         if (input.StartsWith("PG:"))
@@ -42,7 +41,7 @@ internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService
 
         if (isInputFile && !File.Exists(input))
         {
-            throw new InvalidOperationException("Input file not found");
+            throw new FileNotFoundException("Input file not found");
         }
 
         var process = new Process();
@@ -88,7 +87,7 @@ internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService
 
         if (isOutputFile && !File.Exists(output))
         {
-            throw new InvalidOperationException("Output file not found");
+            throw new FileNotFoundException("Output file not found");
         }
     }
 }
