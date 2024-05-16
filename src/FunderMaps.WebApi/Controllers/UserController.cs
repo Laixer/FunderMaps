@@ -1,7 +1,6 @@
 using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers;
@@ -13,7 +12,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     This controller should *only* handle operations on the current
 ///     user session. Therefore the user context must be active.
 /// </remarks>
-[Authorize, Route("api/user")]
+[Route("api/user")]
 public class UserController(IUserRepository userRepository) : FunderMapsController
 {
     // GET: user

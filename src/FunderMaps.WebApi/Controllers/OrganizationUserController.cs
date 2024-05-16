@@ -16,7 +16,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     This controller should *only* handle organization operations on the current
 ///     user session. Therefore the user context must be active.
 /// </remarks>
-[Authorize, Route("api/organization/user")]
+[Route("api/organization/user")]
 public class OrganizationUserController(
     IUserRepository userRepository,
     IOrganizationUserRepository organizationUserRepository,

@@ -1,6 +1,7 @@
 using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers;
@@ -8,6 +9,7 @@ namespace FunderMaps.WebApi.Controllers;
 /// <summary>
 ///     Endpoint controller for mapset.
 /// </summary>
+[AllowAnonymous]
 [Route("api/mapset")]
 public sealed class MapsetController(IMapsetRepository mapsetRepository) : FunderMapsController
 {
