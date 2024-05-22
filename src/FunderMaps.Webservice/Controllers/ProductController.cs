@@ -38,7 +38,7 @@ public sealed class ProductController(ModelService modelService, ILogger<Product
     {
         logger.LogWarning("Legacy endpoint called: {Endpoint}", HttpContext.Request.Path);
 
-        return GetAnalysisAsync(id);
+        throw new NotImplementedException();
     }
 
     // TODO: LEGACY
@@ -52,6 +52,6 @@ public sealed class ProductController(ModelService modelService, ILogger<Product
     {
         logger.LogWarning("Legacy endpoint called: {Endpoint}", HttpContext.Request.Path);
 
-        return GetStatisticsAsync(id);
+        throw new NotImplementedException();
     }
 }
