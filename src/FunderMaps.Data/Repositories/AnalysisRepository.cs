@@ -14,7 +14,6 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
 {
-    // FUTURE: Remove address_id, external_address_id
     // FUTURE: Add owner, address_count
     /// <summary>
     ///     Gets an analysis product by its internal building id.
