@@ -26,8 +26,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             SELECT
                     mrs.building_id,
                     mrs.external_building_id,
-                    a.id as address_id,
-                    a.external_id as address_external_id,
                     mrs.neighborhood_id,
                     mrs.construction_year,
                     mrs.construction_year_reliability,
@@ -53,8 +51,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                     mrs.unclassified_risk,
                     mrs.recovery_type
             FROM    data.model_risk_static mrs
-            JOIN    geocoder.address_building ab ON ab.building_id = mrs.building_id
-            JOIN    geocoder.address a ON a.id = ab.address_id
             WHERE   mrs.building_id = @id
             LIMIT   1";
 
@@ -121,8 +117,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         {
             BuildingId = reader.GetString(offset++),
             ExternalBuildingId = reader.GetString(offset++),
-            AddressId = reader.GetString(offset++),
-            ExternalAddressId = reader.GetString(offset++),
             NeighborhoodId = reader.GetString(offset++),
             ConstructionYear = reader.GetSafeInt(offset++),
             ConstructionYearReliability = reader.GetFieldValue<Reliability>(offset++),

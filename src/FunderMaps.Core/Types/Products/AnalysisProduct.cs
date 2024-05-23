@@ -21,18 +21,6 @@ public sealed record AnalysisProduct
     public string ExternalBuildingId { get; init; } = default!;
 
     /// <summary>
-    ///     Address identifier.
-    /// </summary>
-    [Required, Geocoder]
-    public string AddressId { get; init; } = default!;
-
-    /// <summary>
-    ///     Address external identifier.
-    /// </summary>
-    [Required]
-    public string ExternalAddressId { get; init; } = default!;
-
-    /// <summary>
     ///     Neighborhood identifier.
     /// </summary>
     [Required, Geocoder]

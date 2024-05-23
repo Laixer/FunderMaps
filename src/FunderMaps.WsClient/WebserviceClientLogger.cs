@@ -105,8 +105,6 @@ public class WebserviceClientLogger(FunderMapsClient webserviceClient, ILogger<W
 
         logger.LogInformation($"Building ID: {product.BuildingId}\n"
             + $"ExternalBuilding ID: {product.ExternalBuildingId}\n"
-            + $"Address ID: {product.AddressId}\n"
-            + $"ExternalAddress ID: {product.ExternalAddressId}\n"
             + $"NeighborhoodId ID: {product.NeighborhoodId}");
 
         logger.LogInformation($"ConstructionYear: {product.ConstructionYear}\n"
