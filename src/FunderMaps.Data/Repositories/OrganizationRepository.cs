@@ -7,6 +7,7 @@ using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
+// TODO: Remove Area and Center from Organization.
 /// <summary>
 ///     Organization repository.
 /// </summary>
@@ -81,12 +82,12 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
             SELECT  id,
                     name,
                     email,
-                    st_xmin(fence) AS x_min,
-                    st_ymin(fence) AS y_min,
-                    st_xmax(fence) AS x_max,
-                    st_ymax(fence) AS y_max,
-                    st_x(st_centroid(fence)) AS center_x,
-                    st_y(st_centroid(fence)) AS center_y
+                    0 AS x_min,
+                    0 AS y_min,
+                    0 AS x_max,
+                    0 AS y_max,
+                    0 AS center_x,
+                    0 AS center_y
             FROM    application.organization
             WHERE   id = @id
             LIMIT   1";
@@ -110,12 +111,12 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
             SELECT  id,
                     name,
                     email,
-                    st_xmin(fence) AS x_min,
-                    st_ymin(fence) AS y_min,
-                    st_xmax(fence) AS x_max,
-                    st_ymax(fence) AS y_max,
-                    st_x(st_centroid(fence)) AS center_x,
-                    st_y(st_centroid(fence)) AS center_y
+                    0 AS x_min,
+                    0 AS y_min,
+                    0 AS x_max,
+                    0 AS y_max,
+                    0 AS center_x,
+                    0 AS center_y
             FROM    application.organization";
 
         sql = ConstructNavigation(sql, navigation);

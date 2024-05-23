@@ -111,7 +111,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) AS slug,
                     m.style,
                     m.layers,
-                    m.options,
+                    COALESCE(mo.options, m.options),
                     m.public,
                     m.consent,
                     m.note,
