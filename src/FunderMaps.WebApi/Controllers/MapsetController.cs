@@ -17,7 +17,7 @@ public sealed class MapsetController(IMapsetRepository mapsetRepository) : Funde
     /// <summary>
     ///     Return all mapsets the user has access to or a specific mapset.
     /// </summary>
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
+    [ResponseCache(Duration = 60 * 60, VaryByHeader = "Authorization", Location = ResponseCacheLocation.Client)]
     [HttpGet("{name?}")]
     public async Task<IActionResult> GetAsync(string? name)
     {
