@@ -190,7 +190,7 @@ public class State
     {
         if (StepId == 0)
         {
-            return "Melding maken";
+            return "Melding maken of vraag stellen";
         }
         if (StepId == 9)
         {
