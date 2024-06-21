@@ -116,7 +116,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         {
             BuildingId = reader.GetString(offset++),
             ExternalBuildingId = reader.GetString(offset++),
-            NeighborhoodId = reader.GetString(offset++),
+            NeighborhoodId = reader.GetSafeString(offset++),
             ConstructionYear = reader.GetSafeInt(offset++),
             ConstructionYearReliability = reader.GetFieldValue<Reliability>(offset++),
             FoundationType = reader.GetFieldValue<FoundationType>(offset++),

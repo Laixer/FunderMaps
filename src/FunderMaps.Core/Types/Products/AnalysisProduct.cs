@@ -24,7 +24,7 @@ public sealed record AnalysisProduct
     ///     Neighborhood identifier.
     /// </summary>
     [Required, Geocoder]
-    public string NeighborhoodId { get; init; } = default!;
+    public string? NeighborhoodId { get; init; } = default!;
 
     /// <summary>
     ///     Built year.
