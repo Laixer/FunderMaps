@@ -10,7 +10,7 @@ namespace FunderMaps.Webservice.Controllers;
 ///     Controller for all product endpoints.
 /// </summary>
 [Route("api/v3/product")]
-public sealed class ProductController(ModelService modelService, ILogger<ProductController> logger) : FunderMapsController
+public sealed class ProductController(ModelService modelService) : FunderMapsController
 {
     // GET: api/v3/product/analysis
     /// <summary>
@@ -29,29 +29,4 @@ public sealed class ProductController(ModelService modelService, ILogger<Product
     [HttpGet("statistics/{id}")]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
         => modelService.GetStatisticsAsync(id, TenantId);
-
-    // TODO: LEGACY
-    // GET: api/v3/product/analysis
-    [Authorize(Roles = "Service, Administrator")]
-    [HttpGet("analysis")]
-    public Task<AnalysisProduct> GetAnalysisLegacyAsync([FromQuery] string id)
-    {
-        logger.LogWarning("Legacy endpoint called: {Endpoint}", HttpContext.Request.Path);
-
-        throw new NotImplementedException();
-    }
-
-    // TODO: LEGACY
-    // GET: api/v3/product/statistics
-    /// <summary>
-    ///     Request the statistics product.
-    /// </summary>
-    [Authorize(Roles = "Service,Administrator")]
-    [HttpGet("statistics")]
-    public Task<StatisticsProduct> GetStatisticsLegacyAsync([FromQuery] string id)
-    {
-        logger.LogWarning("Legacy endpoint called: {Endpoint}", HttpContext.Request.Path);
-
-        throw new NotImplementedException();
-    }
 }
