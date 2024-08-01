@@ -60,9 +60,8 @@ public sealed class Mapset : IEntityIdentifier<Guid>
     /// </summary>
     public string? Icon { get; set; }
 
-    /// <summary>
-    ///     Unique identifier.
-    /// </summary>
+    public string[]? FenceNeighborhood { get; set; }
+    public string[]? FenceDistrict { get; set; }
     public string[]? FenceMunicipality { get; set; }
 
     /// <summary>

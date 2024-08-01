@@ -31,6 +31,8 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     m.consent,
                     m.note,
                     m.icon,
+                    NULL AS fence_neighborhood,
+                    NULL AS fence_district,
                     NULL as fence_municipality,
                     (
                         SELECT jsonb_agg(maplayers.layer)
@@ -74,7 +76,9 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     m.consent,
                     m.note,
                     m.icon,
-                    NULL as fence_municipality,
+                    NULL AS fence_neighborhood,
+                    NULL AS fence_district,
+                    NULL AS fence_municipality,
                     (
                         SELECT jsonb_agg(maplayers.layer)
                         FROM (
@@ -118,6 +122,8 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     m.consent,
                     m.note,
                     m.icon,
+                    o.fence_neighborhood,
+                    o.fence_district,
                     o.fence_municipality,
                     (
                         SELECT jsonb_agg(maplayers.layer)
