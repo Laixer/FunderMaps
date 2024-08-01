@@ -42,6 +42,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                                 FROM    maplayer.mapset m2
                                 WHERE   m2.id = m.id
                             )
+                            ORDER BY l.order ASC
                         ) AS maplayers
                     ) AS layerset
             FROM    maplayer.mapset AS m
@@ -84,6 +85,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                                 FROM    maplayer.mapset m2
                                 WHERE   m2.id = m.id
                             )
+                            ORDER BY l.order ASC
                         ) AS maplayers
                     ) AS layerset
             FROM    maplayer.mapset AS m
@@ -127,6 +129,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                                 FROM    maplayer.mapset m2
                                 WHERE   m2.id = m.id
                             )
+                            ORDER BY l.order ASC
                         ) AS maplayers
                     ) AS layerset
             FROM    maplayer.map_organization mo
