@@ -63,7 +63,7 @@ public sealed class Mapset : IEntityIdentifier<Guid>
     /// <summary>
     ///     Unique identifier.
     /// </summary>
-    public string? FenceMunicipality { get; set; }
+    public string[]? FenceMunicipality { get; set; }
 
     /// <summary>
     ///     Map layers sets.
