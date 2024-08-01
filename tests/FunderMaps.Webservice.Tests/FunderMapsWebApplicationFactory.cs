@@ -285,16 +285,16 @@ internal class MemoryOrganizationRepository : MemoryRepositoryBase<Organization,
             Id = Guid.Parse("a44aa6d6-714a-4d5e-a6c7-25c9a840d114"),
             Name = "FunderMaps",
             Email = "info@fundermaps.com",
-            Area = new SpatialBox { },
-            Center = new SpatialPoint { }
+            // Area = new SpatialBox { },
+            // Center = new SpatialPoint { }
         });
         memory.Add(Guid.Parse("7b6f6e29-24b6-41ff-a433-6f2aaddf2d91"), new()
         {
             Id = Guid.Parse("7b6f6e29-24b6-41ff-a433-6f2aaddf2d91"),
             Name = "Contoso",
             Email = "info@contoso.com",
-            Area = new SpatialBox { },
-            Center = new SpatialPoint { }
+            // Area = new SpatialBox { },
+            // Center = new SpatialPoint { }
         });
     }
 }

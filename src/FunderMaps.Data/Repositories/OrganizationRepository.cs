@@ -2,7 +2,6 @@
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Data.Extensions;
 using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
@@ -52,18 +51,18 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
             Id = reader.GetGuid(offset++),
             Name = reader.GetString(offset++),
             Email = reader.GetString(offset++),
-            Area = new()
-            {
-                XMin = reader.GetSafeDouble(offset++),
-                YMin = reader.GetSafeDouble(offset++),
-                XMax = reader.GetSafeDouble(offset++),
-                YMax = reader.GetSafeDouble(offset++),
-            },
-            Center = new()
-            {
-                CenterX = reader.GetSafeDouble(offset++),
-                CenterY = reader.GetSafeDouble(offset++),
-            }
+            // Area = new()
+            // {
+            //     XMin = reader.GetSafeDouble(offset++),
+            //     YMin = reader.GetSafeDouble(offset++),
+            //     XMax = reader.GetSafeDouble(offset++),
+            //     YMax = reader.GetSafeDouble(offset++),
+            // },
+            // Center = new()
+            // {
+            //     CenterX = reader.GetSafeDouble(offset++),
+            //     CenterY = reader.GetSafeDouble(offset++),
+            // }
         };
 
     /// <summary>
@@ -81,13 +80,13 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         var sql = @"
             SELECT  id,
                     name,
-                    email,
-                    0 AS x_min,
-                    0 AS y_min,
-                    0 AS x_max,
-                    0 AS y_max,
-                    0 AS center_x,
-                    0 AS center_y
+                    email
+                    -- 0 AS x_min,
+                    -- 0 AS y_min,
+                    -- 0 AS x_max,
+                    -- 0 AS y_max,
+                    -- 0 AS center_x,
+                    -- 0 AS center_y
             FROM    application.organization
             WHERE   id = @id
             LIMIT   1";
@@ -111,12 +110,12 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
             SELECT  id,
                     name,
                     email,
-                    0 AS x_min,
-                    0 AS y_min,
-                    0 AS x_max,
-                    0 AS y_max,
-                    0 AS center_x,
-                    0 AS center_y
+                    -- 0 AS x_min,
+                    -- 0 AS y_min,
+                    -- 0 AS x_max,
+                    -- 0 AS y_max,
+                    -- 0 AS center_x,
+                    -- 0 AS center_y
             FROM    application.organization";
 
         sql = ConstructNavigation(sql, navigation);
