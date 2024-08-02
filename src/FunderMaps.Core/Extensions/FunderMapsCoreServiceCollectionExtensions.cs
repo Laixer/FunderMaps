@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Authentication;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Authorization;
 using FunderMaps.Core.DataProtection;
 using FunderMaps.Core.ExternalServices;
@@ -57,7 +57,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddSingleton<ITilesetGeneratorService, TippecanoeService>();
         services.AddSingleton<IMapboxService, MapboxService>();
         services.AddSingleton<IGDALService, GeospatialAbstractionService>();
-        services.AddSingleton<OpenAIService>();
+        // services.AddSingleton<OpenAIService>();
 
         // NOTE: Register the HttpContextAccessor service to the container.
         //       The HttpContextAccessor exposes a singleton holding the
