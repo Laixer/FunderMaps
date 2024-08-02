@@ -14,12 +14,6 @@ public interface ITelemetryRepository
 
     // TODO: Rename
     /// <summary>
-    ///     Retrieve all product telemetrics.
-    /// </summary>
-    IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync(Guid tenantId);
-
-    // TODO: Rename
-    /// <summary>
     ///    Retrieve all product telemetrics.
     /// </summary>
     IAsyncEnumerable<Guid> ListLastMonthOrganizationaAsync();

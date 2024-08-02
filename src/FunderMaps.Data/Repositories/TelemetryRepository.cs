@@ -40,34 +40,6 @@ internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
         }
     }
 
-    // TODO: Rename
-    /// <summary>
-    ///     Retrieve all product telemetrics.
-    /// </summary>
-    public async IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync(Guid tenantId)
-    {
-        var sql = @"
-            SELECT  -- ProductTracker
-                    pt.product,
-                    count(pt.organization_id)
-            FROM    application.product_tracker AS pt
-            WHERE   pt.organization_id = @tenant
-            GROUP BY pt.organization_id, pt.product";
-
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        context.AddParameterWithValue("tenant", tenantId);
-
-        await foreach (var reader in context.EnumerableReaderAsync())
-        {
-            yield return new()
-            {
-                Product = reader.GetString(0),
-                Count = reader.GetInt(1),
-            };
-        }
-    }
-
     public async IAsyncEnumerable<Guid> ListLastMonthOrganizationaAsync()
     {
         var sql = @"

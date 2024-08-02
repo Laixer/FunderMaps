@@ -58,7 +58,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddSingleton<IMapboxService, MapboxService>();
         services.AddSingleton<IGDALService, GeospatialAbstractionService>();
         services.AddSingleton<OpenAIService>();
-        services.AddSingleton<FunderMapsClient>();
 
         // NOTE: Register the HttpContextAccessor service to the container.
         //       The HttpContextAccessor exposes a singleton holding the
