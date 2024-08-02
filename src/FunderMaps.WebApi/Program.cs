@@ -13,11 +13,6 @@ builder.Services.AddFunderMapsAuthServices();
 
 builder.Services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)));
 
-builder.Services.AddLocalization(options =>
-{
-    options.ResourcesPath = "Resources";
-});
-
 if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddHsts(options =>
