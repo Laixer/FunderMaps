@@ -11,7 +11,6 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : IClassFixture<FunderMapsWebApplicationFactory<Program>>
 {
     [Theory]
-    [InlineData("gfm-4f5e73d478ff452b86023a06e5b8d834")]
     [InlineData("NL.IMBAG.PAND.0599100000685769")]
     [InlineData("0599100000685769")]
     [InlineData("NL.IMBAG.NUMMERAANDUIDING.0599200000499204")]
@@ -50,8 +49,9 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
     [InlineData("343545435_4928374hfdkjsfh")]
     [InlineData("thisismyquerystringyes")]
     [InlineData("fdshjbf438gi")]
-    // [InlineData("gfm-dfcdbbabf1de41c38597c049b0cce5d4")]
-    // [InlineData("gfm-1437da5c31e944dd8d362264041d067a")]
+    [InlineData("gfm-dfcdbbabf1de41c38597c049b0cce5d4")]
+    [InlineData("gfm-1437da5c31e944dd8d362264041d067a")]
+    [InlineData("gfm-4f5e73d478ff452b86023a06e5b8d834")]
     public async Task GetByIdInvalidAddressThrows(string address)
     {
         using var client = factory.CreateClient();

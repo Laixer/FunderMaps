@@ -127,7 +127,7 @@ public class GeocoderTranslation(
     public async Task<Address> GetAddressIdAsync(string input) => FromIdentifier(input, out string id) switch
     {
         // TODO: Add NlBagResidence
-        GeocoderDatasource.FunderMaps => await addressRepository.GetByIdAsync(id), // FUTURE: This can never be requested.
+        GeocoderDatasource.FunderMaps => throw new EntityNotFoundException("Requested address entity could not be found."),
         GeocoderDatasource.NlBagAddress => await addressRepository.GetByExternalIdAsync(id),
         GeocoderDatasource.NlBagBuilding => await addressRepository.GetByExternalBuildingIdAsync(id),
         _ => throw new EntityNotFoundException("Requested address entity could not be found."),
@@ -144,7 +144,7 @@ public class GeocoderTranslation(
     public async Task<Building> GetBuildingIdAsync(string input) => FromIdentifier(input, out string id) switch
     {
         // TODO: Add NlBagResidence
-        GeocoderDatasource.FunderMaps => await buildingRepository.GetByIdAsync(id), // FUTURE: This can never be requested.
+        GeocoderDatasource.FunderMaps => throw new EntityNotFoundException("Requested building entity could not be found."),
         GeocoderDatasource.NlBagAddress => await buildingRepository.GetByExternalAddressIdAsync(id),
         GeocoderDatasource.NlBagBuilding => await buildingRepository.GetByExternalIdAsync(id),
         GeocoderDatasource.FundermapsIncidentReport => await buildingRepository.GetByIncidentIdAsync(id), // FUTURE: Maybe just request incident repository?
