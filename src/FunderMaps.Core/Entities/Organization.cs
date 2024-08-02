@@ -24,16 +24,6 @@ public sealed class Organization : IEntityIdentifier<Guid>
     [Required, EmailAddress]
     public string Email { get; set; } = default!;
 
-    // / <summary>
-    // /     Geospatial account area.
-    // / </summary>
-    // public SpatialBox Area { get; set; } = default!;
-
-    // / <summary>
-    // /     Geospatial account area center.
-    // / </summary>
-    // public SpatialPoint Center { get; set; } = default!;
-
     /// <summary>
     ///     Print object as name.
     /// </summary>

@@ -60,8 +60,19 @@ public sealed class Mapset : IEntityIdentifier<Guid>
     /// </summary>
     public string? Icon { get; set; }
 
+    /// <summary>
+    ///    Geographic bounding box on neighborhood level.
+    /// </summary>
     public string[]? FenceNeighborhood { get; set; }
+
+    /// <summary>
+    ///   Geographic bounding box on district level.
+    /// </summary>
     public string[]? FenceDistrict { get; set; }
+
+    /// <summary>
+    ///    Geographic bounding box on municipality level.
+    /// </summary>
     public string[]? FenceMunicipality { get; set; }
 
     /// <summary>

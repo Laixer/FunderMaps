@@ -57,7 +57,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddSingleton<ITilesetGeneratorService, TippecanoeService>();
         services.AddSingleton<IMapboxService, MapboxService>();
         services.AddSingleton<IGDALService, GeospatialAbstractionService>();
-        // services.AddSingleton<OpenAIService>();
+        // services.AddSingleton<Auth0Service>();
 
         // NOTE: Register the HttpContextAccessor service to the container.
         //       The HttpContextAccessor exposes a singleton holding the
@@ -82,7 +82,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.Configure<MailgunOptions>(configuration.GetSection(MailgunOptions.Section));
         services.Configure<MapboxOptions>(configuration.GetSection(MapboxOptions.Section));
         services.Configure<S3StorageOptions>(configuration.GetSection(S3StorageOptions.Section));
-        services.Configure<OpenAIOptions>(configuration.GetSection(OpenAIOptions.Section));
+        // services.Configure<Auth0Options>(configuration.GetSection(Auth0Options.Section));
         services.Configure<IncidentOptions>(configuration.GetSection(IncidentOptions.Section));
         services.Configure<FunderMapsOptions>(configuration.GetSection(FunderMapsOptions.Section));
 

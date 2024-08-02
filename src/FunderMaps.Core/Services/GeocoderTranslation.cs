@@ -169,7 +169,7 @@ public class GeocoderTranslation(
     /// <returns>If found returns the <see cref="Neighborhood"/> entity.</returns>
     public async Task<Neighborhood> GetNeighborhoodIdAsync(string input) => FromIdentifier(input, out string id) switch
     {
-        GeocoderDatasource.FunderMaps => await neighborhoodRepository.GetByIdAsync(id),
+        GeocoderDatasource.FunderMaps => await neighborhoodRepository.GetByIdAsync(id), // FUTURE: This will become obsolete
         GeocoderDatasource.NlBagAddress => await neighborhoodRepository.GetByExternalAddressIdAsync(id),
         GeocoderDatasource.NlBagBuilding => await neighborhoodRepository.GetByExternalBuildingIdAsync(id),
         GeocoderDatasource.NlCbsNeighborhood => await neighborhoodRepository.GetByExternalIdAsync(id),
@@ -179,7 +179,7 @@ public class GeocoderTranslation(
 
     public async Task<District> GetDistrictIdAsync(string input) => FromIdentifier(input, out string id) switch
     {
-        GeocoderDatasource.FunderMaps => await districtRepository.GetByIdAsync(id),
+        GeocoderDatasource.FunderMaps => await districtRepository.GetByIdAsync(id), // FUTURE: This will become obsolete
         GeocoderDatasource.NlBagAddress => await districtRepository.GetByExternalAddressIdAsync(id),
         GeocoderDatasource.NlBagBuilding => await districtRepository.GetByExternalBuildingIdAsync(id),
         GeocoderDatasource.NlCbsNeighborhood => await districtRepository.GetByExternalNeighborhoodIdAsync(id),
@@ -190,7 +190,7 @@ public class GeocoderTranslation(
 
     public async Task<Municipality> GetMunicipalityIdAsync(string input) => FromIdentifier(input, out string id) switch
     {
-        GeocoderDatasource.FunderMaps => await municipalityRepository.GetByIdAsync(id),
+        GeocoderDatasource.FunderMaps => await municipalityRepository.GetByIdAsync(id), // FUTURE: This will become obsolete
         GeocoderDatasource.NlBagAddress => await municipalityRepository.GetByExternalAddressIdAsync(id),
         GeocoderDatasource.NlBagBuilding => await municipalityRepository.GetByExternalBuildingIdAsync(id),
         GeocoderDatasource.NlCbsNeighborhood => await municipalityRepository.GetByExternalNeighborhoodIdAsync(id),
@@ -202,7 +202,7 @@ public class GeocoderTranslation(
 
     public async Task<State> GetStateIdAsync(string input) => FromIdentifier(input, out string id) switch
     {
-        GeocoderDatasource.FunderMaps => await stateRepository.GetByIdAsync(id),
+        GeocoderDatasource.FunderMaps => await stateRepository.GetByIdAsync(id), // FUTURE: This will become obsolete
         GeocoderDatasource.NlBagAddress => await stateRepository.GetByExternalAddressIdAsync(id),
         GeocoderDatasource.NlBagBuilding => await stateRepository.GetByExternalBuildingIdAsync(id),
         GeocoderDatasource.NlCbsNeighborhood => await stateRepository.GetByExternalNeighborhoodIdAsync(id),
