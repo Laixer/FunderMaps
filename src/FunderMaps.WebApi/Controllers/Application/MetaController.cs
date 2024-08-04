@@ -19,7 +19,7 @@ public sealed class MetaController : FunderMapsController
 
     // PUT: api/metadata
     [HttpPut("metadata")]
-    public async Task<object> UpdateAsync()
+    public async Task<object> UpdateAsync([FromBody] object metadata)
     {
         await Task.CompletedTask;
 
