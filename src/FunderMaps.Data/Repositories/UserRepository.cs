@@ -32,9 +32,9 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                 phone_number,
                 role)
             VALUES (
-                @given_name,
-                @last_name,
-                @email,
+                NULLIF(trim(@given_name), ''),
+                NULLIF(trim(@last_name), ''),
+                application.normalize2(@email),
                 NULLIF(trim(@job_title), ''),
                 REGEXP_REPLACE(@phone_number,'\D','','g'),
                 @role)
@@ -157,7 +157,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     u.phone_number,
                     u.role
             FROM    application.user AS u
-            WHERE   u.email = application.normalize2((@email)
+            WHERE   u.email = application.normalize2(@email)
             LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
@@ -305,8 +305,8 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
         var sql = @"
             UPDATE  application.user
-            SET     given_name = @given_name,
-                    last_name = @last_name,
+            SET     given_name = NULLIF(trim(@given_name), ''),
+                    last_name = NULLIF(trim(@last_name), ''),
                     job_title = NULLIF(trim(@job_title), ''),
                     phone_number = REGEXP_REPLACE(@phone_number,'\D','','g')
             WHERE   id = @id";
