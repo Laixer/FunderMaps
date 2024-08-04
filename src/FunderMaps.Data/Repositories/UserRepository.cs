@@ -157,7 +157,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     u.phone_number,
                     u.role
             FROM    application.user AS u
-            WHERE   u.normalized_email = application.normalize(@email)
+            WHERE   u.email = application.normalize2((@email)
             LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
@@ -219,7 +219,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
             FROM    application.user AS u
             JOIN    application.reset_key rk ON rk.user_id = u.id
             WHERE   rk.key = @key
-            AND     u.normalized_email = application.normalize(@email)
+            AND     u.email = application.normalize2(@email)
             AND     rk.create_date > NOW() - INTERVAL '2 hours'
             LIMIT   1";
 
