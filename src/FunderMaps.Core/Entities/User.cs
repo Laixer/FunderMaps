@@ -30,11 +30,6 @@ public class User : IEntityIdentifier<Guid>
     public string Email { get; set; } = default!;
 
     /// <summary>
-    ///     Avatar.
-    /// </summary>
-    public string? Avatar { get; set; }
-
-    /// <summary>
     ///     Job title.
     /// </summary>
     public string? JobTitle { get; set; }

@@ -28,7 +28,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                 given_name,
                 last_name,
                 email,
-                avatar,
                 job_title,
                 phone_number,
                 role)
@@ -36,7 +35,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                 @given_name,
                 @last_name,
                 @email,
-                @avatar,
                 NULLIF(trim(@job_title), ''),
                 REGEXP_REPLACE(@phone_number,'\D','','g'),
                 @role)
@@ -91,7 +89,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         context.AddParameterWithValue("given_name", entity.GivenName);
         context.AddParameterWithValue("last_name", entity.LastName);
         context.AddParameterWithValue("email", entity.Email);
-        context.AddParameterWithValue("avatar", entity.Avatar);
         context.AddParameterWithValue("job_title", entity.JobTitle);
         context.AddParameterWithValue("phone_number", entity.PhoneNumber);
         context.AddParameterWithValue("role", entity.Role);
@@ -104,10 +101,9 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
             GivenName = reader.GetSafeString(offset + 1),
             LastName = reader.GetSafeString(offset + 2),
             Email = reader.GetString(offset + 3),
-            Avatar = reader.GetSafeString(offset + 4),
-            JobTitle = reader.GetSafeString(offset + 5),
-            PhoneNumber = reader.GetSafeString(offset + 6),
-            Role = reader.GetFieldValue<ApplicationRole>(offset + 7),
+            JobTitle = reader.GetSafeString(offset + 4),
+            PhoneNumber = reader.GetSafeString(offset + 5),
+            Role = reader.GetFieldValue<ApplicationRole>(offset + 6),
         };
 
     /// <summary>
@@ -128,7 +124,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     u.given_name,
                     u.last_name,
                     u.email,
-                    u.avatar,
                     u.job_title,
                     u.phone_number,
                     u.role
@@ -158,7 +153,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     u.given_name,
                     u.last_name,
                     u.email,
-                    u.avatar,
                     u.job_title,
                     u.phone_number,
                     u.role
@@ -188,7 +182,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     u.given_name,
                     u.last_name,
                     u.email,
-                    u.avatar,
                     u.job_title,
                     u.phone_number,
                     u.role
@@ -220,7 +213,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     u.given_name,
                     u.last_name,
                     u.email,
-                    u.avatar,
                     u.job_title,
                     u.phone_number,
                     u.role
@@ -289,7 +281,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     u.given_name,
                     u.last_name,
                     u.email,
-                    u.avatar,
                     u.job_title,
                     u.phone_number,
                     u.role
@@ -316,7 +307,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
             UPDATE  application.user
             SET     given_name = @given_name,
                     last_name = @last_name,
-                    avatar = @avatar,
                     job_title = NULLIF(trim(@job_title), ''),
                     phone_number = REGEXP_REPLACE(@phone_number,'\D','','g')
             WHERE   id = @id";

@@ -45,7 +45,6 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
                     u.given_name,
                     u.last_name,
                     u.email,
-                    u.avatar,
                     u.job_title,
                     u.phone_number,
                     u.role,
@@ -66,11 +65,10 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
                 GivenName = reader.GetSafeString(1),
                 LastName = reader.GetSafeString(2),
                 Email = reader.GetString(3),
-                Avatar = reader.GetSafeString(4),
-                JobTitle = reader.GetSafeString(5),
-                PhoneNumber = reader.GetSafeString(6),
-                Role = reader.GetFieldValue<ApplicationRole>(7),
-                OrganizationRole = reader.GetFieldValue<OrganizationRole>(8),
+                JobTitle = reader.GetSafeString(4),
+                PhoneNumber = reader.GetSafeString(5),
+                Role = reader.GetFieldValue<ApplicationRole>(6),
+                OrganizationRole = reader.GetFieldValue<OrganizationRole>(7),
             };
         }
     }
