@@ -181,9 +181,13 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
                     -- Attribution
                     a.reviewer,
+                    u.email AS reviewer_name, 
                     a.creator,
+                    u2.email AS creator_name,
                     a.owner,
+                    o.name AS owner_name,
                     a.contractor,
+                    c.name AS contractor_name,
 
                     -- State control
                     r.audit_status,
@@ -197,6 +201,10 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
                     r.delete_date
             FROM    report.recovery AS r
             JOIN 	application.attribution AS a ON a.id = r.attribution
+            JOIN    application.user u ON u.id = a.reviewer
+            JOIN    application.user u2 ON u2.id = a.creator
+            JOIN    application.organization o ON o.id = a.owner
+            JOIN    application.contractor c ON c.id = a.contractor
             WHERE   r.id = @id
             AND     a.owner = @tenant
             LIMIT   1";
@@ -233,9 +241,13 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
                     -- Attribution
                     a.reviewer,
+                    u.email AS reviewer_name, 
                     a.creator,
+                    u2.email AS creator_name,
                     a.owner,
+                    o.name AS owner_name,
                     a.contractor,
+                    c.name AS contractor_name,
 
                     -- State control
                     r.audit_status,
@@ -249,6 +261,10 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
                     r.delete_date
             FROM    report.recovery AS r
             JOIN 	application.attribution AS a ON a.id = r.attribution
+            JOIN    application.user u ON u.id = a.reviewer
+            JOIN    application.user u2 ON u2.id = a.creator
+            JOIN    application.organization o ON o.id = a.owner
+            JOIN    application.contractor c ON c.id = a.contractor
             WHERE   a.owner = @tenant
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
@@ -277,9 +293,13 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
                     -- Attribution
                     a.reviewer,
+                    u.email AS reviewer_name, 
                     a.creator,
+                    u2.email AS creator_name,
                     a.owner,
+                    o.name AS owner_name,
                     a.contractor,
+                    c.name AS contractor_name,
 
                     -- State control
                     r.audit_status,
@@ -294,8 +314,12 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             FROM    report.recovery_sample AS s
             JOIN    report.recovery AS r ON r.id = s.recovery
             JOIN    application.attribution AS a ON a.id = r.attribution
+            JOIN    application.user u ON u.id = a.reviewer
+            JOIN    application.user u2 ON u2.id = a.creator
+            JOIN    application.organization o ON o.id = a.owner
+            JOIN    application.contractor c ON c.id = a.contractor
             WHERE   s.building = @building
-            GROUP BY r.id, a.reviewer, a.creator, a.owner, a.contractor
+            GROUP BY i.id, a.reviewer, u.email, a.creator, u2.email, a.owner, o.name, a.contractor, c.name
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
         sql = ConstructNavigation(sql, navigation);

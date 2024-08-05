@@ -1,9 +1,8 @@
-﻿using FunderMaps.Core;
+﻿using Dapper;
+using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types;
-using FunderMaps.Data.Extensions;
-using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -41,36 +40,30 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                 question_type,
                 meta)
             VALUES (
-                report.fir_generate_id(@client_id),
-                @foundation_type,
-                @chained_building,
-                @owner,
-                @foundation_recovery,
-                @neightbor_recovery,
-                @foundation_damage_cause,
-                NULLIF(@document_file, '{}'::text[]),
-                NULLIF(trim(@note), ''),
-                NULLIF(trim(@internal_note), ''),
-                trim(lower(@email)),
-                NULLIF(trim(@name), ''),
-                NULLIF(trim(@phone_number), ''),
-                NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
-                NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
-                @building,
-                @audit_status,
-                @question_type,
-                @meta)
+                report.fir_generate_id(@ClientId),
+                @FoundationType,
+                @ChainedBuilding,
+                @Owner,
+                @FoundationRecovery,
+                @NeightborRecovery,
+                @FoundationDamageCause,
+                NULLIF(@DocumentFile, '{}'::text[]),
+                NULLIF(trim(@Note), ''),
+                NULLIF(trim(@InternalNote), ''),
+                trim(lower(@Email)),
+                NULLIF(trim(@Name), ''),
+                NULLIF(trim(@PhoneNumber), ''),
+                NULLIF(@FoundationDamageCharacteristics, '{}'::report.foundation_damage_characteristics[]),
+                NULLIF(@EnvironmentDamageCharacteristics, '{}'::report.environment_damage_characteristics[]),
+                @Building,
+                @AuditStatus,
+                @QuestionType,
+                @Meta)
             RETURNING id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("client_id", entity.ClientId);
-
-        MapToWriter(context, entity);
-
-        await using var reader = await context.ReaderAsync();
-
-        return reader.GetString(0);
+        return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new InvalidOperationException();
     }
 
     /// <summary>
@@ -83,9 +76,9 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
             SELECT  COUNT(*)
             FROM    report.incident";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<long>();
+        return await connection.ExecuteScalarAsync<long>(sql);
     }
 
     /// <summary>
@@ -101,62 +94,60 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
             FROM    report.incident
             WHERE   id = @id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { id });
     }
 
-    private static void MapToWriter(DbContext context, Incident entity)
-    {
-        context.AddParameterWithValue("foundation_type", entity.FoundationType);
-        context.AddParameterWithValue("chained_building", entity.ChainedBuilding);
-        context.AddParameterWithValue("owner", entity.Owner);
-        context.AddParameterWithValue("foundation_recovery", entity.FoundationRecovery);
-        context.AddParameterWithValue("neightbor_recovery", entity.NeighborRecovery);
-        context.AddParameterWithValue("foundation_damage_cause", entity.FoundationDamageCause);
-        context.AddParameterWithValue("document_file", entity.DocumentFile);
-        context.AddParameterWithValue("note", entity.Note);
-        context.AddParameterWithValue("internal_note", entity.InternalNote);
-        context.AddParameterWithValue("foundation_damage_characteristics", entity.FoundationDamageCharacteristics);
-        context.AddParameterWithValue("environment_damage_characteristics", entity.EnvironmentDamageCharacteristics);
-        context.AddParameterWithValue("email", entity.Email);
-        context.AddParameterWithValue("name", entity.Name);
-        context.AddParameterWithValue("phone_number", entity.PhoneNumber);
-        context.AddParameterWithValue("building", entity.Building);
-        context.AddParameterWithValue("audit_status", entity.AuditStatus);
-        context.AddParameterWithValue("question_type", entity.QuestionType);
-        context.AddJsonParameterWithValue("meta", entity.Meta);
-    }
+    // private static void MapToWriter(DbContext context, Incident entity)
+    // {
+    //     context.AddParameterWithValue("foundation_type", entity.FoundationType);
+    //     context.AddParameterWithValue("chained_building", entity.ChainedBuilding);
+    //     context.AddParameterWithValue("owner", entity.Owner);
+    //     context.AddParameterWithValue("foundation_recovery", entity.FoundationRecovery);
+    //     context.AddParameterWithValue("neightbor_recovery", entity.NeighborRecovery);
+    //     context.AddParameterWithValue("foundation_damage_cause", entity.FoundationDamageCause);
+    //     context.AddParameterWithValue("document_file", entity.DocumentFile);
+    //     context.AddParameterWithValue("note", entity.Note);
+    //     context.AddParameterWithValue("internal_note", entity.InternalNote);
+    //     context.AddParameterWithValue("foundation_damage_characteristics", entity.FoundationDamageCharacteristics);
+    //     context.AddParameterWithValue("environment_damage_characteristics", entity.EnvironmentDamageCharacteristics);
+    //     context.AddParameterWithValue("email", entity.Email);
+    //     context.AddParameterWithValue("name", entity.Name);
+    //     context.AddParameterWithValue("phone_number", entity.PhoneNumber);
+    //     context.AddParameterWithValue("building", entity.Building);
+    //     context.AddParameterWithValue("audit_status", entity.AuditStatus);
+    //     context.AddParameterWithValue("question_type", entity.QuestionType);
+    //     context.AddJsonParameterWithValue("meta", entity.Meta);
+    // }
 
-    private static Incident MapFromReader(DbDataReader reader, int offset = 0)
-        => new()
-        {
-            Id = reader.GetString(offset++),
-            ClientName = reader.GetString(offset++),
-            FoundationType = reader.GetSafeStructValue<FoundationType>(offset++),
-            ChainedBuilding = reader.GetBoolean(offset++),
-            Owner = reader.GetBoolean(offset++),
-            FoundationRecovery = reader.GetBoolean(offset++),
-            NeighborRecovery = reader.GetBoolean(offset++),
-            FoundationDamageCause = reader.GetSafeStructValue<FoundationDamageCause>(offset++),
-            DocumentFile = reader.GetSafeStringArray(offset++),
-            Note = reader.GetSafeString(offset++),
-            InternalNote = reader.GetSafeString(offset++),
-            Email = reader.GetString(offset++),
-            Name = reader.GetSafeString(offset++),
-            PhoneNumber = reader.GetSafeString(offset++),
-            CreateDate = reader.GetDateTime(offset++),
-            UpdateDate = reader.GetSafeDateTime(offset++),
-            DeleteDate = reader.GetSafeDateTime(offset++),
-            FoundationDamageCharacteristics = reader.GetSafeFieldValue<FoundationDamageCharacteristics[]>(offset++),
-            EnvironmentDamageCharacteristics = reader.GetSafeFieldValue<EnvironmentDamageCharacteristics[]>(offset++),
-            Building = reader.GetString(offset++),
-            AuditStatus = reader.GetFieldValue<AuditStatus>(offset++),
-            QuestionType = reader.GetFieldValue<IncidentQuestionType>(offset++),
-            Meta = reader.GetSafeFieldValue<object>(offset++),
-        };
+    // private static Incident MapFromReader(DbDataReader reader, int offset = 0)
+    //     => new()
+    //     {
+    //         Id = reader.GetString(offset++),
+    //         ClientName = reader.GetString(offset++),
+    //         FoundationType = reader.GetSafeStructValue<FoundationType>(offset++),
+    //         ChainedBuilding = reader.GetBoolean(offset++),
+    //         Owner = reader.GetBoolean(offset++),
+    //         FoundationRecovery = reader.GetBoolean(offset++),
+    //         NeighborRecovery = reader.GetBoolean(offset++),
+    //         FoundationDamageCause = reader.GetSafeStructValue<FoundationDamageCause>(offset++),
+    //         DocumentFile = reader.GetSafeStringArray(offset++),
+    //         Note = reader.GetSafeString(offset++),
+    //         InternalNote = reader.GetSafeString(offset++),
+    //         Email = reader.GetString(offset++),
+    //         Name = reader.GetSafeString(offset++),
+    //         PhoneNumber = reader.GetSafeString(offset++),
+    //         CreateDate = reader.GetDateTime(offset++),
+    //         UpdateDate = reader.GetSafeDateTime(offset++),
+    //         DeleteDate = reader.GetSafeDateTime(offset++),
+    //         FoundationDamageCharacteristics = reader.GetSafeFieldValue<FoundationDamageCharacteristics[]>(offset++),
+    //         EnvironmentDamageCharacteristics = reader.GetSafeFieldValue<EnvironmentDamageCharacteristics[]>(offset++),
+    //         Building = reader.GetString(offset++),
+    //         AuditStatus = reader.GetFieldValue<AuditStatus>(offset++),
+    //         QuestionType = reader.GetFieldValue<IncidentQuestionType>(offset++),
+    //         Meta = reader.GetSafeFieldValue<object>(offset++),
+    //     };
 
     /// <summary>
     ///     Retrieve <see cref="Incident"/> by id.
@@ -200,13 +191,10 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
             WHERE   i.id = upper(@id)
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        var incident = await connection.QuerySingleOrDefaultAsync<Incident>(sql, new { id });
+        return incident is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(incident);
     }
 
     public async IAsyncEnumerable<Incident> ListAllByBuildingIdAsync(string id)
@@ -241,13 +229,11 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
             LEFT JOIN    application.portal p ON p.id = substring(i.id from 'FIR(\d{2})')::int
             WHERE   i.building = @building";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("building", id);
-
-        await foreach (var reader in context.EnumerableReaderAsync())
+        await foreach (var item in connection.QueryUnbufferedAsync<Incident>(sql, new { building = id }))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return CacheEntity(item);
         }
     }
 
@@ -287,11 +273,11 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
 
         sql = ConstructNavigation(sql, navigation);
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var reader in context.EnumerableReaderAsync())
+        await foreach (var item in connection.QueryUnbufferedAsync<Incident>(sql, navigation))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return CacheEntity(item);
         }
     }
 
@@ -305,28 +291,24 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
 
         var sql = @"
             UPDATE  report.incident
-            SET     foundation_type = @foundation_type,
-                    chained_building = @chained_building,
-                    owner = @owner,
-                    foundation_recovery = @foundation_recovery,
-                    neightbor_recovery = @neightbor_recovery,
-                    foundation_damage_cause = @foundation_damage_cause,
-                    document_file = NULLIF(@document_file, '{}'::text[]),
-                    note = NULLIF(trim(@note), ''),
-                    internal_note = NULLIF(trim(@internal_note), ''),
-                    foundation_damage_characteristics = NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
-                    environment_damage_characteristics = NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
-                    audit_status = @audit_status,
-                    question_type = @question_type,
-                    meta = @meta
-            WHERE   id = upper(@id)";
+            SET     foundation_type = @FoundationType,
+                    chained_building = @ChainedBuilding,
+                    owner = @Owner,
+                    foundation_recovery = @FoundationRecovery,
+                    neightbor_recovery = @NeightborRecovery,
+                    foundation_damage_cause = @FoundationDamageCause,
+                    document_file = NULLIF(@DocumentFile, '{}'::text[]),
+                    note = NULLIF(trim(@Note), ''),
+                    internal_note = NULLIF(trim(@InternalNote), ''),
+                    foundation_damage_characteristics = NULLIF(@FoundationDamageCharacteristics, '{}'::report.foundation_damage_characteristics[]),
+                    environment_damage_characteristics = NULLIF(@EnvironmentDamageCharacteristics, '{}'::report.environment_damage_characteristics[]),
+                    audit_status = @AuditStatus,
+                    question_type = @QuestionType,
+                    meta = @Meta
+            WHERE   id = upper(@Id)";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", entity.Id);
-
-        MapToWriter(context, entity);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, entity);
     }
 }
