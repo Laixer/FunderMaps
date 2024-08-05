@@ -44,8 +44,7 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
             .SetSlidingExpiration(TimeSpan.FromMinutes(10))
             .SetAbsoluteExpiration(TimeSpan.FromMinutes(90));
 
-        Cache.Set(value.Id, value, options);
-        return value;
+        return Cache.Set(value.Id, value, options);
     }
 
     /// <summary>

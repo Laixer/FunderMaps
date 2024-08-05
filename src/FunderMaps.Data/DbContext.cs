@@ -92,25 +92,6 @@ internal class DbContext : IAsyncDisposable
         _dbCommand.Parameters.Add(parameter);
     }
 
-    // FUTURE: Do not depend on Npgsql. Too npgsql specific.
-    /// <summary>
-    ///     Add parameter with key and json value to command.
-    /// </summary>
-    /// <remarks>
-    ///     Sets a database null value if the object value is null.
-    /// </remarks>
-    /// <param name="parameterName">Parameter name.</param>
-    /// <param name="value">Parameter value.</param>
-    public void AddJsonParameterWithValue(string parameterName, object? value)
-    {
-        Npgsql.NpgsqlParameter parameter = new(parameterName, NpgsqlTypes.NpgsqlDbType.Jsonb)
-        {
-            Value = value ?? DBNull.Value
-        };
-
-        _dbCommand.Parameters.Add(parameter);
-    }
-
     /// <summary>
     ///     Execute command and return a reader.
     /// </summary>

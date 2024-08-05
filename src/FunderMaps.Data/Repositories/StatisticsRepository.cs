@@ -28,7 +28,7 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
 
         context.AddParameterWithValue("id", id);
 
-        List<FoundationTypePair> pairs = new();
+        List<FoundationTypePair> pairs = [];
         await foreach (var reader in context.EnumerableReaderAsync())
         {
             pairs.Add(new()
@@ -61,7 +61,7 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
 
         context.AddParameterWithValue("id", id);
 
-        List<ConstructionYearPair> pairs = new();
+        List<ConstructionYearPair> pairs = [];
         await foreach (var reader in context.EnumerableReaderAsync())
         {
             pairs.Add(new()
@@ -175,7 +175,7 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
 
         context.AddParameterWithValue("id", id);
 
-        List<IncidentYearPair> pairs = new();
+        List<IncidentYearPair> pairs = [];
         await foreach (var reader in context.EnumerableReaderAsync())
         {
             pairs.Add(new()
@@ -205,7 +205,7 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
 
         context.AddParameterWithValue("id", id);
 
-        List<IncidentYearPair> pairs = new();
+        List<IncidentYearPair> pairs = [];
         await foreach (var reader in context.EnumerableReaderAsync())
         {
             pairs.Add(new()
@@ -236,7 +236,7 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
 
         context.AddParameterWithValue("id", id);
 
-        List<InquiryYearPair> pairs = new();
+        List<InquiryYearPair> pairs = [];
         await foreach (var reader in context.EnumerableReaderAsync())
         {
             pairs.Add(new()
@@ -266,7 +266,7 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
 
         context.AddParameterWithValue("id", id);
 
-        List<InquiryYearPair> pairs = new();
+        List<InquiryYearPair> pairs = [];
         await foreach (var reader in context.EnumerableReaderAsync())
         {
             pairs.Add(new()
