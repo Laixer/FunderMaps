@@ -1,8 +1,10 @@
-﻿using Dapper;
+﻿using System.Data.Common;
+using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Types;
+using FunderMaps.Data.Extensions;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -21,37 +23,37 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         context.AddParameterWithValue("document_name", entity.DocumentName);
     }
 
-    // public static Recovery MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-    //     => new()
-    //     {
-    //         Id = reader.GetInt(offset + 0),
-    //         Note = reader.GetSafeString(offset + 1),
-    //         Type = reader.GetFieldValue<RecoveryDocumentType>(offset + 2),
-    //         DocumentDate = reader.GetDateTime(offset + 3),
-    //         DocumentFile = reader.GetString(offset + 4),
-    //         DocumentName = reader.GetString(offset + 5),
-    //         Attribution = new()
-    //         {
-    //             Reviewer = reader.GetFieldValue<Guid>(offset + 6),
-    //             Creator = reader.GetGuid(offset + 7),
-    //             Owner = reader.GetGuid(offset + 8),
-    //             Contractor = reader.GetInt(offset + 9),
-    //         },
-    //         State = new()
-    //         {
-    //             AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 10),
-    //         },
-    //         Access = new()
-    //         {
-    //             AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 11),
-    //         },
-    //         Record = new()
-    //         {
-    //             CreateDate = reader.GetDateTime(offset + 12),
-    //             UpdateDate = reader.GetSafeDateTime(offset + 13),
-    //             DeleteDate = reader.GetSafeDateTime(offset + 14),
-    //         },
-    //     };
+    public static Recovery MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+        => new()
+        {
+            Id = reader.GetInt(offset + 0),
+            Note = reader.GetSafeString(offset + 1),
+            Type = reader.GetFieldValue<RecoveryDocumentType>(offset + 2),
+            DocumentDate = reader.GetDateTime(offset + 3),
+            DocumentFile = reader.GetString(offset + 4),
+            DocumentName = reader.GetString(offset + 5),
+            Attribution = new()
+            {
+                Reviewer = reader.GetFieldValue<Guid>(offset + 6),
+                Creator = reader.GetGuid(offset + 7),
+                Owner = reader.GetGuid(offset + 8),
+                Contractor = reader.GetInt(offset + 9),
+            },
+            State = new()
+            {
+                AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 10),
+            },
+            Access = new()
+            {
+                AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 11),
+            },
+            Record = new()
+            {
+                CreateDate = reader.GetDateTime(offset + 12),
+                UpdateDate = reader.GetSafeDateTime(offset + 13),
+                DeleteDate = reader.GetSafeDateTime(offset + 14),
+            },
+        };
 
     /// <summary>
     ///     Create new <see cref="Recovery"/>.
@@ -117,9 +119,9 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             SELECT  COUNT(*)
             FROM    report.recovery";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<long>();
+        return await connection.ExecuteScalarAsync<long>(sql);
     }
 
     public override Task DeleteAsync(int id)
@@ -144,12 +146,9 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             AND     i.id = @id
             AND     a.owner = @tenant";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("tenant", tenantId);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { id, tenant = tenantId });
     }
 
     public override Task<Recovery> GetByIdAsync(int id)
@@ -208,10 +207,21 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             AND     a.owner = @tenant
             LIMIT   1";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        // TODO: Dapper can't handle multiple result sets in one go.
 
-        var recovery = await connection.QuerySingleOrDefaultAsync<Recovery>(sql, new { id, tenant = tenantId });
-        return recovery is null ? throw new EntityNotFoundException(nameof(Recovery)) : CacheEntity(recovery);
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // var recovery = await connection.QuerySingleOrDefaultAsync<Recovery>(sql, new { id, tenant = tenantId });
+        // return recovery is null ? throw new EntityNotFoundException(nameof(Recovery)) : CacheEntity(recovery);
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("tenant", tenantId);
+
+        await using var reader = await context.ReaderAsync();
+
+        return CacheEntity(MapFromReader(reader));
     }
 
     public override IAsyncEnumerable<Recovery> ListAllAsync(Navigation navigation)
@@ -263,12 +273,25 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             WHERE   a.owner = @tenant
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        sql = ConstructNavigation(sql, navigation);
 
-        await foreach (var item in connection.QueryUnbufferedAsync<Recovery>(sql, new { tenant = tenantId }))
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("tenant", tenantId);
+
+        await foreach (var reader in context.EnumerableReaderAsync())
         {
-            yield return CacheEntity(item);
+            yield return CacheEntity(MapFromReader(reader));
         }
+
+        // TODO: Dapper can't handle multiple result sets in one go.
+
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // await foreach (var item in connection.QueryUnbufferedAsync<Recovery>(sql, new { tenant = tenantId }))
+        // {
+        //     yield return CacheEntity(item);
+        // }
     }
 
     public async IAsyncEnumerable<Recovery> ListAllByBuildingIdAsync(Navigation navigation, Guid tenantId, string id)
@@ -313,12 +336,25 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             GROUP BY r.id, a.reviewer, u.email, a.creator, u2.email, a.owner, o.name, a.contractor, c.name
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        sql = ConstructNavigation(sql, navigation);
 
-        await foreach (var item in connection.QueryUnbufferedAsync<Recovery>(sql, new { building = id }))
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("building", id);
+
+        await foreach (var reader in context.EnumerableReaderAsync())
         {
-            yield return CacheEntity(item);
+            yield return CacheEntity(MapFromReader(reader));
         }
+
+        // TODO: Dapper can't handle multiple result sets in one go.
+
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // await foreach (var item in connection.QueryUnbufferedAsync<Recovery>(sql, new { building = id }))
+        // {
+        //     yield return CacheEntity(item);
+        // }
     }
 
     /// <summary>
@@ -381,12 +417,8 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             AND     r.id = @id
             AND     a.owner = @tenant";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("tenant", tenantId);
-        context.AddParameterWithValue("status", entity.State.AuditStatus);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { id, tenant = tenantId, status = entity.State.AuditStatus });
     }
 }

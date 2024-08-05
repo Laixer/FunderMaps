@@ -1,8 +1,10 @@
-﻿using Dapper;
+﻿using System.Data.Common;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Extensions;
+using FunderMaps.Core.Types;
+using Dapper;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -11,6 +13,60 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryRepository
 {
+    private static void MapToWriter(DbContext context, Inquiry entity)
+    {
+        context.AddParameterWithValue("document_name", entity.DocumentName);
+        context.AddParameterWithValue("inspection", entity.Inspection);
+        context.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
+        context.AddParameterWithValue("floor_measurement", entity.FloorMeasurement);
+        context.AddParameterWithValue("note", entity.Note);
+        context.AddParameterWithValue("document_date", entity.DocumentDate);
+        context.AddParameterWithValue("document_file", entity.DocumentFile);
+        context.AddParameterWithValue("access_policy", entity.Access.AccessPolicy);
+        context.AddParameterWithValue("type", entity.Type);
+        context.AddParameterWithValue("standard_f3o", entity.StandardF3o);
+    }
+
+    private static Inquiry MapFromReader(DbDataReader reader, int offset = 0)
+        => new()
+        {
+            Id = reader.GetInt(offset + 0),
+            DocumentName = reader.GetString(offset + 1),
+            Inspection = reader.GetBoolean(offset + 2),
+            JointMeasurement = reader.GetBoolean(offset + 3),
+            FloorMeasurement = reader.GetBoolean(offset + 4),
+            Note = reader.GetSafeString(offset + 5),
+            DocumentDate = reader.GetDateTime(offset + 6),
+            DocumentFile = reader.GetString(offset + 7),
+            Type = reader.GetFieldValue<InquiryType>(offset + 8),
+            StandardF3o = reader.GetBoolean(offset + 9),
+            Attribution = new()
+            {
+                Reviewer = reader.GetFieldValue<Guid>(offset + 10),
+                ReviewerName = reader.GetSafeString(offset + 11),
+                Creator = reader.GetGuid(offset + 12),
+                CreatorName = reader.GetSafeString(offset + 13),
+                Owner = reader.GetGuid(offset + 14),
+                OwnerName = reader.GetSafeString(offset + 15),
+                Contractor = reader.GetInt(offset + 16),
+                ContractorName = reader.GetSafeString(offset + 17),
+            },
+            State = new()
+            {
+                AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 18),
+            },
+            Access = new()
+            {
+                AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 19),
+            },
+            Record = new()
+            {
+                CreateDate = reader.GetDateTime(offset + 20),
+                UpdateDate = reader.GetSafeDateTime(offset + 21),
+                DeleteDate = reader.GetSafeDateTime(offset + 22),
+            },
+        };
+
     /// <summary>
     ///     Create new <see cref="InquiryFull"/>.
     /// </summary>
@@ -87,11 +143,9 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             JOIN 	application.attribution AS a ON a.id = i.attribution
             WHERE   a.owner = @tenant";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("tenant", tenantId);
-
-        return await context.ScalarAsync<long>();
+        return await connection.ExecuteScalarAsync<long>(sql, new { tenant = tenantId });
     }
 
     public override Task DeleteAsync(int id)
@@ -115,67 +169,10 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             AND     i.id = @id
             AND     a.owner = @tenant";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("tenant", tenantId);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { id, tenant = tenantId });
     }
-
-    private static void MapToWriter(DbContext context, Inquiry entity)
-    {
-        context.AddParameterWithValue("document_name", entity.DocumentName);
-        context.AddParameterWithValue("inspection", entity.Inspection);
-        context.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
-        context.AddParameterWithValue("floor_measurement", entity.FloorMeasurement);
-        context.AddParameterWithValue("note", entity.Note);
-        context.AddParameterWithValue("document_date", entity.DocumentDate);
-        context.AddParameterWithValue("document_file", entity.DocumentFile);
-        context.AddParameterWithValue("access_policy", entity.Access.AccessPolicy);
-        context.AddParameterWithValue("type", entity.Type);
-        context.AddParameterWithValue("standard_f3o", entity.StandardF3o);
-    }
-
-    // private static Inquiry MapFromReader(DbDataReader reader, int offset = 0)
-    //     => new()
-    //     {
-    //         Id = reader.GetInt(offset + 0),
-    //         DocumentName = reader.GetString(offset + 1),
-    //         Inspection = reader.GetBoolean(offset + 2),
-    //         JointMeasurement = reader.GetBoolean(offset + 3),
-    //         FloorMeasurement = reader.GetBoolean(offset + 4),
-    //         Note = reader.GetSafeString(offset + 5),
-    //         DocumentDate = reader.GetDateTime(offset + 6),
-    //         DocumentFile = reader.GetString(offset + 7),
-    //         Type = reader.GetFieldValue<InquiryType>(offset + 8),
-    //         StandardF3o = reader.GetBoolean(offset + 9),
-    //         Attribution = new()
-    //         {
-    //             Reviewer = reader.GetFieldValue<Guid>(offset + 10),
-    //             ReviewerName = reader.GetSafeString(offset + 11),
-    //             Creator = reader.GetGuid(offset + 12),
-    //             CreatorName = reader.GetSafeString(offset + 13),
-    //             Owner = reader.GetGuid(offset + 14),
-    //             OwnerName = reader.GetSafeString(offset + 15),
-    //             Contractor = reader.GetInt(offset + 16),
-    //             ContractorName = reader.GetSafeString(offset + 17),
-    //         },
-    //         State = new()
-    //         {
-    //             AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 18),
-    //         },
-    //         Access = new()
-    //         {
-    //             AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 19),
-    //         },
-    //         Record = new()
-    //         {
-    //             CreateDate = reader.GetDateTime(offset + 20),
-    //             UpdateDate = reader.GetSafeDateTime(offset + 21),
-    //             DeleteDate = reader.GetSafeDateTime(offset + 22),
-    //         },
-    //     };
 
     /// <summary>
     ///     Retrieve <see cref="InquiryFull"/> by id.
@@ -232,10 +229,21 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             AND     a.owner = @tenant
             LIMIT   1";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        // TODO: Dapper can't handle multiple result sets in one go.
 
-        var inquiry = await connection.QuerySingleOrDefaultAsync<Inquiry>(sql, new { id, tenant = tenantId });
-        return inquiry is null ? throw new EntityNotFoundException(nameof(Inquiry)) : CacheEntity(inquiry);
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // var inquiry = await connection.QuerySingleOrDefaultAsync<Inquiry>(sql, new { id, tenant = tenantId });
+        // return inquiry is null ? throw new EntityNotFoundException(nameof(Inquiry)) : CacheEntity(inquiry);
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("tenant", tenantId);
+
+        await using var reader = await context.ReaderAsync();
+
+        return CacheEntity(MapFromReader(reader));
     }
 
     public override IAsyncEnumerable<Inquiry> ListAllAsync(Navigation navigation)
@@ -291,12 +299,25 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             WHERE   a.owner = @tenant
             ORDER BY coalesce(i.update_date, i.create_date) DESC";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        sql = ConstructNavigation(sql, navigation);
 
-        await foreach (var item in connection.QueryUnbufferedAsync<Inquiry>(sql, new { tenant = tenantId }))
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("tenant", tenantId);
+
+        await foreach (var reader in context.EnumerableReaderAsync())
         {
-            yield return CacheEntity(item);
+            yield return CacheEntity(MapFromReader(reader));
         }
+
+        // TODO: Dapper can't handle multiple result sets in one go.
+
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // await foreach (var item in connection.QueryUnbufferedAsync<Inquiry>(sql, new { tenant = tenantId }))
+        // {
+        //     yield return CacheEntity(item);
+        // }
     }
 
     public async IAsyncEnumerable<Inquiry> ListAllByBuildingIdAsync(Navigation navigation, Guid tenantId, string id)
@@ -345,12 +366,25 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             GROUP BY i.id, a.reviewer, u.email, a.creator, u2.email, a.owner, o.name, a.contractor, c.name
             ORDER BY coalesce(i.update_date, i.create_date) DESC";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        sql = ConstructNavigation(sql, navigation);
 
-        await foreach (var item in connection.QueryUnbufferedAsync<Inquiry>(sql, new { building = id }))
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("building", id);
+
+        await foreach (var reader in context.EnumerableReaderAsync())
         {
-            yield return CacheEntity(item);
+            yield return CacheEntity(MapFromReader(reader));
         }
+
+        // TODO: Dapper can't handle multiple result sets in one go.
+
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // await foreach (var item in connection.QueryUnbufferedAsync<Inquiry>(sql, new { building = id }))
+        // {
+        //     yield return CacheEntity(item);
+        // }
     }
 
     /// <summary>
@@ -417,12 +451,8 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             AND     i.id = @id
             AND     a.owner = @tenant";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("tenant", tenantId);
-        context.AddParameterWithValue("status", entity.State.AuditStatus);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { id, tenant = tenantId, status = entity.State.AuditStatus });
     }
 }
