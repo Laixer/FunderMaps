@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
-using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -45,25 +45,13 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         await connection.ExecuteAsync(sql, new { id });
     }
 
-    private static Organization MapFromReader(DbDataReader reader, int offset = 0)
-        => new()
-        {
-            Id = reader.GetGuid(offset++),
-            Name = reader.GetString(offset++),
-            Email = reader.GetString(offset++),
-            // Area = new()
-            // {
-            //     XMin = reader.GetSafeDouble(offset++),
-            //     YMin = reader.GetSafeDouble(offset++),
-            //     XMax = reader.GetSafeDouble(offset++),
-            //     YMax = reader.GetSafeDouble(offset++),
-            // },
-            // Center = new()
-            // {
-            //     CenterX = reader.GetSafeDouble(offset++),
-            //     CenterY = reader.GetSafeDouble(offset++),
-            // }
-        };
+    // private static Organization MapFromReader(DbDataReader reader, int offset = 0)
+    //     => new()
+    //     {
+    //         Id = reader.GetGuid(offset++),
+    //         Name = reader.GetString(offset++),
+    //         Email = reader.GetString(offset++),
+    //     };
 
     /// <summary>
     ///     Retrieve <see cref="Organization"/> by id.
@@ -81,23 +69,24 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
             SELECT  id,
                     name,
                     email
-                    -- 0 AS x_min,
-                    -- 0 AS y_min,
-                    -- 0 AS x_max,
-                    -- 0 AS y_max,
-                    -- 0 AS center_x,
-                    -- 0 AS center_y
             FROM    application.organization
             WHERE   id = @id
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
+        var organization = await connection.QuerySingleOrDefaultAsync<Organization>(sql, new { id });
+        return organization is null ? throw new EntityNotFoundException(nameof(Organization)) : CacheEntity(organization);
 
-        await using var reader = await context.ReaderAsync();
+        // return await connection.QuerySingleOrDefaultAsync<Organization>(sql, new { id });
 
-        return CacheEntity(MapFromReader(reader));
+        // await using var context = await DbContextFactory.CreateAsync(sql);
+
+        // context.AddParameterWithValue("id", id);
+
+        // await using var reader = await context.ReaderAsync();
+
+        // return CacheEntity(MapFromReader(reader));
     }
 
     /// <summary>
@@ -109,23 +98,24 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         var sql = @"
             SELECT  id,
                     name,
-                    email,
-                    -- 0 AS x_min,
-                    -- 0 AS y_min,
-                    -- 0 AS x_max,
-                    -- 0 AS y_max,
-                    -- 0 AS center_x,
-                    -- 0 AS center_y
+                    email
             FROM    application.organization";
 
-        sql = ConstructNavigation(sql, navigation);
+        // sql = ConstructNavigation(sql, navigation);
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var reader in context.EnumerableReaderAsync())
+        await foreach (var item in connection.QueryUnbufferedAsync<Organization>(sql, navigation))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return CacheEntity(item);
         }
+
+        // await using var context = await DbContextFactory.CreateAsync(sql);
+
+        // await foreach (var reader in context.EnumerableReaderAsync())
+        // {
+        //     yield return CacheEntity(MapFromReader(reader));
+        // }
     }
 
     /// <summary>

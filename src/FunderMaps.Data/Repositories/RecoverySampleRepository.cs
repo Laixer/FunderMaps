@@ -1,5 +1,7 @@
-﻿using FunderMaps.Core;
+﻿using Dapper;
+using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
@@ -81,11 +83,15 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
                 @recovery_date)
             RETURNING id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        MapToWriter(context, entity);
+        return await connection.ExecuteScalarAsync<int>(sql, entity);
 
-        return await context.ScalarAsync<int>();
+        // await using var context = await DbContextFactory.CreateAsync(sql);
+
+        // MapToWriter(context, entity);
+
+        // return await context.ScalarAsync<int>();
     }
 
     /// <summary>
@@ -98,9 +104,13 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             SELECT  COUNT(*)
             FROM    report.recovery_sample";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<long>();
+        return await connection.ExecuteScalarAsync<long>(sql);
+
+        // await using var context = await DbContextFactory.CreateAsync(sql);
+
+        // return await context.ScalarAsync<long>();
     }
 
     /// <summary>
@@ -117,12 +127,16 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             WHERE   a.owner = @tenant
             AND     r.id = @id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", recovery);
-        context.AddParameterWithValue("tenant", tenantId);
+        return await connection.ExecuteScalarAsync<long>(sql, new { id = recovery, tenant = tenantId });
 
-        return await context.ScalarAsync<long>();
+        // await using var context = await DbContextFactory.CreateAsync(sql);
+
+        // context.AddParameterWithValue("id", recovery);
+        // context.AddParameterWithValue("tenant", tenantId);
+
+        // return await context.ScalarAsync<long>();
     }
 
     public override Task DeleteAsync(int id)
@@ -141,11 +155,15 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             FROM    report.recovery_sample
             WHERE   id = @id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
+        await connection.ExecuteAsync(sql, new { id });
 
-        await context.NonQueryAsync();
+        // await using var context = await DbContextFactory.CreateAsync(sql);
+
+        // context.AddParameterWithValue("id", id);
+
+        // await context.NonQueryAsync();
     }
 
     public override Task<RecoverySample> GetByIdAsync(int id)
@@ -182,13 +200,18 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             WHERE   s.id = @id
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
+        var recovery_sample = await connection.QuerySingleOrDefaultAsync<RecoverySample>(sql, new { id });
+        return recovery_sample is null ? throw new EntityNotFoundException(nameof(RecoverySample)) : CacheEntity(recovery_sample);
 
-        await using var reader = await context.ReaderAsync();
+        // await using var context = await DbContextFactory.CreateAsync(sql);
 
-        return MapFromReader(reader);
+        // context.AddParameterWithValue("id", id);
+
+        // await using var reader = await context.ReaderAsync();
+
+        // return MapFromReader(reader);
     }
 
     public async IAsyncEnumerable<RecoverySample> ListAllByBuildingIdAsync(string id)
@@ -217,14 +240,21 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             WHERE   s.building = @building
             ORDER BY s.create_date DESC";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("building", id);
-
-        await foreach (var reader in context.EnumerableReaderAsync())
+        await foreach (var item in connection.QueryUnbufferedAsync<RecoverySample>(sql, new { building = id }))
         {
-            yield return MapFromReader(reader);
+            yield return CacheEntity(item);
         }
+
+        // await using var context = await DbContextFactory.CreateAsync(sql);
+
+        // context.AddParameterWithValue("building", id);
+
+        // await foreach (var reader in context.EnumerableReaderAsync())
+        // {
+        //     yield return MapFromReader(reader);
+        // }
     }
 
     public override IAsyncEnumerable<RecoverySample> ListAllAsync(Navigation navigation)
@@ -262,16 +292,23 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             WHERE   a.owner = @tenant
             ORDER BY s.create_date DESC";
 
-        sql = ConstructNavigation(sql, navigation);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        context.AddParameterWithValue("tenant", tenantId);
-
-        await foreach (var reader in context.EnumerableReaderAsync())
+        await foreach (var item in connection.QueryUnbufferedAsync<RecoverySample>(sql, new { tenant = tenantId }))
         {
-            yield return MapFromReader(reader);
+            yield return CacheEntity(item);
         }
+
+        // sql = ConstructNavigation(sql, navigation);
+
+        // await using var context = await DbContextFactory.CreateAsync(sql);
+
+        // context.AddParameterWithValue("tenant", tenantId);
+
+        // await foreach (var reader in context.EnumerableReaderAsync())
+        // {
+        //     yield return MapFromReader(reader);
+        // }
     }
 
     /// <summary>
@@ -305,17 +342,24 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             AND     r.id = @id
             ORDER BY s.create_date DESC";
 
-        sql = ConstructNavigation(sql, navigation);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        context.AddParameterWithValue("id", recovery);
-        context.AddParameterWithValue("tenant", tenantId);
-
-        await foreach (var reader in context.EnumerableReaderAsync())
+        await foreach (var item in connection.QueryUnbufferedAsync<RecoverySample>(sql, new { id = recovery, tenant = tenantId }))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return CacheEntity(item);
         }
+
+        // sql = ConstructNavigation(sql, navigation);
+
+        // await using var context = await DbContextFactory.CreateAsync(sql);
+
+        // context.AddParameterWithValue("id", recovery);
+        // context.AddParameterWithValue("tenant", tenantId);
+
+        // await foreach (var reader in context.EnumerableReaderAsync())
+        // {
+        //     yield return CacheEntity(MapFromReader(reader));
+        // }
     }
 
     public override Task UpdateAsync(RecoverySample entity)
@@ -340,12 +384,16 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
                     recovery_date = @recovery_date
             WHERE   id = @id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", entity.Id);
+        await connection.ExecuteAsync(sql, entity);
 
-        MapToWriter(context, entity);
+        // await using var context = await DbContextFactory.CreateAsync(sql);
 
-        await context.NonQueryAsync();
+        // context.AddParameterWithValue("id", entity.Id);
+
+        // MapToWriter(context, entity);
+
+        // await context.NonQueryAsync();
     }
 }

@@ -19,6 +19,7 @@ internal sealed class TaskRepository : DbServiceBase, ITaskRepository
             VALUES (@id, @runtime);";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
         await connection.ExecuteAsync(sql, new { id, runtime });
     }
 }

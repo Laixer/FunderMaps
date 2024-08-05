@@ -99,56 +99,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         await connection.ExecuteAsync(sql, new { id });
     }
 
-    // private static void MapToWriter(DbContext context, Incident entity)
-    // {
-    //     context.AddParameterWithValue("foundation_type", entity.FoundationType);
-    //     context.AddParameterWithValue("chained_building", entity.ChainedBuilding);
-    //     context.AddParameterWithValue("owner", entity.Owner);
-    //     context.AddParameterWithValue("foundation_recovery", entity.FoundationRecovery);
-    //     context.AddParameterWithValue("neightbor_recovery", entity.NeighborRecovery);
-    //     context.AddParameterWithValue("foundation_damage_cause", entity.FoundationDamageCause);
-    //     context.AddParameterWithValue("document_file", entity.DocumentFile);
-    //     context.AddParameterWithValue("note", entity.Note);
-    //     context.AddParameterWithValue("internal_note", entity.InternalNote);
-    //     context.AddParameterWithValue("foundation_damage_characteristics", entity.FoundationDamageCharacteristics);
-    //     context.AddParameterWithValue("environment_damage_characteristics", entity.EnvironmentDamageCharacteristics);
-    //     context.AddParameterWithValue("email", entity.Email);
-    //     context.AddParameterWithValue("name", entity.Name);
-    //     context.AddParameterWithValue("phone_number", entity.PhoneNumber);
-    //     context.AddParameterWithValue("building", entity.Building);
-    //     context.AddParameterWithValue("audit_status", entity.AuditStatus);
-    //     context.AddParameterWithValue("question_type", entity.QuestionType);
-    //     context.AddJsonParameterWithValue("meta", entity.Meta);
-    // }
-
-    // private static Incident MapFromReader(DbDataReader reader, int offset = 0)
-    //     => new()
-    //     {
-    //         Id = reader.GetString(offset++),
-    //         ClientName = reader.GetString(offset++),
-    //         FoundationType = reader.GetSafeStructValue<FoundationType>(offset++),
-    //         ChainedBuilding = reader.GetBoolean(offset++),
-    //         Owner = reader.GetBoolean(offset++),
-    //         FoundationRecovery = reader.GetBoolean(offset++),
-    //         NeighborRecovery = reader.GetBoolean(offset++),
-    //         FoundationDamageCause = reader.GetSafeStructValue<FoundationDamageCause>(offset++),
-    //         DocumentFile = reader.GetSafeStringArray(offset++),
-    //         Note = reader.GetSafeString(offset++),
-    //         InternalNote = reader.GetSafeString(offset++),
-    //         Email = reader.GetString(offset++),
-    //         Name = reader.GetSafeString(offset++),
-    //         PhoneNumber = reader.GetSafeString(offset++),
-    //         CreateDate = reader.GetDateTime(offset++),
-    //         UpdateDate = reader.GetSafeDateTime(offset++),
-    //         DeleteDate = reader.GetSafeDateTime(offset++),
-    //         FoundationDamageCharacteristics = reader.GetSafeFieldValue<FoundationDamageCharacteristics[]>(offset++),
-    //         EnvironmentDamageCharacteristics = reader.GetSafeFieldValue<EnvironmentDamageCharacteristics[]>(offset++),
-    //         Building = reader.GetString(offset++),
-    //         AuditStatus = reader.GetFieldValue<AuditStatus>(offset++),
-    //         QuestionType = reader.GetFieldValue<IncidentQuestionType>(offset++),
-    //         Meta = reader.GetSafeFieldValue<object>(offset++),
-    //     };
-
     /// <summary>
     ///     Retrieve <see cref="Incident"/> by id.
     /// </summary>
@@ -194,7 +144,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         var incident = await connection.QuerySingleOrDefaultAsync<Incident>(sql, new { id });
-        return incident is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(incident);
+        return incident is null ? throw new EntityNotFoundException(nameof(Incident)) : CacheEntity(incident);
     }
 
     public async IAsyncEnumerable<Incident> ListAllByBuildingIdAsync(string id)
