@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Components;
+﻿using FunderMaps.Data.Components;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Abstractions;

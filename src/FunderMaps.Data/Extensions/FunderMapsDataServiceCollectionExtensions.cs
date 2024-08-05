@@ -1,6 +1,6 @@
-using FunderMaps.Core.Components;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
+using FunderMaps.Data.Components;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;

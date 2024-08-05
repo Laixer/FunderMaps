@@ -19,17 +19,6 @@ internal static class DbDataReaderExtensions
     }
 
     /// <summary>
-    ///     Return value as unsigned integer.
-    /// </summary>
-    /// <param name="reader">Input reader to extend.</param>
-    /// <param name="ordinal">Column ordinal.</param>
-    /// <returns>Value as integer.</returns>
-    public static uint GetUInt(this DbDataReader reader, int ordinal)
-    {
-        return (uint)reader.GetInt(ordinal);
-    }
-
-    /// <summary>
     ///     Return value as nullable integer.
     /// </summary>
     /// <param name="reader">Input reader to extend.</param>
@@ -70,17 +59,6 @@ internal static class DbDataReaderExtensions
     public static string? GetSafeString(this DbDataReader reader, int ordinal)
     {
         return reader.IsDBNull(ordinal) ? null : reader.GetString(ordinal);
-    }
-
-    /// <summary>
-    ///     Return value as nullable string array.
-    /// </summary>
-    /// <param name="reader">Input reader to extend.</param>
-    /// <param name="ordinal">Column ordinal.</param>
-    /// <returns>Value as nullable string.</returns>
-    public static string[]? GetSafeStringArray(this DbDataReader reader, int ordinal)
-    {
-        return reader.IsDBNull(ordinal) ? null : reader.GetFieldValue<string[]>(ordinal);
     }
 
     /// <summary>

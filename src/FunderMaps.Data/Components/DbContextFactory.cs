@@ -1,12 +1,11 @@
-using FunderMaps.Data;
 using FunderMaps.Data.Providers;
 
-namespace FunderMaps.Core.Components;
+namespace FunderMaps.Data.Components;
 
 /// <summary>
 ///     Default <see cref="DbContext"/> factory.
 /// </summary>
-internal class DbContextFactory(AppContext appContext, DbProvider dbProvider)
+internal class DbContextFactory(Core.AppContext appContext, DbProvider dbProvider)
 {
     public DbProvider DbProvider => dbProvider;
 
