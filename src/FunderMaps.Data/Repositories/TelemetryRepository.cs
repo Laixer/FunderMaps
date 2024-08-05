@@ -2,7 +2,6 @@
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
-using FunderMaps.Data.Extensions;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -11,35 +10,6 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
 {
-    /// <summary>
-    ///     Retrieve all product telemetrics.
-    /// </summary>
-    public async IAsyncEnumerable<ProductTelemetry2> ListAllAsync()
-    {
-        var sql = @"
-            SELECT  -- ProductTracker
-                    o.id,
-                    o.name,
-                    pt.product,
-                    count(pt.organization_id)
-            FROM    application.product_tracker AS pt
-            JOIN	application.organization AS o ON o.id::uuid = pt.organization_id::uuid
-            GROUP BY o.id, pt.product";
-
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        await foreach (var reader in context.EnumerableReaderAsync())
-        {
-            yield return new()
-            {
-                Id = reader.GetGuid(0),
-                Name = reader.GetString(1),
-                Product = reader.GetString(2),
-                Count = reader.GetInt(3),
-            };
-        }
-    }
-
     public async IAsyncEnumerable<Guid> ListLastMonthOrganizationaAsync()
     {
         var sql = @"
