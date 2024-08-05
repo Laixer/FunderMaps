@@ -4,14 +4,8 @@ using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Various data operations.
-/// </summary>
 internal sealed class TaskRepository : DbServiceBase, ITaskRepository
 {
-    /// <summary>
-    ///     Log the run time of a task.
-    /// </summary>
     public async Task LogRunTimeAsync(string id, TimeSpan runtime)
     {
         var sql = @"

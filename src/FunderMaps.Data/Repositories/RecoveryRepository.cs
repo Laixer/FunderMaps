@@ -35,23 +35,27 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             Attribution = new()
             {
                 Reviewer = reader.GetFieldValue<Guid>(offset + 6),
-                Creator = reader.GetGuid(offset + 7),
-                Owner = reader.GetGuid(offset + 8),
-                Contractor = reader.GetInt(offset + 9),
+                ReviewerName = reader.GetString(offset + 7),
+                Creator = reader.GetGuid(offset + 8),
+                CreatorName = reader.GetString(offset + 9),
+                Owner = reader.GetGuid(offset + 10),
+                OwnerName = reader.GetString(offset + 11),
+                Contractor = reader.GetInt(offset + 12),
+                ContractorName = reader.GetString(offset + 13),
             },
             State = new()
             {
-                AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 10),
+                AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 14),
             },
             Access = new()
             {
-                AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 11),
+                AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 15),
             },
             Record = new()
             {
-                CreateDate = reader.GetDateTime(offset + 12),
-                UpdateDate = reader.GetSafeDateTime(offset + 13),
-                DeleteDate = reader.GetSafeDateTime(offset + 14),
+                CreateDate = reader.GetDateTime(offset + 16),
+                UpdateDate = reader.GetSafeDateTime(offset + 17),
+                DeleteDate = reader.GetSafeDateTime(offset + 18),
             },
         };
 
