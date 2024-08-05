@@ -154,23 +154,27 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             Attribution = new()
             {
                 Reviewer = reader.GetFieldValue<Guid>(offset + 10),
-                Creator = reader.GetGuid(offset + 11),
-                Owner = reader.GetGuid(offset + 12),
-                Contractor = reader.GetInt(offset + 13),
+                ReviewerName = reader.GetSafeString(offset + 11),
+                Creator = reader.GetGuid(offset + 12),
+                CreatorName = reader.GetSafeString(offset + 13),
+                Owner = reader.GetGuid(offset + 14),
+                OwnerName = reader.GetSafeString(offset + 15),
+                Contractor = reader.GetInt(offset + 16),
+                ContractorName = reader.GetSafeString(offset + 17),
             },
             State = new()
             {
-                AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 14),
+                AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 18),
             },
             Access = new()
             {
-                AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 15),
+                AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 19),
             },
             Record = new()
             {
-                CreateDate = reader.GetDateTime(offset + 16),
-                UpdateDate = reader.GetSafeDateTime(offset + 17),
-                DeleteDate = reader.GetSafeDateTime(offset + 18),
+                CreateDate = reader.GetDateTime(offset + 20),
+                UpdateDate = reader.GetSafeDateTime(offset + 21),
+                DeleteDate = reader.GetSafeDateTime(offset + 22),
             },
         };
 
@@ -201,9 +205,13 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
                     -- Attribution
                     a.reviewer,
+                    u.email AS reviewer_name, 
                     a.creator,
+                    u2.email AS creator_name,
                     a.owner,
+                    o.name AS owner_name,
                     a.contractor,
+                    c.name AS contractor_name,
 
                     -- State control
                     i.audit_status,
@@ -217,6 +225,10 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
                     i.delete_date
             FROM    report.inquiry AS i
             JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN    application.user u ON u.id = a.reviewer
+            JOIN    application.user u2 ON u2.id = a.creator
+            JOIN    application.organization o ON o.id = a.owner
+            JOIN    application.contractor c ON c.id = a.contractor
             WHERE   i.id = @id
             AND     a.owner = @tenant
             LIMIT   1";
@@ -257,9 +269,13 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
                     -- Attribution
                     a.reviewer,
+                    u.email AS reviewer_name, 
                     a.creator,
+                    u2.email AS creator_name,
                     a.owner,
+                    o.name AS owner_name,
                     a.contractor,
+                    c.name AS contractor_name,
 
                     -- State control
                     i.audit_status,
@@ -273,6 +289,10 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
                     i.delete_date
             FROM    report.inquiry AS i
             JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN    application.user u ON u.id = a.reviewer
+            JOIN    application.user u2 ON u2.id = a.creator
+            JOIN    application.organization o ON o.id = a.owner
+            JOIN    application.contractor c ON c.id = a.contractor
             WHERE   a.owner = @tenant
             ORDER BY coalesce(i.update_date, i.create_date) DESC";
 
@@ -305,9 +325,13 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
                     -- Attribution
                     a.reviewer,
+                    u.email AS reviewer_name, 
                     a.creator,
+                    u2.email AS creator_name,
                     a.owner,
+                    o.name AS owner_name,
                     a.contractor,
+                    c.name AS contractor_name,
 
                     -- State control
                     i.audit_status,
@@ -322,8 +346,12 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN    application.user u ON u.id = a.reviewer
+            JOIN    application.user u2 ON u2.id = a.creator
+            JOIN    application.organization o ON o.id = a.owner
+            JOIN    application.contractor c ON c.id = a.contractor
             WHERE   s.building = @building
-            GROUP BY i.id, a.reviewer, a.creator, a.owner, a.contractor
+            GROUP BY i.id, a.reviewer, u.email, a.creator, u2.email, a.owner, o.name, a.contractor, c.name
             ORDER BY coalesce(i.update_date, i.create_date) DESC";
 
         sql = ConstructNavigation(sql, navigation);
