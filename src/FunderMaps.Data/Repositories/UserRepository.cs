@@ -1,10 +1,8 @@
 ﻿using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types;
-using FunderMaps.Data.Extensions;
-using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -32,21 +30,17 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                 phone_number,
                 role)
             VALUES (
-                NULLIF(trim(@given_name), ''),
-                NULLIF(trim(@last_name), ''),
-                application.normalize2(@email),
-                NULLIF(trim(@job_title), ''),
-                REGEXP_REPLACE(@phone_number,'\D','','g'),
-                @role)
+                NULLIF(trim(@GivenName), ''),
+                NULLIF(trim(@LastName), ''),
+                application.normalize2(@Email),
+                NULLIF(trim(@JobTitle), ''),
+                REGEXP_REPLACE(@PhoneNumber,'\D','','g'),
+                @Role)
             RETURNING id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        MapToWriter(context, entity);
-
-        await using var reader = await context.ReaderAsync();
-
-        return reader.GetGuid(0);
+        return await connection.ExecuteScalarAsync<Guid>(sql, entity);
     }
 
     /// <summary>
@@ -84,28 +78,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         await connection.ExecuteAsync(sql, new { id });
     }
 
-    private static void MapToWriter(DbContext context, User entity)
-    {
-        context.AddParameterWithValue("given_name", entity.GivenName);
-        context.AddParameterWithValue("last_name", entity.LastName);
-        context.AddParameterWithValue("email", entity.Email);
-        context.AddParameterWithValue("job_title", entity.JobTitle);
-        context.AddParameterWithValue("phone_number", entity.PhoneNumber);
-        context.AddParameterWithValue("role", entity.Role);
-    }
-
-    private static User MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-        => new()
-        {
-            Id = reader.GetGuid(offset + 0),
-            GivenName = reader.GetSafeString(offset + 1),
-            LastName = reader.GetSafeString(offset + 2),
-            Email = reader.GetString(offset + 3),
-            JobTitle = reader.GetSafeString(offset + 4),
-            PhoneNumber = reader.GetSafeString(offset + 5),
-            Role = reader.GetFieldValue<ApplicationRole>(offset + 6),
-        };
-
     /// <summary>
     ///     Retrieve <see cref="User"/> by id.
     /// </summary>
@@ -131,13 +103,10 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
             WHERE   u.id = @id
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { id });
+        return user is null ? throw new EntityNotFoundException(nameof(User)) : CacheEntity(user);
     }
 
     /// <summary>
@@ -160,13 +129,11 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
             WHERE   u.email = application.normalize2(@email)
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
 
-        context.AddParameterWithValue("email", email);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { email });
+        return user is null ? throw new EntityNotFoundException(nameof(User)) : CacheEntity(user);
     }
 
     /// <summary>
@@ -190,13 +157,10 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
             WHERE   ak.key = @key
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("key", key);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { key });
+        return user is null ? throw new EntityNotFoundException(nameof(User)) : CacheEntity(user);
     }
 
     /// <summary>
@@ -223,14 +187,10 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
             AND     rk.create_date > NOW() - INTERVAL '2 hours'
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("key", key);
-        context.AddParameterWithValue("email", email);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { key, email });
+        return user is null ? throw new EntityNotFoundException(nameof(User)) : CacheEntity(user);
     }
 
     /// <summary>
@@ -286,11 +246,11 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     u.role
             FROM    application.user AS u";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var reader in context.EnumerableReaderAsync())
+        await foreach (var item in connection.QueryUnbufferedAsync<User>(sql))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return CacheEntity(item);
         }
     }
 
@@ -305,19 +265,15 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
         var sql = @"
             UPDATE  application.user
-            SET     given_name = NULLIF(trim(@given_name), ''),
-                    last_name = NULLIF(trim(@last_name), ''),
-                    job_title = NULLIF(trim(@job_title), ''),
-                    phone_number = REGEXP_REPLACE(@phone_number,'\D','','g')
-            WHERE   id = @id";
+            SET     given_name = NULLIF(trim(@GivenName), ''),
+                    last_name = NULLIF(trim(@LastName), ''),
+                    job_title = NULLIF(trim(@JobTitle), ''),
+                    phone_number = REGEXP_REPLACE(@PhoneNumber,'\D','','g')
+            WHERE   id = @Id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", entity.Id);
-
-        MapToWriter(context, entity);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, entity);
     }
 
     /// <summary>
