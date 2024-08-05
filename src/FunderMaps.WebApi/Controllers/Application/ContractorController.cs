@@ -1,6 +1,5 @@
 using FunderMaps.Core;
 using FunderMaps.Core.Controllers;
-using FunderMaps.Core.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +21,6 @@ public sealed class ContractorController(IContractorRepository contractorReposit
     ///     Contractors are tenant independent.
     /// </remarks>
     [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 12)]
-    public ValueTask<List<Contractor>> GetAllAsync([FromQuery] PaginationDto pagination)
+    public ValueTask<List<Contractor>> GetAllAsync()
         => contractorRepository.ListAllAsync(Navigation.All).ToListAsync();
 }

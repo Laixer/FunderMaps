@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers.Application;
 
-[Route("api")]
+[Route("api/metadata")]
 public sealed class MetaController : FunderMapsController
 {
     // GET: api/metadata
-    [HttpGet("metadata")]
+    [HttpGet]
     public async Task<object> GetAllAsync()
     {
         await Task.CompletedTask;
@@ -18,7 +18,7 @@ public sealed class MetaController : FunderMapsController
     }
 
     // PUT: api/metadata
-    [HttpPut("metadata")]
+    [HttpPut]
     public async Task<object> UpdateAsync([FromBody] object metadata)
     {
         await Task.CompletedTask;
