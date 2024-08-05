@@ -3,21 +3,19 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Repository for map sets.
-/// </summary>
 internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 {
-    // FUTURE: Add caching.
-    /// <summary>
-    ///     Gets an analysis product by its internal building id.
-    /// </summary>
-    /// <param name="id">Internal building id.</param>
     public async Task<Mapset> GetPublicAsync(Guid id)
     {
+        if (Cache.TryGetValue(id, out Mapset? value))
+        {
+            return value ?? throw new EntityNotFoundException(nameof(Mapset));
+        }
+
         // TODO: Refactor to use a view.
         var sql = @"
             SELECT  -- Mapset
@@ -54,15 +52,23 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var mapset = await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { id });
-        return mapset is null ? throw new EntityNotFoundException(nameof(mapset)) : mapset;
+        var mapset = await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(Mapset));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromHours(1))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+
+        return Cache.Set(mapset.Id, mapset, options);
     }
 
-    /// <summary>
-    ///    Gets an analysis product by its name.
-    /// </summary>
     public async Task<Mapset> GetPublicByNameAsync(string name)
     {
+        if (Cache.TryGetValue(name, out Mapset? value))
+        {
+            return value ?? throw new EntityNotFoundException(nameof(Mapset));
+        }
+
         // TODO: Refactor to use a view.
         var sql = @"
             SELECT  -- Mapset
@@ -99,14 +105,18 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var mapset = await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { name });
-        return mapset is null ? throw new EntityNotFoundException(nameof(mapset)) : mapset;
+        var mapset = await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { name })
+            ?? throw new EntityNotFoundException(nameof(Mapset));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromHours(1))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+
+        Cache.Set(mapset.Name, mapset, options);
+
+        return Cache.Set(mapset.Id, mapset, options);
     }
 
-    /// <summary>
-    ///     Gets an analysis product by its internal building id.
-    /// </summary>
-    /// <param name="id">Internal building id.</param>
     public async IAsyncEnumerable<Mapset> GetByOrganizationIdAsync(Guid id)
     {
         // TODO: Refactor to use a view.
@@ -147,9 +157,13 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromHours(1))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+
         await foreach (var item in connection.QueryUnbufferedAsync<Mapset>(sql, new { id }))
         {
-            yield return item;
+            yield return Cache.Set(item.Id, item, options);
         }
     }
 }
