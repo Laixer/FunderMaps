@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -60,9 +62,9 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
     public override async Task<User> GetByIdAsync(Guid id)
     {
-        if (TryGetEntity(id, out User? entity))
+        if (Cache.TryGetValue(id, out User? value))
         {
-            return entity ?? throw new InvalidOperationException();
+            return value ?? throw new EntityNotFoundException(nameof(User));
         }
 
         var sql = @"
@@ -80,8 +82,14 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var user = await connection.QuerySingleAsync<User>(sql, new { id });
-        return CacheEntity(user);
+        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(User));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromHours(1))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+
+        return Cache.Set(user.Id, user, options);
     }
 
     public async Task<User> GetByEmailAsync(string email)
@@ -101,8 +109,14 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var user = await connection.QuerySingleAsync<User>(sql, new { email });
-        return CacheEntity(user);
+        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { email })
+            ?? throw new EntityNotFoundException(nameof(User));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromHours(1))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+
+        return Cache.Set(user.Id, user, options);
     }
 
     public async Task<User> GetByAuthKeyAsync(string key)
@@ -123,8 +137,14 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var user = await connection.QuerySingleAsync<User>(sql, new { key });
-        return CacheEntity(user);
+        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { key })
+            ?? throw new EntityNotFoundException(nameof(User));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromHours(1))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+
+        return Cache.Set(user.Id, user, options);
     }
 
     public async Task<User> GetByResetKeyAsync(string email, Guid key)
@@ -147,8 +167,14 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var user = await connection.QuerySingleAsync<User>(sql, new { email, key });
-        return CacheEntity(user);
+        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { email, key })
+            ?? throw new EntityNotFoundException(nameof(User));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromHours(1))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+
+        return Cache.Set(user.Id, user, options);
     }
 
     public async Task<string?> GetPasswordHashAsync(Guid id)
@@ -192,6 +218,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
+        // TODO: Do not cache list.
         await foreach (var item in connection.QueryUnbufferedAsync<User>(sql))
         {
             yield return CacheEntity(item);

@@ -21,10 +21,10 @@ public class TileController(ITilesetRepository tilesetRepository) : FunderMapsCo
     /// <param name="y">The y-coordinate of the tile.</param>
     /// <returns>The tile data as a file.</returns>
     [HttpGet("api/tile/{name}/{z}/{x}/{y}.vector.pbf")]
+    [ResponseCache(Duration = 60 * 60 * 24, VaryByHeader = "Authorization", Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> GetAsync(string name, int z, int x, int y)
     {
         var fileContent = await tilesetRepository.GetTileAsync(name, z, x, y);
-
         if (fileContent == null || fileContent.Length == 0)
         {
             return NotFound();
