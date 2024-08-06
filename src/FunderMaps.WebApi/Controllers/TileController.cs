@@ -11,7 +11,6 @@ namespace FunderMaps.WebApi.Controllers;
 [AllowAnonymous]
 public class TileController(ITilesetRepository tilesetRepository) : FunderMapsController
 {
-    // TODO: Add serious caching to this controller.
     /// <summary>
     ///     Retrieves the specified tile data.
     /// </summary>
@@ -25,13 +24,16 @@ public class TileController(ITilesetRepository tilesetRepository) : FunderMapsCo
     public async Task<IActionResult> GetAsync(string name, int z, int x, int y)
     {
         var fileContent = await tilesetRepository.GetTileAsync(name, z, x, y);
-        if (fileContent == null || fileContent.Length == 0)
+        if (fileContent == null || fileContent.Length < 2)
         {
             return NotFound();
         }
 
-        // TODO: We need to check if the file is compressed or not.
-        Response.Headers.Append("Content-Encoding", "gzip");
+        // Check if the file is gzipped.
+        if (fileContent[0] == 0x1F && fileContent[1] == 0x8B)
+        {
+            Response.Headers.Append("Content-Encoding", "gzip");
+        }
 
         return File(fileContent, "application/x-protobuf");
     }
