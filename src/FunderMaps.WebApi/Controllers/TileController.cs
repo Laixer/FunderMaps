@@ -1,4 +1,5 @@
 using FunderMaps.Core.Controllers;
+using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     Represents a controller for handling tile requests.
 /// </summary>
 [AllowAnonymous]
-public class TileController : FunderMapsController
+public class TileController(ITilesetRepository tilesetRepository) : FunderMapsController
 {
     /// <summary>
     ///     Retrieves the specified tile data.
@@ -19,10 +20,12 @@ public class TileController : FunderMapsController
     /// <param name="y">The y-coordinate of the tile.</param>
     /// <returns>The tile data as a file.</returns>
     [HttpGet("api/tile/{name}/{z}/{x}/{y}.vector.pbf")]
-    public IActionResult GetAsync(string name, int z, int x, int y)
+    public async Task<IActionResult> GetAsync(string name, int z, int x, int y)
     {
-        var data = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+        var fileContent = await tilesetRepository.GetTileAsync(name, z, x, y);
 
-        return File(data, "application/x-protobuf");
+        Response.Headers.Append("Content-Encoding", "gzip");
+
+        return File(fileContent, "application/x-protobuf");
     }
 }
