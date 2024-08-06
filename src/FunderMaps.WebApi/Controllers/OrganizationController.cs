@@ -21,6 +21,7 @@ public class OrganizationController(IOrganizationRepository organizationReposito
     ///     Return session organization.
     /// </summary>
     [HttpGet]
+    [ResponseCache(Duration = 60 * 60, VaryByHeader = "Authorization", Location = ResponseCacheLocation.Client)]
     public Task<Organization> GetAsync()
         => organizationRepository.GetByIdAsync(TenantId);
 

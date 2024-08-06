@@ -20,6 +20,7 @@ public class UserController(IUserRepository userRepository) : FunderMapsControll
     ///     Return session user.
     /// </summary>
     [HttpGet]
+    [ResponseCache(Duration = 60 * 60, VaryByHeader = "Authorization", Location = ResponseCacheLocation.Client)]
     public Task<User> GetAsync()
         => userRepository.GetByIdAsync(UserId);
 
