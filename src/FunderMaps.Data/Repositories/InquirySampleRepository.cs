@@ -323,78 +323,78 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         context.AddParameterWithValue("facade_scan_risk", entity.FacadeScanRisk);
     }
 
-    private static InquirySample MapFromReader(DbDataReader reader, int offset = 0)
-        => new()
-        {
-            Id = reader.GetInt(offset++),
-            Inquiry = reader.GetInt(offset++),
-            Address = reader.GetString(offset++),
-            Building = reader.GetString(offset++),
-            Note = reader.GetSafeString(offset++),
-            CreateDate = reader.GetDateTime(offset++),
-            UpdateDate = reader.GetSafeDateTime(offset++),
-            DeleteDate = reader.GetSafeDateTime(offset++),
-            BuiltYear = reader.GetSafeDateTime(offset++),
-            Substructure = reader.GetFieldValue<Substructure?>(offset++),
-            OverallQuality = reader.GetFieldValue<FoundationQuality?>(offset++),
-            WoodQuality = reader.GetFieldValue<WoodQuality?>(offset++),
-            ConstructionQuality = reader.GetFieldValue<Quality?>(offset++),
-            WoodCapacityHorizontalQuality = reader.GetFieldValue<Quality?>(offset++),
-            PileWoodCapacityVerticalQuality = reader.GetFieldValue<Quality?>(offset++),
-            CarryingCapacityQuality = reader.GetFieldValue<Quality?>(offset++),
-            MasonQuality = reader.GetFieldValue<Quality?>(offset++),
-            WoodQualityNecessity = reader.GetSafeBoolean(offset++),
-            ConstructionLevel = reader.GetSafeDecimal(offset++),
-            WoodLevel = reader.GetSafeDecimal(offset++),
-            PileDiameterTop = reader.GetSafeDecimal(offset++),
-            PileDiameterBottom = reader.GetSafeDecimal(offset++),
-            PileHeadLevel = reader.GetSafeDecimal(offset++),
-            PileTipLevel = reader.GetSafeDecimal(offset++),
-            FoundationDepth = reader.GetSafeDecimal(offset++),
-            MasonLevel = reader.GetSafeDecimal(offset++),
-            ConcreteChargerLength = reader.GetSafeDecimal(offset++),
-            PileDistanceLength = reader.GetSafeDecimal(offset++),
-            WoodPenetrationDepth = reader.GetSafeDecimal(offset++),
-            Cpt = reader.GetSafeString(offset++),
-            MonitoringWell = reader.GetSafeString(offset++),
-            GroundwaterLevelTemp = reader.GetSafeDecimal(offset++),
-            GroundLevel = reader.GetSafeDecimal(offset++),
-            GroundwaterLevelNet = reader.GetSafeDecimal(offset++),
-            FoundationType = reader.GetFieldValue<FoundationType?>(offset++),
-            EnforcementTerm = reader.GetFieldValue<EnforcementTerm?>(offset++),
-            RecoveryAdvised = reader.GetSafeBoolean(offset++),
-            DamageCause = reader.GetFieldValue<FoundationDamageCause?>(offset++),
-            DamageCharacteristics = reader.GetFieldValue<FoundationDamageCharacteristics?>(offset++),
-            ConstructionPile = reader.GetFieldValue<ConstructionPile?>(offset++),
-            WoodType = reader.GetFieldValue<WoodType?>(offset++),
-            WoodEncroachement = reader.GetFieldValue<WoodEncroachement?>(offset++),
-            CrackIndoorRestored = reader.GetSafeBoolean(offset++),
-            CrackIndoorType = reader.GetFieldValue<CrackType?>(offset++),
-            CrackIndoorSize = reader.GetSafeInt(offset++),
-            CrackFacadeFrontRestored = reader.GetSafeBoolean(offset++),
-            CrackFacadeFrontType = reader.GetFieldValue<CrackType?>(offset++),
-            CrackFacadeFrontSize = reader.GetSafeInt(offset++),
-            CrackFacadeBackRestored = reader.GetSafeBoolean(offset++),
-            CrackFacadeBackType = reader.GetFieldValue<CrackType?>(offset++),
-            CrackFacadeBackSize = reader.GetSafeInt(offset++),
-            CrackFacadeLeftRestored = reader.GetSafeBoolean(offset++),
-            CrackFacadeLeftType = reader.GetFieldValue<CrackType?>(offset++),
-            CrackFacadeLeftSize = reader.GetSafeInt(offset++),
-            CrackFacadeRightRestored = reader.GetSafeBoolean(offset++),
-            CrackFacadeRightType = reader.GetFieldValue<CrackType?>(offset++),
-            CrackFacadeRightSize = reader.GetSafeInt(offset++),
-            DeformedFacade = reader.GetSafeBoolean(offset++),
-            ThresholdUpdownSkewed = reader.GetSafeBoolean(offset++),
-            ThresholdFrontLevel = reader.GetSafeDecimal(offset++),
-            ThresholdBackLevel = reader.GetSafeDecimal(offset++),
-            SkewedParallel = reader.GetSafeDecimal(offset++),
-            SkewedParallelFacade = reader.GetFieldValue<RotationType?>(offset++),
-            SkewedPerpendicular = reader.GetSafeDecimal(offset++),
-            SkewedPerpendicularFacade = reader.GetFieldValue<RotationType?>(offset++),
-            SettlementSpeed = reader.GetSafeDouble(offset++),
-            SkewedWindowFrame = reader.GetSafeBoolean(offset++),
-            FacadeScanRisk = reader.GetFieldValue<FacadeScanRisk?>(offset++),
-        };
+    // private static InquirySample MapFromReader(DbDataReader reader, int offset = 0)
+    //     => new()
+    //     {
+    //         Id = reader.GetInt(offset++),
+    //         Inquiry = reader.GetInt(offset++),
+    //         Address = reader.GetString(offset++),
+    //         Building = reader.GetString(offset++),
+    //         Note = reader.GetSafeString(offset++),
+    //         CreateDate = reader.GetDateTime(offset++),
+    //         UpdateDate = reader.GetSafeDateTime(offset++),
+    //         DeleteDate = reader.GetSafeDateTime(offset++),
+    //         BuiltYear = reader.GetSafeDateTime(offset++),
+    //         Substructure = reader.GetFieldValue<Substructure?>(offset++),
+    //         OverallQuality = reader.GetFieldValue<FoundationQuality?>(offset++),
+    //         WoodQuality = reader.GetFieldValue<WoodQuality?>(offset++),
+    //         ConstructionQuality = reader.GetFieldValue<Quality?>(offset++),
+    //         WoodCapacityHorizontalQuality = reader.GetFieldValue<Quality?>(offset++),
+    //         PileWoodCapacityVerticalQuality = reader.GetFieldValue<Quality?>(offset++),
+    //         CarryingCapacityQuality = reader.GetFieldValue<Quality?>(offset++),
+    //         MasonQuality = reader.GetFieldValue<Quality?>(offset++),
+    //         WoodQualityNecessity = reader.GetSafeBoolean(offset++),
+    //         ConstructionLevel = reader.GetSafeDecimal(offset++),
+    //         WoodLevel = reader.GetSafeDecimal(offset++),
+    //         PileDiameterTop = reader.GetSafeDecimal(offset++),
+    //         PileDiameterBottom = reader.GetSafeDecimal(offset++),
+    //         PileHeadLevel = reader.GetSafeDecimal(offset++),
+    //         PileTipLevel = reader.GetSafeDecimal(offset++),
+    //         FoundationDepth = reader.GetSafeDecimal(offset++),
+    //         MasonLevel = reader.GetSafeDecimal(offset++),
+    //         ConcreteChargerLength = reader.GetSafeDecimal(offset++),
+    //         PileDistanceLength = reader.GetSafeDecimal(offset++),
+    //         WoodPenetrationDepth = reader.GetSafeDecimal(offset++),
+    //         Cpt = reader.GetSafeString(offset++),
+    //         MonitoringWell = reader.GetSafeString(offset++),
+    //         GroundwaterLevelTemp = reader.GetSafeDecimal(offset++),
+    //         GroundLevel = reader.GetSafeDecimal(offset++),
+    //         GroundwaterLevelNet = reader.GetSafeDecimal(offset++),
+    //         FoundationType = reader.GetFieldValue<FoundationType?>(offset++),
+    //         EnforcementTerm = reader.GetFieldValue<EnforcementTerm?>(offset++),
+    //         RecoveryAdvised = reader.GetSafeBoolean(offset++),
+    //         DamageCause = reader.GetFieldValue<FoundationDamageCause?>(offset++),
+    //         DamageCharacteristics = reader.GetFieldValue<FoundationDamageCharacteristics?>(offset++),
+    //         ConstructionPile = reader.GetFieldValue<ConstructionPile?>(offset++),
+    //         WoodType = reader.GetFieldValue<WoodType?>(offset++),
+    //         WoodEncroachement = reader.GetFieldValue<WoodEncroachement?>(offset++),
+    //         CrackIndoorRestored = reader.GetSafeBoolean(offset++),
+    //         CrackIndoorType = reader.GetFieldValue<CrackType?>(offset++),
+    //         CrackIndoorSize = reader.GetSafeInt(offset++),
+    //         CrackFacadeFrontRestored = reader.GetSafeBoolean(offset++),
+    //         CrackFacadeFrontType = reader.GetFieldValue<CrackType?>(offset++),
+    //         CrackFacadeFrontSize = reader.GetSafeInt(offset++),
+    //         CrackFacadeBackRestored = reader.GetSafeBoolean(offset++),
+    //         CrackFacadeBackType = reader.GetFieldValue<CrackType?>(offset++),
+    //         CrackFacadeBackSize = reader.GetSafeInt(offset++),
+    //         CrackFacadeLeftRestored = reader.GetSafeBoolean(offset++),
+    //         CrackFacadeLeftType = reader.GetFieldValue<CrackType?>(offset++),
+    //         CrackFacadeLeftSize = reader.GetSafeInt(offset++),
+    //         CrackFacadeRightRestored = reader.GetSafeBoolean(offset++),
+    //         CrackFacadeRightType = reader.GetFieldValue<CrackType?>(offset++),
+    //         CrackFacadeRightSize = reader.GetSafeInt(offset++),
+    //         DeformedFacade = reader.GetSafeBoolean(offset++),
+    //         ThresholdUpdownSkewed = reader.GetSafeBoolean(offset++),
+    //         ThresholdFrontLevel = reader.GetSafeDecimal(offset++),
+    //         ThresholdBackLevel = reader.GetSafeDecimal(offset++),
+    //         SkewedParallel = reader.GetSafeDecimal(offset++),
+    //         SkewedParallelFacade = reader.GetFieldValue<RotationType?>(offset++),
+    //         SkewedPerpendicular = reader.GetSafeDecimal(offset++),
+    //         SkewedPerpendicularFacade = reader.GetFieldValue<RotationType?>(offset++),
+    //         SettlementSpeed = reader.GetSafeDouble(offset++),
+    //         SkewedWindowFrame = reader.GetSafeBoolean(offset++),
+    //         FacadeScanRisk = reader.GetFieldValue<FacadeScanRisk?>(offset++),
+    //     };
 
     public override Task<InquirySample> GetByIdAsync(int id)
     {
@@ -505,15 +505,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
 
         var inquiry_sample = await connection.QuerySingleOrDefaultAsync<InquirySample>(sql, new { id, tenant = tenantId });
         return inquiry_sample is null ? throw new EntityNotFoundException(nameof(InquirySample)) : CacheEntity(inquiry_sample);
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("id", id);
-        // context.AddParameterWithValue("tenant", tenantId);
-
-        // await using var reader = await context.ReaderAsync();
-
-        // return CacheEntity(MapFromReader(reader));
     }
 
     public async IAsyncEnumerable<InquirySample> ListAllByBuildingIdAsync(string id)
@@ -609,17 +600,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
 
         await foreach (var item in connection.QueryUnbufferedAsync<InquirySample>(sql, new { building = id }))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("building", id);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return CacheEntity(MapFromReader(reader));
-        // }
     }
 
     public override IAsyncEnumerable<InquirySample> ListAllAsync(Navigation navigation)
@@ -725,19 +707,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
 
         await foreach (var item in connection.QueryUnbufferedAsync<InquirySample>(sql, new { tenant = tenantId }))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
-
-        // sql = ConstructNavigation(sql, navigation);
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("tenant", tenantId);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return CacheEntity(MapFromReader(reader));
-        // }
     }
 
     /// <summary>
@@ -838,20 +809,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
 
         await foreach (var item in connection.QueryUnbufferedAsync<InquirySample>(sql, new { id = report, tenant = tenantId }))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
-
-        // sql = ConstructNavigation(sql, navigation);
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("id", report);
-        // context.AddParameterWithValue("tenant", tenantId);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return CacheEntity(MapFromReader(reader));
-        // }
     }
 
     public override Task UpdateAsync(InquirySample entity)

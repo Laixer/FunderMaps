@@ -121,6 +121,11 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
     public async Task<User> GetByAuthKeyAsync(string key)
     {
+        if (Cache.TryGetValue(key, out User? value))
+        {
+            return value ?? throw new EntityNotFoundException(nameof(User));
+        }
+
         var sql = @"
             SELECT  -- User
                     u.id,
@@ -143,6 +148,8 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         var options = new MemoryCacheEntryOptions()
             .SetSlidingExpiration(TimeSpan.FromHours(1))
             .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+
+        Cache.Set(key, user, options);
 
         return Cache.Set(user.Id, user, options);
     }
@@ -218,10 +225,9 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        // TODO: Do not cache list.
         await foreach (var item in connection.QueryUnbufferedAsync<User>(sql))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 
