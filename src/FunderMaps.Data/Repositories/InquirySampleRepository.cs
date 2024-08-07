@@ -3,22 +3,12 @@ using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types;
-using FunderMaps.Data.Extensions;
-using System.Data.Common;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Inquiry sample repository.
-/// </summary>
 internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IInquirySampleRepository
 {
-    /// <summary>
-    ///     Create new <see cref="InquirySample"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Created <see cref="InquirySample"/>.</returns>
     public override async Task<int> AddAsync(InquirySample entity)
     {
         var sql = @"
@@ -165,11 +155,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         // return await context.ScalarAsync<int>();
     }
 
-    // TODO: Maybe remove this method?.
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public async Task<long> CountAsync(Guid tenantId)
     {
         var sql = @"
@@ -190,10 +175,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         // return await context.ScalarAsync<long>();
     }
 
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public async Task<long> CountAsync(int report, Guid tenantId)
     {
         var sql = @"
@@ -216,10 +197,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         // return await context.ScalarAsync<long>();
     }
 
-    /// <summary>
-    ///     Delete <see cref="InquirySample"/>.
-    /// </summary>
-    /// <param name="id">Entity object.</param>
     public async Task DeleteAsync(int id, Guid tenantId)
     {
         ResetCacheEntity(id);
@@ -386,21 +363,11 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     //         FacadeScanRisk = reader.GetFieldValue<FacadeScanRisk?>(offset++),
     //     };
 
-    public override Task<InquirySample> GetByIdAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    ///     Retrieve <see cref="InquirySample"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="InquirySample"/>.</returns>
     public async Task<InquirySample> GetByIdAsync(int id, Guid tenantId)
     {
-        if (TryGetEntity(id, out InquirySample? entity))
+        if (Cache.TryGetValue(id, out InquirySample? value))
         {
-            return entity ?? throw new InvalidOperationException();
+            return value ?? throw new InvalidOperationException();
         }
 
         var sql = @"
@@ -493,8 +460,14 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var inquiry_sample = await connection.QuerySingleOrDefaultAsync<InquirySample>(sql, new { id, tenant = tenantId });
-        return inquiry_sample is null ? throw new EntityNotFoundException(nameof(InquirySample)) : CacheEntity(inquiry_sample);
+        var inquiry_sample = await connection.QuerySingleOrDefaultAsync<InquirySample>(sql, new { id, tenant = tenantId })
+            ?? throw new EntityNotFoundException(nameof(InquirySample));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(10))
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(90));
+
+        return Cache.Set(id, inquiry_sample, options);
     }
 
     public async IAsyncEnumerable<InquirySample> ListAllByBuildingIdAsync(string id)
@@ -595,10 +568,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     }
 
     // TOOD: Remove
-    /// <summary>
-    ///     Retrieve all <see cref="InquirySample"/>.
-    /// </summary>
-    /// <returns>List of <see cref="InquirySample"/>.</returns>
     public async IAsyncEnumerable<InquirySample> ListAllAsync(Navigation navigation, Guid tenantId)
     {
         var sql = @"
@@ -696,10 +665,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         }
     }
 
-    /// <summary>
-    ///     Retrieve all entities and filter on report.
-    /// </summary>
-    /// <returns>List of entities.</returns>
     public async IAsyncEnumerable<InquirySample> ListAllAsync(int report, Navigation navigation, Guid tenantId)
     {
         var sql = @"

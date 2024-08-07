@@ -153,11 +153,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
     public async Task<Inquiry> GetByIdAsync(int id, Guid tenantId)
     {
-        if (TryGetEntity(id, out Inquiry? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- Inquiry
                     i.id,
@@ -215,7 +210,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
         await using var reader = await context.ReaderAsync();
 
-        return CacheEntity(MapFromReader(reader));
+        return MapFromReader(reader);
     }
 
     public async IAsyncEnumerable<Inquiry> ListAllAsync(Navigation navigation, Guid tenantId)

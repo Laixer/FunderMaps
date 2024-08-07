@@ -135,11 +135,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
     public async Task<Recovery> GetByIdAsync(int id, Guid tenantId)
     {
-        if (TryGetEntity(id, out Recovery? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- Recovery
                     r.id,
@@ -193,7 +188,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
         await using var reader = await context.ReaderAsync();
 
-        return CacheEntity(MapFromReader(reader));
+        return MapFromReader(reader);
     }
 
     public async IAsyncEnumerable<Recovery> ListAllAsync(Navigation navigation, Guid tenantId)

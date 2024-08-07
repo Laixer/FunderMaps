@@ -17,20 +17,6 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     #region Cache
 
     /// <summary>
-    ///     Try get entity from cache.
-    /// </summary>
-    protected bool TryGetEntity(TEntityPrimaryKey key, out TEntity? value)
-    {
-        if (key is null)
-        {
-            value = default;
-            return false;
-        }
-
-        return Cache.TryGetValue(key, out value);
-    }
-
-    /// <summary>
     ///     Cache entity.
     /// </summary>
     protected TEntity CacheEntity(TEntity value)

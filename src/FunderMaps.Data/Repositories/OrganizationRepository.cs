@@ -43,11 +43,6 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
 
     public override async Task<Organization> GetByIdAsync(Guid id)
     {
-        if (TryGetEntity(id, out Organization? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  id,
                     name,
@@ -58,8 +53,8 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var organization = await connection.QuerySingleOrDefaultAsync<Organization>(sql, new { id });
-        return organization is null ? throw new EntityNotFoundException(nameof(Organization)) : CacheEntity(organization);
+        return await connection.QuerySingleOrDefaultAsync<Organization>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(Organization));
 
         // return await connection.QuerySingleOrDefaultAsync<Organization>(sql, new { id });
 
