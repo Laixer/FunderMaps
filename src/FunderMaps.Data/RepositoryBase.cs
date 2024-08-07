@@ -127,5 +127,6 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
     /// </summary>
-    public abstract Task<long> CountAsync();
+    public virtual Task<long> CountAsync()
+        => throw new InvalidOperationException();
 }

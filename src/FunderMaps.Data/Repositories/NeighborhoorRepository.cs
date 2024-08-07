@@ -6,15 +6,8 @@ using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Neighborhood repository.
-/// </summary>
 internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, INeighborhoodRepository
 {
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -99,11 +92,6 @@ internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, IN
         return neighborhood is null ? throw new EntityNotFoundException(nameof(Neighborhood)) : CacheEntity(neighborhood);
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="Neighborhood"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="Neighborhood"/>.</returns>
     public override async Task<Neighborhood> GetByIdAsync(string id)
     {
         if (TryGetEntity(id, out Neighborhood? entity))
@@ -127,10 +115,6 @@ internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, IN
         return neighborhood is null ? throw new EntityNotFoundException(nameof(Neighborhood)) : CacheEntity(neighborhood);
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="Neighborhood"/>.
-    /// </summary>
-    /// <returns>List of <see cref="Neighborhood"/>.</returns>
     public override async IAsyncEnumerable<Neighborhood> ListAllAsync(Navigation navigation)
     {
         var sql = @"

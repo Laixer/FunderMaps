@@ -5,9 +5,6 @@ using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Log product hit.
-/// </summary>
 internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
 {
     public async IAsyncEnumerable<Guid> ListLastMonthOrganizationaAsync()

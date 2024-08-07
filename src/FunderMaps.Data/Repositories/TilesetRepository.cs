@@ -20,10 +20,8 @@ internal sealed class TilesetRepository : DbServiceBase, ITilesetRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var tile = await connection.QuerySingleOrDefaultAsync<byte[]>(sql, new { id = name, z = zoom, x, y })
+        return await connection.QuerySingleOrDefaultAsync<byte[]>(sql, new { id = name, z = zoom, x, y })
             ?? throw new EntityNotFoundException();
-
-        return tile;
     }
 
     public async Task AddTileAsync(string name, int zoom, int x, int y, byte[] tile)

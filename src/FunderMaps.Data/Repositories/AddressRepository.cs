@@ -9,18 +9,6 @@ namespace FunderMaps.Data.Repositories;
 
 internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepository
 {
-    // TODO: when is this used?
-    public override async Task<long> CountAsync()
-    {
-        var sql = @"
-            SELECT  COUNT(*)
-            FROM    geocoder.address";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        return await connection.ExecuteScalarAsync<long>(sql);
-    }
-
     public async Task<Address> GetByExternalIdAsync(string id)
     {
         if (Cache.TryGetValue(id, out Address? value))
@@ -89,9 +77,9 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
     public override async Task<Address> GetByIdAsync(string id)
     {
-        if (TryGetEntity(id, out Address? entity))
+        if (Cache.TryGetValue(id, out Address? value))
         {
-            return entity ?? throw new InvalidOperationException();
+            return value ?? throw new InvalidOperationException();
         }
 
         var sql = @"

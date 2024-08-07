@@ -6,16 +6,8 @@ using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
 
-// TODO: Remove Area and Center from Organization.
-/// <summary>
-///     Organization repository.
-/// </summary>
 internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrganizationRepository
 {
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -27,10 +19,6 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         return await connection.ExecuteScalarAsync<long>(sql);
     }
 
-    /// <summary>
-    ///     Delete <see cref="Organization"/>.
-    /// </summary>
-    /// <param name="id">Entity id.</param>
     public override async Task DeleteAsync(Guid id)
     {
         ResetCacheEntity(id);
@@ -53,11 +41,6 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
     //         Email = reader.GetString(offset++),
     //     };
 
-    /// <summary>
-    ///     Retrieve <see cref="Organization"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="Organization"/>.</returns>
     public override async Task<Organization> GetByIdAsync(Guid id)
     {
         if (TryGetEntity(id, out Organization? entity))
@@ -89,10 +72,6 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         // return CacheEntity(MapFromReader(reader));
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="Organization"/>.
-    /// </summary>
-    /// <returns>List of <see cref="Organization"/>.</returns>
     public override async IAsyncEnumerable<Organization> ListAllAsync(Navigation navigation)
     {
         var sql = @"
@@ -118,10 +97,6 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         // }
     }
 
-    /// <summary>
-    ///     Update <see cref="Organization"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
     public override async Task UpdateAsync(Organization entity)
     {
         ResetCacheEntity(entity);
