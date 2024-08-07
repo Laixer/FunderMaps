@@ -104,7 +104,8 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>
     /// </summary>
-    public abstract IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation);
+    public virtual IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation)
+        => throw new InvalidOperationException();
 
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddAsync"/>

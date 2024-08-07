@@ -1,5 +1,4 @@
 using Dapper;
-using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -105,29 +104,5 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
             .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
 
         return Cache.Set(id, address, options);
-    }
-
-    // TODO: when is this used?
-    public override async IAsyncEnumerable<Address> ListAllAsync(Navigation navigation)
-    {
-        var sql = @"
-            SELECT  -- Address
-                    a.id,
-                    a.building_number,
-                    a.postal_code,
-                    a.street,
-                    a.external_id,
-                    a.city,
-                    a.building_id
-            FROM    geocoder.address AS a
-            OFFSET  @offset
-            LIMIT   @limit";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        await foreach (var item in connection.QueryUnbufferedAsync<Address>(sql, navigation))
-        {
-            yield return item;
-        }
     }
 }

@@ -8,18 +8,6 @@ namespace FunderMaps.Data.Repositories;
 
 internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleRepository
 {
-    // TODO: when is this used?
-    public override async Task<long> CountAsync()
-    {
-        var sql = @"
-            SELECT  COUNT(*)
-            FROM    maplayer.bundle";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        return await connection.ExecuteScalarAsync<long>(sql);
-    }
-
     public override async Task<Bundle> GetByIdAsync(string id)
     {
         var sql = $@"
@@ -90,9 +78,6 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
         }
     }
 
-    /// <summary>
-    ///     Run precondition.
-    /// </summary>
     public async Task<bool> RunPreconditionAsync(string id, string precondition)
     {
         var sql = $@"
@@ -105,9 +90,6 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
         return await connection.ExecuteScalarAsync<bool>(sql, new { tileset = id });
     }
 
-    /// <summary>
-    ///     Log the built time of a bundle.
-    /// </summary>
     public async Task LogBuiltTimeAsync(string id)
     {
         var sql = $@"
