@@ -1,5 +1,4 @@
 using Dapper;
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 
@@ -17,10 +16,8 @@ internal sealed class UserdataRepository : DbServiceBase, IUserdataRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var metadata = await connection.QuerySingleOrDefaultAsync<object>(sql, new { user_id, application_id })
-            ?? throw new EntityNotFoundException();
-
-        return metadata;
+        return await connection.QuerySingleOrDefaultAsync<object>(sql, new { user_id, application_id })
+            ?? new { };
     }
 
     public async Task UpdateAsync(Guid user_id, string application_id, object metadata)
