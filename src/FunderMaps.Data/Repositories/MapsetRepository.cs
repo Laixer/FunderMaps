@@ -119,6 +119,16 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
     public async IAsyncEnumerable<Mapset> GetByOrganizationIdAsync(Guid id)
     {
+        if (Cache.TryGetValue($"map-{id}", out List<Mapset>? value))
+        {
+            foreach (var item in value ?? throw new EntityNotFoundException(nameof(Mapset)))
+            {
+                yield return item;
+            }
+
+            yield break;
+        }
+
         // TODO: Refactor to use a view.
         var sql = @"
             SELECT  -- Mapset
@@ -157,9 +167,17 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
+        List<Mapset> mapsets = [];
         await foreach (var item in connection.QueryUnbufferedAsync<Mapset>(sql, new { id }))
         {
+            mapsets.Add(item);
             yield return item;
         }
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromHours(30))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(90));
+
+        Cache.Set($"map-{id}", mapsets, options);
     }
 }
