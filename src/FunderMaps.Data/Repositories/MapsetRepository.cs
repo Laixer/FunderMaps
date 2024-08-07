@@ -9,7 +9,7 @@ namespace FunderMaps.Data.Repositories;
 
 internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 {
-    public async Task<Mapset> GetPublicAsync(Guid id)
+    public async Task<Mapset> GetPublicAsync(string id)
     {
         if (Cache.TryGetValue(id, out Mapset? value))
         {
@@ -19,7 +19,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
         // TODO: Refactor to use a view.
         var sql = @"
             SELECT  -- Mapset
-                    m.id,
+                    m.id::text,
                     m.name,
                     LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) AS slug,
                     m.style,
@@ -46,7 +46,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                         ) AS maplayers
                     ) AS layerset
             FROM    maplayer.mapset AS m
-            WHERE   m.id = @id
+            WHERE   m.id::text = @id
             AND     m.public = true
             LIMIT   1";
 
@@ -56,8 +56,8 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             ?? throw new EntityNotFoundException(nameof(Mapset));
 
         var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(1))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+            .SetSlidingExpiration(TimeSpan.FromHours(2))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(12));
 
         return Cache.Set(mapset.Id, mapset, options);
     }
@@ -72,7 +72,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
         // TODO: Refactor to use a view.
         var sql = @"
             SELECT  -- Mapset
-                    m.id,
+                    m.id::text,
                     m.name,
                     LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) AS slug,
                     m.style,
@@ -109,8 +109,8 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             ?? throw new EntityNotFoundException(nameof(Mapset));
 
         var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(1))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+            .SetSlidingExpiration(TimeSpan.FromHours(2))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(12));
 
         Cache.Set(mapset.Name, mapset, options);
 
@@ -122,7 +122,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
         // TODO: Refactor to use a view.
         var sql = @"
             SELECT  -- Mapset
-                    m.id,
+                    m.id::text,
                     m.name,
                     LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) AS slug,
                     m.style,
@@ -158,8 +158,8 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(1))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
+            .SetSlidingExpiration(TimeSpan.FromHours(2))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(12));
 
         await foreach (var item in connection.QueryUnbufferedAsync<Mapset>(sql, new { id }))
         {

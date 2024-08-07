@@ -5,12 +5,12 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Mapset entity.
 /// </summary>
-public sealed class Mapset : IEntityIdentifier<Guid>
+public sealed class Mapset : IEntityIdentifier<string>
 {
     /// <summary>
     ///     Unique identifier.
     /// </summary>
-    public Guid Id { get; set; }
+    public string Id { get; set; } = default!;
 
     /// <summary>
     ///     Name.
