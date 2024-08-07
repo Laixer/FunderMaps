@@ -3,18 +3,13 @@ using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Building repository.
-/// </summary>
 internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingRepository
 {
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
+    // TODO: when is this used?
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -28,6 +23,11 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
     public async Task<Building> GetByExternalIdAsync(string id)
     {
+        if (Cache.TryGetValue(id, out Building? value))
+        {
+            return value ?? throw new InvalidOperationException();
+        }
+
         var sql = @"
             SELECT  -- Building
                     ba.id,
@@ -40,17 +40,23 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id });
-        return building is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(building);
+        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Building));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
+
+        return Cache.Set(id, building, options);
     }
 
-    /// <summary>
-    ///     Get building by external address id.
-    /// </summary>
-    /// <param name="id">External address identifier.</param>
-    /// <returns>A single building.</returns>
     public async Task<Building> GetByExternalAddressIdAsync(string id)
     {
+        if (Cache.TryGetValue(id, out Building? value))
+        {
+            return value ?? throw new InvalidOperationException();
+        }
+
         var sql = @"
             SELECT  -- Building
                     ba.id,
@@ -65,15 +71,16 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id });
-        return building is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(building);
+        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Building));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
+
+        return Cache.Set(id, building, options);
     }
 
-    /// <summary>
-    ///     Get building by external residence id.
-    /// </summary>
-    /// <param name="id">External residence identifier.</param>
-    /// <returns>A single building.</returns>
     public async Task<Building> GetByExternalResidenceIdAsync(string id)
     {
         var sql = @"
@@ -89,8 +96,8 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id });
-        return building is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(building);
+        return await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(Building));
     }
 
     // TODO: Maybe move this to incident repository?
@@ -109,20 +116,15 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id });
-        return building is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(building);
+        return await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(Building));
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="Building"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="Building"/>.</returns>
     public override async Task<Building> GetByIdAsync(string id)
     {
-        if (TryGetEntity(id, out Building? entity))
+        if (Cache.TryGetValue(id, out Building? value))
         {
-            return entity ?? throw new InvalidOperationException();
+            return value ?? throw new InvalidOperationException();
         }
 
         var sql = @"
@@ -137,14 +139,17 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id });
-        return building is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(building);
+        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(Building));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
+
+        return Cache.Set(id, building, options);
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="Building"/>.
-    /// </summary>
-    /// <returns>List of <see cref="Building"/>.</returns>
+    // TODO: when is this used?
     public override async IAsyncEnumerable<Building> ListAllAsync(Navigation navigation)
     {
         var sql = @"
@@ -163,7 +168,7 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         await foreach (var item in connection.QueryUnbufferedAsync<Building>(sql, navigation))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 }

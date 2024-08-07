@@ -6,15 +6,8 @@ using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Municipality repository.
-/// </summary>
 internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IMunicipalityRepository
 {
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -157,11 +150,6 @@ internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IM
         return municipality is null ? throw new EntityNotFoundException(nameof(Municipality)) : CacheEntity(municipality);
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="Municipality"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="Municipality"/>.</returns>
     public override async Task<Municipality> GetByIdAsync(string id)
     {
         if (TryGetEntity(id, out Municipality? entity))
@@ -186,10 +174,6 @@ internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IM
         return municipality is null ? throw new EntityNotFoundException(nameof(Municipality)) : CacheEntity(municipality);
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="Municipality"/>.
-    /// </summary>
-    /// <returns>List of <see cref="Municipality"/>.</returns>
     public override async IAsyncEnumerable<Municipality> ListAllAsync(Navigation navigation)
     {
         var sql = @"
@@ -207,7 +191,7 @@ internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IM
 
         await foreach (var item in connection.QueryUnbufferedAsync<Municipality>(sql, navigation))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 }

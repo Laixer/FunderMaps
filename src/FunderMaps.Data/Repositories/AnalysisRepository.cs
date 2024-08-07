@@ -8,18 +8,16 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Repository for analysis products.
-/// </summary>
 internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
 {
     // FUTURE: Add owner, address_count
-    /// <summary>
-    ///     Gets an analysis product by its internal building id.
-    /// </summary>
-    /// <param name="id">Internal building id.</param>
     public async Task<AnalysisProduct> GetAsync(string id)
     {
+        if (Cache.TryGetValue(id, out AnalysisProduct? value))
+        {
+            return value ?? throw new InvalidOperationException();
+        }
+
         var sql = @"
             SELECT
                     mrs.building_id,
@@ -54,12 +52,12 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var analysis = await connection.QueryFirstOrDefaultAsync<AnalysisProduct>(sql, new { id })
+        var analysis = await connection.QuerySingleOrDefaultAsync<AnalysisProduct>(sql, new { id })
             ?? throw new EntityNotFoundException(nameof(AnalysisProduct));
 
         var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(10))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(90));
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
 
         return Cache.Set(id, analysis, options);
 

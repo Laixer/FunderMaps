@@ -107,7 +107,7 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
 
         await foreach (var item in connection.QueryUnbufferedAsync<Organization>(sql, navigation))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
 
         // await using var context = await DbContextFactory.CreateAsync(sql);

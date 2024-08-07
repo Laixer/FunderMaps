@@ -6,15 +6,8 @@ using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     District repository.
-/// </summary>
 internal class DistrictRepository : RepositoryBase<District, string>, IDistrictRepository
 {
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -129,12 +122,6 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
         return district is null ? throw new EntityNotFoundException(nameof(District)) : CacheEntity(district);
     }
 
-
-    /// <summary>
-    ///     Retrieve <see cref="District"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="District"/>.</returns>
     public override async Task<District> GetByIdAsync(string id)
     {
         if (TryGetEntity(id, out District? entity))
@@ -159,10 +146,6 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
         return district is null ? throw new EntityNotFoundException(nameof(District)) : CacheEntity(district);
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="District"/>.
-    /// </summary>
-    /// <returns>List of <see cref="District"/>.</returns>
     public override async IAsyncEnumerable<District> ListAllAsync(Navigation navigation)
     {
         var sql = @"
@@ -180,7 +163,7 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
 
         await foreach (var item in connection.QueryUnbufferedAsync<District>(sql, navigation))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 }

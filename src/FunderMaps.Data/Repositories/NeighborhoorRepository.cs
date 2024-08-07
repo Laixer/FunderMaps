@@ -147,7 +147,7 @@ internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, IN
 
         await foreach (var item in connection.QueryUnbufferedAsync<Neighborhood>(sql, navigation))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 }

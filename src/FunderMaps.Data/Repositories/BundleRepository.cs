@@ -6,15 +6,9 @@ using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Bundle repository.
-/// </summary>
 internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleRepository
 {
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
+    // TODO: when is this used?
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -26,18 +20,8 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
         return await connection.ExecuteScalarAsync<long>(sql);
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="Bundle"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="Bundle"/>.</returns>
     public override async Task<Bundle> GetByIdAsync(string id)
     {
-        if (TryGetEntity(id, out Bundle? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = $@"
             SELECT
                     b.tileset,
@@ -54,14 +38,10 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var bundle = await connection.QuerySingleOrDefaultAsync<Bundle>(sql, new { tileset = id });
-        return bundle is null ? throw new EntityNotFoundException(nameof(bundle)) : CacheEntity(bundle);
+        return await connection.QuerySingleOrDefaultAsync<Bundle>(sql, new { tileset = id })
+            ?? throw new EntityNotFoundException(nameof(Bundle));
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="Bundle"/>.
-    /// </summary>
-    /// <returns>List of <see cref="Bundle"/>.</returns>
     public override async IAsyncEnumerable<Bundle> ListAllAsync(Navigation navigation)
     {
         var sql = $@"
@@ -82,14 +62,10 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
 
         await foreach (var item in connection.QueryUnbufferedAsync<Bundle>(sql, navigation))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 
-    /// <summary>
-    ///     Retrieve all enabled <see cref="Bundle"/>.
-    /// </summary>
-    /// <returns>List of <see cref="Bundle"/>.</returns>
     public async IAsyncEnumerable<Bundle> ListAllEnabledAsync()
     {
         var sql = $@"
@@ -110,7 +86,7 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
 
         await foreach (var item in connection.QueryUnbufferedAsync<Bundle>(sql))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 

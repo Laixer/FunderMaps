@@ -6,15 +6,9 @@ using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     State repository.
-/// </summary>
 internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 {
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
+    // TODO: when is this used?
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -180,11 +174,6 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
         return state is null ? throw new EntityNotFoundException(nameof(State)) : CacheEntity(state);
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="State"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="State"/>.</returns>
     public override async Task<State> GetByIdAsync(string id)
     {
         if (TryGetEntity(id, out State? entity))
@@ -208,10 +197,6 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
         return state is null ? throw new EntityNotFoundException(nameof(State)) : CacheEntity(state);
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="State"/>.
-    /// </summary>
-    /// <returns>List of <see cref="State"/>.</returns>
     public override async IAsyncEnumerable<State> ListAllAsync(Navigation navigation)
     {
         var sql = @"
@@ -228,7 +213,7 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
         await foreach (var item in connection.QueryUnbufferedAsync<State>(sql, navigation))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 }

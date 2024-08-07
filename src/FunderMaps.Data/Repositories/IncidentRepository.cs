@@ -183,7 +183,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
 
         await foreach (var item in connection.QueryUnbufferedAsync<Incident>(sql, new { building = id }))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 
@@ -227,7 +227,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
 
         await foreach (var item in connection.QueryUnbufferedAsync<Incident>(sql, navigation))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 

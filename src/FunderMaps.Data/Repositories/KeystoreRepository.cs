@@ -6,9 +6,6 @@ using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     KeyStore repository.
-/// </summary>
 internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreRepository
 {
     public override async Task<string> AddAsync(KeyStore entity)
@@ -23,10 +20,6 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
         return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new DatabaseException("Unable to insert record.");
     }
 
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -38,10 +31,6 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
         return await connection.ExecuteScalarAsync<long>(sql);
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="KeyStore"/>.
-    /// </summary>
-    /// <returns>List of <see cref="KeyStore"/>.</returns>
     public override async IAsyncEnumerable<KeyStore> ListAllAsync(Navigation navigation)
     {
         var sql = @"

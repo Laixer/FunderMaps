@@ -3,18 +3,13 @@ using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Address repository.
-/// </summary>
 internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepository
 {
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
+    // TODO: when is this used?
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -28,9 +23,9 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
     public async Task<Address> GetByExternalIdAsync(string id)
     {
-        if (TryGetEntity(id, out Address? entity))
+        if (Cache.TryGetValue(id, out Address? value))
         {
-            return entity ?? throw new InvalidOperationException();
+            return value ?? throw new InvalidOperationException();
         }
 
         var sql = @"
@@ -48,15 +43,21 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id });
-        return address is null ? throw new EntityNotFoundException(nameof(Address)) : CacheEntity(address);
+        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Address));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
+
+        return Cache.Set(id, address, options);
     }
 
     public async Task<Address> GetByExternalBuildingIdAsync(string id)
     {
-        if (TryGetEntity(id, out Address? entity))
+        if (Cache.TryGetValue(id, out Address? value))
         {
-            return entity ?? throw new InvalidOperationException();
+            return value ?? throw new InvalidOperationException();
         }
 
         var sql = @"
@@ -76,15 +77,16 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id });
-        return address is null ? throw new EntityNotFoundException(nameof(Address)) : CacheEntity(address);
+        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Address));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
+
+        return Cache.Set(id, address, options);
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="Address"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="Address"/>.</returns>
     public override async Task<Address> GetByIdAsync(string id)
     {
         if (TryGetEntity(id, out Address? entity))
@@ -107,14 +109,17 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { id });
-        return address is null ? throw new EntityNotFoundException(nameof(Address)) : CacheEntity(address);
+        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(Address));
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
+
+        return Cache.Set(id, address, options);
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="Address"/>.
-    /// </summary>
-    /// <returns>List of <see cref="Address"/>.</returns>
+    // TODO: when is this used?
     public override async IAsyncEnumerable<Address> ListAllAsync(Navigation navigation)
     {
         var sql = @"
@@ -134,7 +139,7 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
         await foreach (var item in connection.QueryUnbufferedAsync<Address>(sql, navigation))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 }

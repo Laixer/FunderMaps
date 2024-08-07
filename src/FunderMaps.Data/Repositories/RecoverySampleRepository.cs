@@ -244,7 +244,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
 
         await foreach (var item in connection.QueryUnbufferedAsync<RecoverySample>(sql, new { building = id }))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
 
         // await using var context = await DbContextFactory.CreateAsync(sql);
@@ -296,7 +296,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
 
         await foreach (var item in connection.QueryUnbufferedAsync<RecoverySample>(sql, new { tenant = tenantId }))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
 
         // sql = ConstructNavigation(sql, navigation);
@@ -346,7 +346,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
 
         await foreach (var item in connection.QueryUnbufferedAsync<RecoverySample>(sql, new { id = recovery, tenant = tenantId }))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
 
         // sql = ConstructNavigation(sql, navigation);

@@ -6,15 +6,9 @@ using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Residence repository.
-/// </summary>
 internal class ResidenceRepository : RepositoryBase<Residence, string>, IResidenceRepository
 {
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
+    // TODO: when is this used?
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -74,11 +68,6 @@ internal class ResidenceRepository : RepositoryBase<Residence, string>, IResiden
         return residence is null ? throw new EntityNotFoundException(nameof(Residence)) : CacheEntity(residence);
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="Residence"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="Residence"/>.</returns>
     public override async Task<Residence> GetByIdAsync(string id)
     {
         if (TryGetEntity(id, out Residence? entity))
@@ -103,10 +92,6 @@ internal class ResidenceRepository : RepositoryBase<Residence, string>, IResiden
         return residence is null ? throw new EntityNotFoundException(nameof(Residence)) : CacheEntity(residence);
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="Residence"/>.
-    /// </summary>
-    /// <returns>List of <see cref="Residence"/>.</returns>
     public override async IAsyncEnumerable<Residence> ListAllAsync(Navigation navigation)
     {
         var sql = @"
@@ -124,7 +109,7 @@ internal class ResidenceRepository : RepositoryBase<Residence, string>, IResiden
 
         await foreach (var item in connection.QueryUnbufferedAsync<Residence>(sql, navigation))
         {
-            yield return CacheEntity(item);
+            yield return item;
         }
     }
 }

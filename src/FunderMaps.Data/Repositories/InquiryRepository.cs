@@ -131,10 +131,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         throw new NotImplementedException();
     }
 
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public async Task<long> CountAsync(Guid tenantId)
     {
         var sql = @"
@@ -153,10 +149,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         return base.DeleteAsync(id);
     }
 
-    /// <summary>
-    ///     Delete <see cref="InquiryFull"/>.
-    /// </summary>
-    /// <param name="id">Entity object.</param>
     public async Task DeleteAsync(int id, Guid tenantId)
     {
         ResetCacheEntity(id);
@@ -307,7 +299,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return MapFromReader(reader);
         }
 
         // TODO: Dapper can't handle multiple result sets in one go.
@@ -374,7 +366,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return MapFromReader(reader);
         }
 
         // TODO: Dapper can't handle multiple result sets in one go.

@@ -285,7 +285,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return MapFromReader(reader);
         }
 
         // TODO: Dapper can't handle multiple result sets in one go.
@@ -348,7 +348,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return MapFromReader(reader);
         }
 
         // TODO: Dapper can't handle multiple result sets in one go.
