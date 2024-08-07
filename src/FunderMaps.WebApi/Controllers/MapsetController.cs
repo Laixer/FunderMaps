@@ -25,14 +25,16 @@ public sealed class MapsetController(IMapsetRepository mapsetRepository) : Funde
 
         try
         {
-            // if (Guid.TryParse(name, out Guid id))
-            // {
-            //     mapSets.Add(await mapsetRepository.GetPublicAsync(id));
-            // }
-            // else 
             if (!string.IsNullOrWhiteSpace(name))
             {
-                mapSets.Add(await mapsetRepository.GetPublicByNameAsync(name));
+                if (name.StartsWith("cl"))
+                {
+                    mapSets.Add(await mapsetRepository.GetPublicAsync(name));
+                }
+                else
+                {
+                    mapSets.Add(await mapsetRepository.GetPublicByNameAsync(name));
+                }
             }
         }
         catch (Core.Exceptions.EntityNotFoundException) { }

@@ -157,13 +157,9 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(2))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(12));
-
         await foreach (var item in connection.QueryUnbufferedAsync<Mapset>(sql, new { id }))
         {
-            yield return Cache.Set(item.Id, item, options);
+            yield return item;
         }
     }
 }
