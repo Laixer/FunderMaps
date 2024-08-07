@@ -20,6 +20,6 @@ public sealed class MetaController(IUserdataRepository userdataRepository) : Fun
     {
         await userdataRepository.UpdateAsync(UserId, "app-0blu4s39", metadata);
 
-        return await userdataRepository.GetAsync(UserId, "app-0blu4s39"); // TODO: Move to ENV
+        return NoContent();
     }
 }
