@@ -8,24 +8,8 @@ namespace FunderMaps.Data.Repositories;
 
 internal class DistrictRepository : RepositoryBase<District, string>, IDistrictRepository
 {
-    public override async Task<long> CountAsync()
-    {
-        var sql = @"
-            SELECT  COUNT(*)
-            FROM    geocoder.district";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        return await connection.ExecuteScalarAsync<long>(sql);
-    }
-
     public async Task<District> GetByExternalIdAsync(string id)
     {
-        if (TryGetEntity(id, out District? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- District
                     d.id,
@@ -45,11 +29,6 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
 
     public async Task<District> GetByExternalAddressIdAsync(string id)
     {
-        if (TryGetEntity(id, out District? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- District
                     d.id,
@@ -73,11 +52,6 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
 
     public async Task<District> GetByExternalBuildingIdAsync(string id)
     {
-        if (TryGetEntity(id, out District? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- District
                     d.id,
@@ -99,11 +73,6 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
 
     public async Task<District> GetByExternalNeighborhoodIdAsync(string id)
     {
-        if (TryGetEntity(id, out District? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- District
                     d.id,
@@ -124,11 +93,6 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
 
     public override async Task<District> GetByIdAsync(string id)
     {
-        if (TryGetEntity(id, out District? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- District
                     d.id,

@@ -1,5 +1,4 @@
 using Dapper;
-using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -8,25 +7,8 @@ namespace FunderMaps.Data.Repositories;
 
 internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 {
-    // TODO: when is this used?
-    public override async Task<long> CountAsync()
-    {
-        var sql = @"
-            SELECT  COUNT(*)
-            FROM    geocoder.state";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        return await connection.ExecuteScalarAsync<long>(sql);
-    }
-
     public async Task<State> GetByExternalIdAsync(string id)
     {
-        if (TryGetEntity(id, out State? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- State
                     s.id,
@@ -45,11 +27,6 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
     public async Task<State> GetByExternalAddressIdAsync(string id)
     {
-        if (TryGetEntity(id, out State? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- State
                     s.id,
@@ -74,11 +51,6 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
     public async Task<State> GetByExternalBuildingIdAsync(string id)
     {
-        if (TryGetEntity(id, out State? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- State
                     s.id,
@@ -101,11 +73,6 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
     public async Task<State> GetByExternalNeighborhoodIdAsync(string id)
     {
-        if (TryGetEntity(id, out State? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- State
                     s.id,
@@ -127,11 +94,6 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
     public async Task<State> GetByExternalDistrictIdAsync(string id)
     {
-        if (TryGetEntity(id, out State? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- State
                     s.id,
@@ -152,11 +114,6 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
     public async Task<State> GetByExternalMunicipalityIdAsync(string id)
     {
-        if (TryGetEntity(id, out State? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- State
                     s.id,
@@ -176,11 +133,6 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
     public override async Task<State> GetByIdAsync(string id)
     {
-        if (TryGetEntity(id, out State? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- State
                     s.id,
@@ -195,25 +147,5 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
         var state = await connection.QuerySingleOrDefaultAsync<State>(sql, new { id });
         return state is null ? throw new EntityNotFoundException(nameof(State)) : CacheEntity(state);
-    }
-
-    public override async IAsyncEnumerable<State> ListAllAsync(Navigation navigation)
-    {
-        var sql = @"
-            SELECT  -- State
-                    s.id,
-                    s.name,
-                    s.water,
-                    s.external_id
-            FROM    geocoder.state AS s
-            OFFSET  @offset
-            LIMIT   @limit";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        await foreach (var item in connection.QueryUnbufferedAsync<State>(sql, navigation))
-        {
-            yield return item;
-        }
     }
 }

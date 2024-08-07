@@ -1,5 +1,4 @@
 using Dapper;
-using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -8,25 +7,8 @@ namespace FunderMaps.Data.Repositories;
 
 internal class ResidenceRepository : RepositoryBase<Residence, string>, IResidenceRepository
 {
-    // TODO: when is this used?
-    public override async Task<long> CountAsync()
-    {
-        var sql = @"
-            SELECT  COUNT(*)
-            FROM    geocoder.residence";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        return await connection.ExecuteScalarAsync<long>(sql);
-    }
-
     public async Task<Residence> GetByExternalBuildingIdAsync(string id)
     {
-        if (TryGetEntity(id, out Residence? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- Residence
                     r.id,
@@ -46,11 +28,6 @@ internal class ResidenceRepository : RepositoryBase<Residence, string>, IResiden
 
     public async Task<Residence> GetByExternalAddressIdAsync(string id)
     {
-        if (TryGetEntity(id, out Residence? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- Residence
                     r.id,
@@ -70,11 +47,6 @@ internal class ResidenceRepository : RepositoryBase<Residence, string>, IResiden
 
     public override async Task<Residence> GetByIdAsync(string id)
     {
-        if (TryGetEntity(id, out Residence? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- Residence
                     r.id,
@@ -90,26 +62,5 @@ internal class ResidenceRepository : RepositoryBase<Residence, string>, IResiden
 
         var residence = await connection.QuerySingleOrDefaultAsync<Residence>(sql, new { id });
         return residence is null ? throw new EntityNotFoundException(nameof(Residence)) : CacheEntity(residence);
-    }
-
-    public override async IAsyncEnumerable<Residence> ListAllAsync(Navigation navigation)
-    {
-        var sql = @"
-            SELECT  -- Residence
-                    r.id,
-                    r.address_id,
-                    r.building_id,
-                    ST_X(r.geom) AS longitude, 
-                    ST_Y(r.geom) AS latitude
-            FROM    geocoder.residence AS r
-            OFFSET  @offset
-            LIMIT   @limit";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        await foreach (var item in connection.QueryUnbufferedAsync<Residence>(sql, navigation))
-        {
-            yield return item;
-        }
     }
 }

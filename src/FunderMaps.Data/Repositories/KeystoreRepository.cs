@@ -20,17 +20,6 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
         return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new DatabaseException("Unable to insert record.");
     }
 
-    public override async Task<long> CountAsync()
-    {
-        var sql = @"
-            SELECT  COUNT(*)
-            FROM    application.key_store";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        return await connection.ExecuteScalarAsync<long>(sql);
-    }
-
     public override async IAsyncEnumerable<KeyStore> ListAllAsync(Navigation navigation)
     {
         var sql = @"

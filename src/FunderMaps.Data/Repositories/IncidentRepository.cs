@@ -6,16 +6,8 @@ using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Incident repository.
-/// </summary>
 internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentRepository
 {
-    /// <summary>
-    ///     Create new <see cref="Incident"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Created <see cref="Incident"/>.</returns>
     public override async Task<string> AddAsync(Incident entity)
     {
         var sql = @"
@@ -66,10 +58,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new InvalidOperationException();
     }
 
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -81,10 +69,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         return await connection.ExecuteScalarAsync<long>(sql);
     }
 
-    /// <summary>
-    ///     Delete <see cref="Incident"/>.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
     public override async Task DeleteAsync(string id)
     {
         ResetCacheEntity(id);
@@ -99,18 +83,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         await connection.ExecuteAsync(sql, new { id });
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="Incident"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="Incident"/>.</returns>
     public override async Task<Incident> GetByIdAsync(string id)
     {
-        if (TryGetEntity(id, out Incident? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  i.id,
                     coalesce(p.name, 'other'),
@@ -187,10 +161,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         }
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="Incident"/>.
-    /// </summary>
-    /// <returns>List of <see cref="Incident"/>.</returns>
     public override async IAsyncEnumerable<Incident> ListAllAsync(Navigation navigation)
     {
         var sql = @"
@@ -231,10 +201,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         }
     }
 
-    /// <summary>
-    ///     Update <see cref="Incident"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
     public override async Task UpdateAsync(Incident entity)
     {
         ResetCacheEntity(entity);

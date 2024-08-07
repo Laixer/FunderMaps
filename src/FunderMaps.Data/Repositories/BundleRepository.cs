@@ -1,59 +1,11 @@
 using Dapper;
-using FunderMaps.Core;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
 
 internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleRepository
 {
-    public override async Task<Bundle> GetByIdAsync(string id)
-    {
-        var sql = $@"
-            SELECT
-                    b.tileset,
-                    b.enabled,
-                    b.map_enabled,
-                    b.built_date,
-                    b.precondition,
-                    b.name,
-                    b.zoom_min_level AS min_zoom_level,
-                    b.zoom_max_level AS max_zoom_level
-            FROM    maplayer.bundle AS b
-            WHERE   b.tileset = @tileset
-            LIMIT   1";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        return await connection.QuerySingleOrDefaultAsync<Bundle>(sql, new { tileset = id })
-            ?? throw new EntityNotFoundException(nameof(Bundle));
-    }
-
-    public override async IAsyncEnumerable<Bundle> ListAllAsync(Navigation navigation)
-    {
-        var sql = $@"
-            SELECT
-                    b.tileset,
-                    b.enabled,
-                    b.map_enabled,
-                    b.built_date,
-                    b.precondition,
-                    b.name,
-                    b.zoom_min_level AS min_zoom_level,
-                    b.zoom_max_level AS max_zoom_level
-            FROM    maplayer.bundle AS b
-            OFFSET  @offset
-            LIMIT   @limit";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        await foreach (var item in connection.QueryUnbufferedAsync<Bundle>(sql, navigation))
-        {
-            yield return item;
-        }
-    }
-
     public async IAsyncEnumerable<Bundle> ListAllEnabledAsync()
     {
         var sql = $@"
