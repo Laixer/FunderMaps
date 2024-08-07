@@ -21,8 +21,8 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var state = await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id });
-        return state is null ? throw new EntityNotFoundException(nameof(State)) : CacheEntity(state);
+        return await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(State));
     }
 
     public async Task<State> GetByExternalAddressIdAsync(string id)
@@ -45,8 +45,8 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var state = await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id });
-        return state is null ? throw new EntityNotFoundException(nameof(State)) : CacheEntity(state);
+        return await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(State));
     }
 
     public async Task<State> GetByExternalBuildingIdAsync(string id)
@@ -67,8 +67,8 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var state = await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id });
-        return state is null ? throw new EntityNotFoundException(nameof(State)) : CacheEntity(state);
+        return await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(State));
     }
 
     public async Task<State> GetByExternalNeighborhoodIdAsync(string id)
@@ -88,8 +88,8 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var state = await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id });
-        return state is null ? throw new EntityNotFoundException(nameof(State)) : CacheEntity(state);
+        return await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(State));
     }
 
     public async Task<State> GetByExternalDistrictIdAsync(string id)
@@ -108,8 +108,8 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var state = await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id });
-        return state is null ? throw new EntityNotFoundException(nameof(State)) : CacheEntity(state);
+        return await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(State));
     }
 
     public async Task<State> GetByExternalMunicipalityIdAsync(string id)
@@ -127,8 +127,8 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var state = await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id });
-        return state is null ? throw new EntityNotFoundException(nameof(State)) : CacheEntity(state);
+        return await connection.QuerySingleOrDefaultAsync<State>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(State));
     }
 
     public override async Task<State> GetByIdAsync(string id)
@@ -145,7 +145,7 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var state = await connection.QuerySingleOrDefaultAsync<State>(sql, new { id });
-        return state is null ? throw new EntityNotFoundException(nameof(State)) : CacheEntity(state);
+        return await connection.QuerySingleOrDefaultAsync<State>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(State));
     }
 }

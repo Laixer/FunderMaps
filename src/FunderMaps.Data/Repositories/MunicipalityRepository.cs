@@ -22,8 +22,8 @@ internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IM
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var municipality = await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { external_id = id });
-        return municipality is null ? throw new EntityNotFoundException(nameof(Municipality)) : CacheEntity(municipality);
+        return await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Municipality));
     }
 
     public async Task<Municipality> GetByExternalAddressIdAsync(string id)
@@ -46,8 +46,8 @@ internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IM
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var municipality = await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { external_id = id });
-        return municipality is null ? throw new EntityNotFoundException(nameof(Municipality)) : CacheEntity(municipality);
+        return await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Municipality));
     }
 
     public async Task<Municipality> GetByExternalBuildingIdAsync(string id)
@@ -68,8 +68,8 @@ internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IM
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var municipality = await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { external_id = id });
-        return municipality is null ? throw new EntityNotFoundException(nameof(Municipality)) : CacheEntity(municipality);
+        return await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Municipality));
     }
 
     public async Task<Municipality> GetByExternalNeighborhoodIdAsync(string id)
@@ -89,8 +89,8 @@ internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IM
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var municipality = await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { external_id = id });
-        return municipality is null ? throw new EntityNotFoundException(nameof(Municipality)) : CacheEntity(municipality);
+        return await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Municipality));
     }
 
     public async Task<Municipality> GetByExternalDistrictIdAsync(string id)
@@ -109,8 +109,8 @@ internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IM
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var municipality = await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { external_id = id });
-        return municipality is null ? throw new EntityNotFoundException(nameof(Municipality)) : CacheEntity(municipality);
+        return await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Municipality));
     }
 
     public override async Task<Municipality> GetByIdAsync(string id)
@@ -128,7 +128,7 @@ internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IM
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var municipality = await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { id });
-        return municipality is null ? throw new EntityNotFoundException(nameof(Municipality)) : CacheEntity(municipality);
+        return await connection.QuerySingleOrDefaultAsync<Municipality>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(Municipality));
     }
 }

@@ -23,8 +23,8 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var district = await connection.QuerySingleOrDefaultAsync<District>(sql, new { external_id = id });
-        return district is null ? throw new EntityNotFoundException(nameof(District)) : CacheEntity(district);
+        return await connection.QuerySingleOrDefaultAsync<District>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(District));
     }
 
     public async Task<District> GetByExternalAddressIdAsync(string id)
@@ -46,8 +46,8 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var district = await connection.QuerySingleOrDefaultAsync<District>(sql, new { external_id = id });
-        return district is null ? throw new EntityNotFoundException(nameof(District)) : CacheEntity(district);
+        return await connection.QuerySingleOrDefaultAsync<District>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(District));
     }
 
     public async Task<District> GetByExternalBuildingIdAsync(string id)
@@ -67,8 +67,8 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var district = await connection.QuerySingleOrDefaultAsync<District>(sql, new { external_id = id });
-        return district is null ? throw new EntityNotFoundException(nameof(District)) : CacheEntity(district);
+        return await connection.QuerySingleOrDefaultAsync<District>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(District));
     }
 
     public async Task<District> GetByExternalNeighborhoodIdAsync(string id)
@@ -87,8 +87,8 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var district = await connection.QuerySingleOrDefaultAsync<District>(sql, new { external_id = id });
-        return district is null ? throw new EntityNotFoundException(nameof(District)) : CacheEntity(district);
+        return await connection.QuerySingleOrDefaultAsync<District>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(District));
     }
 
     public override async Task<District> GetByIdAsync(string id)
@@ -106,28 +106,7 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var district = await connection.QuerySingleOrDefaultAsync<District>(sql, new { id });
-        return district is null ? throw new EntityNotFoundException(nameof(District)) : CacheEntity(district);
-    }
-
-    public override async IAsyncEnumerable<District> ListAllAsync(Navigation navigation)
-    {
-        var sql = @"
-            SELECT  -- District
-                    d.id,
-                    d.name,
-                    d.water,
-                    d.external_id,
-                    d.municipality_id
-            FROM    geocoder.district AS d
-            OFFSET  @offset
-            LIMIT   @limit";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        await foreach (var item in connection.QueryUnbufferedAsync<District>(sql, navigation))
-        {
-            yield return item;
-        }
+        return await connection.QuerySingleOrDefaultAsync<District>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(District));
     }
 }

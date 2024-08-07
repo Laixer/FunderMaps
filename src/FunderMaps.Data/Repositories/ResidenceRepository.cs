@@ -22,8 +22,8 @@ internal class ResidenceRepository : RepositoryBase<Residence, string>, IResiden
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var residence = await connection.QuerySingleOrDefaultAsync<Residence>(sql, new { building_id = id });
-        return residence is null ? throw new EntityNotFoundException(nameof(Residence)) : CacheEntity(residence);
+        return await connection.QuerySingleOrDefaultAsync<Residence>(sql, new { building_id = id })
+            ?? throw new EntityNotFoundException(nameof(Residence));
     }
 
     public async Task<Residence> GetByExternalAddressIdAsync(string id)
@@ -41,8 +41,8 @@ internal class ResidenceRepository : RepositoryBase<Residence, string>, IResiden
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var residence = await connection.QuerySingleOrDefaultAsync<Residence>(sql, new { address_id = id });
-        return residence is null ? throw new EntityNotFoundException(nameof(Residence)) : CacheEntity(residence);
+        return await connection.QuerySingleOrDefaultAsync<Residence>(sql, new { address_id = id })
+            ?? throw new EntityNotFoundException(nameof(Residence));
     }
 
     public override async Task<Residence> GetByIdAsync(string id)
@@ -60,7 +60,7 @@ internal class ResidenceRepository : RepositoryBase<Residence, string>, IResiden
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var residence = await connection.QuerySingleOrDefaultAsync<Residence>(sql, new { id });
-        return residence is null ? throw new EntityNotFoundException(nameof(Residence)) : CacheEntity(residence);
+        return await connection.QuerySingleOrDefaultAsync<Residence>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(Residence));
     }
 }

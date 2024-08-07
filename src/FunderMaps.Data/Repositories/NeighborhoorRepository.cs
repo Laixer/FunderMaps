@@ -21,8 +21,8 @@ internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, IN
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var neighborhood = await connection.QuerySingleOrDefaultAsync<Neighborhood>(sql, new { external_id = id });
-        return neighborhood is null ? throw new EntityNotFoundException(nameof(Neighborhood)) : CacheEntity(neighborhood);
+        return await connection.QuerySingleOrDefaultAsync<Neighborhood>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Neighborhood));
     }
 
     public async Task<Neighborhood> GetByExternalAddressIdAsync(string id)
@@ -42,8 +42,8 @@ internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, IN
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var neighborhood = await connection.QuerySingleOrDefaultAsync<Neighborhood>(sql, new { external_id = id });
-        return neighborhood is null ? throw new EntityNotFoundException(nameof(Neighborhood)) : CacheEntity(neighborhood);
+        return await connection.QuerySingleOrDefaultAsync<Neighborhood>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Neighborhood));
     }
 
     public async Task<Neighborhood> GetByExternalBuildingIdAsync(string id)
@@ -61,8 +61,8 @@ internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, IN
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var neighborhood = await connection.QuerySingleOrDefaultAsync<Neighborhood>(sql, new { external_id = id });
-        return neighborhood is null ? throw new EntityNotFoundException(nameof(Neighborhood)) : CacheEntity(neighborhood);
+        return await connection.QuerySingleOrDefaultAsync<Neighborhood>(sql, new { external_id = id })
+            ?? throw new EntityNotFoundException(nameof(Neighborhood));
     }
 
     public override async Task<Neighborhood> GetByIdAsync(string id)
@@ -79,7 +79,7 @@ internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, IN
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var neighborhood = await connection.QuerySingleOrDefaultAsync<Neighborhood>(sql, new { id });
-        return neighborhood is null ? throw new EntityNotFoundException(nameof(Neighborhood)) : CacheEntity(neighborhood);
+        return await connection.QuerySingleOrDefaultAsync<Neighborhood>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(Neighborhood));
     }
 }
