@@ -16,7 +16,7 @@ internal sealed class UserdataRepository : DbServiceBase, IUserdataRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await connection.QuerySingleOrDefaultAsync<object>(sql, new { user_id, application_id })
+        return await connection.ExecuteScalarAsync<object>(sql, new { user_id, application_id })
             ?? new { };
     }
 

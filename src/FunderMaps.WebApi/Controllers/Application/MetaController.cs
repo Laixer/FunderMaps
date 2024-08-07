@@ -16,7 +16,7 @@ public sealed class MetaController(IUserdataRepository userdataRepository) : Fun
 
     // PUT: api/metadata
     [HttpPut]
-    public async Task<object> UpdateAsync([FromBody] object metadata)
+    public async Task<IActionResult> UpdateAsync([FromBody] object metadata)
     {
         await userdataRepository.UpdateAsync(UserId, "app-0blu4s39", metadata);
 
