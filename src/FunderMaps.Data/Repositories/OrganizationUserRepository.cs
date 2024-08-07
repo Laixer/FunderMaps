@@ -7,9 +7,6 @@ using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Organization user repository.
-/// </summary>
 internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepository
 {
     public async Task AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
@@ -38,10 +35,6 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
         // await context.NonQueryAsync();
     }
 
-    /// <summary>
-    ///     Retrieve all users by organization.
-    /// </summary>
-    /// <returns>List of user identifiers.</returns>
     public async IAsyncEnumerable<OrganizationUser> ListAllAsync(Guid organizationId, Navigation navigation)
     {
         var sql = @"

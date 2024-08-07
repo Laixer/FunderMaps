@@ -9,9 +9,6 @@ using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Recovery sample repository.
-/// </summary>
 internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, IRecoverySampleRepository
 {
     private static void MapToWriter(DbContext context, RecoverySample entity)
@@ -49,11 +46,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             RecoveryDate = reader.GetSafeDateTime(offset++),
         };
 
-    /// <summary>
-    ///     Create new <see cref="RecoverySample"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Created <see cref="RecoverySample"/>.</returns>
     public override async Task<int> AddAsync(RecoverySample entity)
     {
         var sql = @"
@@ -94,10 +86,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         // return await context.ScalarAsync<int>();
     }
 
-    /// <summary>
-    ///     Retrieve number of <see cref="RecoverySample"/>.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -113,10 +101,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         // return await context.ScalarAsync<long>();
     }
 
-    /// <summary>
-    ///     Retrieve number of <see cref="RecoverySample"/> for a given <see cref="Recovery"/>.
-    /// </summary>
-    /// <returns>Number of <see cref="RecoverySample"/>.</returns>
     public async Task<long> CountAsync(int recovery, Guid tenantId)
     {
         var sql = @"
@@ -139,15 +123,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         // return await context.ScalarAsync<long>();
     }
 
-    public override Task DeleteAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    ///     Delete <see cref="RecoverySample"/>.
-    /// </summary>
-    /// <param name="id">Entity id.</param>
     public async Task DeleteAsync(int id, Guid tenantId)
     {
         var sql = @"
@@ -166,16 +141,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         // await context.NonQueryAsync();
     }
 
-    public override Task<RecoverySample> GetByIdAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    ///     Retrieve <see cref="RecoverySample"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="RecoverySample"/>.</returns>
     public async Task<RecoverySample> GetByIdAsync(int id, Guid tenantId)
     {
         var sql = @"
@@ -257,15 +222,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         // }
     }
 
-    public override IAsyncEnumerable<RecoverySample> ListAllAsync(Navigation navigation)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    ///     Retrieve all <see cref="RecoverySample"/>.
-    /// </summary>
-    /// <returns>List of <see cref="RecoverySample"/>.</returns>
     public async IAsyncEnumerable<RecoverySample> ListAllAsync(Navigation navigation, Guid tenantId)
     {
         var sql = @"
@@ -311,10 +267,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         // }
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="RecoverySample"/> for a given <see cref="Recovery"/>.
-    /// </summary>
-    /// <returns>List of <see cref="RecoverySample"/>.</returns>
     public async IAsyncEnumerable<RecoverySample> ListAllAsync(int recovery, Navigation navigation, Guid tenantId)
     {
         var sql = @"
@@ -360,11 +312,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         // {
         //     yield return CacheEntity(MapFromReader(reader));
         // }
-    }
-
-    public override Task UpdateAsync(RecoverySample entity)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task UpdateAsync(RecoverySample entity, Guid tenantId)

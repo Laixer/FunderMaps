@@ -67,11 +67,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             },
         };
 
-    /// <summary>
-    ///     Create new <see cref="InquiryFull"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Created <see cref="InquiryFull"/>.</returns>
     public override async Task<int> AddAsync(Inquiry entity)
     {
         var sql = @"
@@ -126,11 +121,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         return await context.ScalarAsync<int>();
     }
 
-    public override Task<long> CountAsync()
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<long> CountAsync(Guid tenantId)
     {
         var sql = @"
@@ -142,11 +132,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         return await connection.ExecuteScalarAsync<long>(sql, new { tenant = tenantId });
-    }
-
-    public override Task DeleteAsync(int id)
-    {
-        return base.DeleteAsync(id);
     }
 
     public async Task DeleteAsync(int id, Guid tenantId)
@@ -166,11 +151,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         await connection.ExecuteAsync(sql, new { id, tenant = tenantId });
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="InquiryFull"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="Inquiry"/>.</returns>
     public async Task<Inquiry> GetByIdAsync(int id, Guid tenantId)
     {
         if (TryGetEntity(id, out Inquiry? entity))
@@ -238,15 +218,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         return CacheEntity(MapFromReader(reader));
     }
 
-    public override IAsyncEnumerable<Inquiry> ListAllAsync(Navigation navigation)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    ///     Retrieve all <see cref="InquiryFull"/>.
-    /// </summary>
-    /// <returns>List of <see cref="InquiryFull"/>.</returns>
     public async IAsyncEnumerable<Inquiry> ListAllAsync(Navigation navigation, Guid tenantId)
     {
         var sql = @"
@@ -379,10 +350,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         // }
     }
 
-    /// <summary>
-    ///     Update <see cref="InquiryFull"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
     public override async Task UpdateAsync(Inquiry entity)
     {
         ResetCacheEntity(entity);
@@ -426,11 +393,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         await context.NonQueryAsync();
     }
 
-    /// <summary>
-    ///     Set <see cref="InquiryFull"/> audit status.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
-    /// <param name="entity">Entity object.</param>
     public async Task SetAuditStatusAsync(int id, Inquiry entity, Guid tenantId)
     {
         ResetCacheEntity(id);

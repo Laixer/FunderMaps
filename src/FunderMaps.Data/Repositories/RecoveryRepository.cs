@@ -8,9 +8,6 @@ using FunderMaps.Data.Extensions;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Recovery repository.
-/// </summary>
 internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepository
 {
     private static void MapToWriter(DbContext context, Recovery entity)
@@ -59,11 +56,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             },
         };
 
-    /// <summary>
-    ///     Create new <see cref="Recovery"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Created <see cref="Recovery"/>.</returns>
     public override async Task<int> AddAsync(Recovery entity)
     {
         var sql = @"
@@ -113,10 +105,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         return await context.ScalarAsync<int>();
     }
 
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
         var sql = @"
@@ -128,16 +116,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         return await connection.ExecuteScalarAsync<long>(sql);
     }
 
-    public override Task DeleteAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    ///     Delete <see cref="Recovery"/>.
-    /// </summary>
-    /// <param name="id">Entity id.</param>
-    /// <param name="tenantId">Tenant id.</param>
     public async Task DeleteAsync(int id, Guid tenantId)
     {
         ResetCacheEntity(id);
@@ -155,16 +133,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         await connection.ExecuteAsync(sql, new { id, tenant = tenantId });
     }
 
-    public override Task<Recovery> GetByIdAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    ///     Retrieve <see cref="Recovery"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="Recovery"/>.</returns>
     public async Task<Recovery> GetByIdAsync(int id, Guid tenantId)
     {
         if (TryGetEntity(id, out Recovery? entity))
@@ -228,15 +196,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         return CacheEntity(MapFromReader(reader));
     }
 
-    public override IAsyncEnumerable<Recovery> ListAllAsync(Navigation navigation)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    ///     Retrieve all <see cref="Recovery"/>.
-    /// </summary>
-    /// <returns>List of <see cref="Recovery"/>.</returns>
     public async IAsyncEnumerable<Recovery> ListAllAsync(Navigation navigation, Guid tenantId)
     {
         var sql = @"
@@ -361,10 +320,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         // }
     }
 
-    /// <summary>
-    ///     Update <see cref="Recovery"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
     public override async Task UpdateAsync(Recovery entity)
     {
         ResetCacheEntity(entity);
@@ -404,11 +359,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         await context.NonQueryAsync();
     }
 
-    /// <summary>
-    ///     Set <see cref="Recovery"/> audit status.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
-    /// <param name="entity">Entity object.</param>
     public async Task SetAuditStatusAsync(int id, Recovery entity, Guid tenantId)
     {
         ResetCacheEntity(id);

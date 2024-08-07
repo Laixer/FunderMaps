@@ -165,11 +165,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         // return await context.ScalarAsync<int>();
     }
 
-    public override Task<long> CountAsync()
-    {
-        throw new NotImplementedException();
-    }
-
     // TODO: Maybe remove this method?.
     /// <summary>
     ///     Retrieve number of entities.
@@ -219,11 +214,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         // context.AddParameterWithValue("tenant", tenantId);
 
         // return await context.ScalarAsync<long>();
-    }
-
-    public override Task DeleteAsync(int id)
-    {
-        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -604,11 +594,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         }
     }
 
-    public override IAsyncEnumerable<InquirySample> ListAllAsync(Navigation navigation)
-    {
-        throw new NotImplementedException();
-    }
-
     // TOOD: Remove
     /// <summary>
     ///     Retrieve all <see cref="InquirySample"/>.
@@ -811,11 +796,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         {
             yield return item;
         }
-    }
-
-    public override Task UpdateAsync(InquirySample entity)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task UpdateAsync(InquirySample entity, Guid tenantId)
