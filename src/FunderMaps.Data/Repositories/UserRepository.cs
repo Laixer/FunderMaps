@@ -237,10 +237,10 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
         var sql = @"
             UPDATE  application.user
-            SET     given_name = NULLIF(trim(@GivenName), ''),
-                    last_name = NULLIF(trim(@LastName), ''),
-                    job_title = NULLIF(trim(@JobTitle), ''),
-                    phone_number = REGEXP_REPLACE(@PhoneNumber,'\D','','g')
+            SET     given_name = @GivenName,
+                    last_name = @LastName,
+                    job_title = @JobTitle,
+                    phone_number = @PhoneNumber
             WHERE   id = @Id";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();

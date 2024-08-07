@@ -1,5 +1,6 @@
 using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ public sealed class MapsetController(IMapsetRepository mapsetRepository) : Funde
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
-                if (name.StartsWith("cl"))
+                if (name.Trim().StartsWith("cl", StringComparison.CurrentCultureIgnoreCase))
                 {
                     mapSets.Add(await mapsetRepository.GetPublicAsync(name));
                 }
@@ -37,7 +38,7 @@ public sealed class MapsetController(IMapsetRepository mapsetRepository) : Funde
                 }
             }
         }
-        catch (Core.Exceptions.EntityNotFoundException) { }
+        catch (EntityNotFoundException) { }
 
         if (User.Identity?.IsAuthenticated ?? false)
         {

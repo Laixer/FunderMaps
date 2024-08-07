@@ -32,6 +32,10 @@ public class UserController(IUserRepository userRepository) : FunderMapsControll
     public async Task<IActionResult> UpdateAsync([FromBody] User user)
     {
         user.Id = UserId;
+        user.GivenName = user.GivenName?.Trim();
+        user.LastName = user.LastName?.Trim();
+        user.JobTitle = user.JobTitle?.Trim();
+        user.PhoneNumber = user.PhoneNumber?.Replace(" ", string.Empty);
 
         await userRepository.UpdateAsync(user);
 
