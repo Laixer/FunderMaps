@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IBuildingRepository : IAsyncRepository<Building, string>
 {
     /// <summary>
+    ///     Retrieve building by identifier.
+    /// </summary>
+    Task<Building> GetByIdAsync(string id);
+
+    /// <summary>
     ///     Get building by external id.
     /// </summary>
     /// <param name="id">External identifier.</param>

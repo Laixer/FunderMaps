@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IStateRepository : IAsyncRepository<State, string>
 {
     /// <summary>
+    ///     Retrieve state by identifier.
+    /// </summary>
+    Task<State> GetByIdAsync(string id);
+
+    /// <summary>
     ///     Get state by external identifier.
     /// </summary>
     /// <param name="id">External identifier.</param>

@@ -42,9 +42,9 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
         return cmdText;
     }
 
-    /// <summary>
-    ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
-    /// </summary>
-    public virtual Task<TEntity> GetByIdAsync(TEntityPrimaryKey id)
-        => throw new InvalidOperationException();
+    // /// <summary>
+    // ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
+    // /// </summary>
+    // public virtual Task<TEntity> GetByIdAsync(TEntityPrimaryKey id)
+    //     => throw new InvalidOperationException();
 }

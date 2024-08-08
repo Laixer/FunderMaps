@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IMunicipalityRepository : IAsyncRepository<Municipality, string>
 {
     /// <summary>
+    ///     Retrieve municipality by identifier.
+    /// </summary>
+    Task<Municipality> GetByIdAsync(string id);
+
+    /// <summary>
     ///     Get municipality by external identifier.
     /// </summary>
     /// <param name="id">External identifier.</param>

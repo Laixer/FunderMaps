@@ -89,7 +89,7 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
             ?? throw new EntityNotFoundException(nameof(Building));
     }
 
-    public override async Task<Building> GetByIdAsync(string id)
+    public async Task<Building> GetByIdAsync(string id)
     {
         if (Cache.TryGetValue(id, out Building? value))
         {

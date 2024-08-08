@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IUserRepository : IAsyncRepository<User, Guid>
 {
     /// <summary>
+    ///     Retrieve <see cref="User"/> by id.
+    /// </summary>
+    Task<User> GetByIdAsync(Guid id);
+
+    /// <summary>
     ///    Add a new user.
     /// </summary>
     Task<Guid> AddAsync(User entity);

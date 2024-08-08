@@ -33,7 +33,7 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         await connection.ExecuteAsync(sql, new { id });
     }
 
-    public override async Task<Organization> GetByIdAsync(Guid id)
+    public async Task<Organization> GetByIdAsync(Guid id)
     {
         var sql = @"
             SELECT  id,

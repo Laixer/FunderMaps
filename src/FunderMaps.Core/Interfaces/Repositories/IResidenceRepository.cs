@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IResidenceRepository : IAsyncRepository<Residence, string>
 {
     /// <summary>
+    ///     Retrieve residence by identifier.
+    /// </summary>
+    Task<Residence> GetByIdAsync(string id);
+
+    /// <summary>
     ///     Get residence by external address id.
     /// </summary>
     /// <param name="id">External identifier.</param>

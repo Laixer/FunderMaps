@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IDistrictRepository : IAsyncRepository<District, string>
 {
     /// <summary>
+    ///     Retrieve district by identifier.
+    /// </summary>
+    Task<District> GetByIdAsync(string id);
+
+    /// <summary>
     ///     Get district by external identifier.
     /// </summary>
     /// <param name="id">External identifier.</param>

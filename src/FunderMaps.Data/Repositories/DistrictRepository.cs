@@ -90,7 +90,7 @@ internal class DistrictRepository : RepositoryBase<District, string>, IDistrictR
             ?? throw new EntityNotFoundException(nameof(District));
     }
 
-    public override async Task<District> GetByIdAsync(string id)
+    public async Task<District> GetByIdAsync(string id)
     {
         var sql = @"
             SELECT  -- District

@@ -45,7 +45,7 @@ internal class ResidenceRepository : RepositoryBase<Residence, string>, IResiden
             ?? throw new EntityNotFoundException(nameof(Residence));
     }
 
-    public override async Task<Residence> GetByIdAsync(string id)
+    public async Task<Residence> GetByIdAsync(string id)
     {
         var sql = @"
             SELECT  -- Residence

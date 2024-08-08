@@ -10,12 +10,12 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IAsyncRepository<TEntity, TEntityPrimaryKey>
     where TEntity : IEntityIdentifier<TEntityPrimaryKey>
 {
-    /// <summary>
-    ///     Retrieve <typeparamref name="TEntity"/> by id.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
-    /// <returns><typeparamref name="TEntity"/>.</returns>
-    Task<TEntity> GetByIdAsync(TEntityPrimaryKey id);
+    // /// <summary>
+    // ///     Retrieve <typeparamref name="TEntity"/> by id.
+    // /// </summary>
+    // /// <param name="id">Entity identifier.</param>
+    // /// <returns><typeparamref name="TEntity"/>.</returns>
+    // Task<TEntity> GetByIdAsync(TEntityPrimaryKey id);
 
     // /// <summary>
     // ///     Create new <typeparamref name="TEntity"/>.

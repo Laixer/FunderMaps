@@ -65,7 +65,7 @@ internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, IN
             ?? throw new EntityNotFoundException(nameof(Neighborhood));
     }
 
-    public override async Task<Neighborhood> GetByIdAsync(string id)
+    public async Task<Neighborhood> GetByIdAsync(string id)
     {
         var sql = @"
             SELECT  -- Neighborhood

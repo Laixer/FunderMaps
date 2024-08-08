@@ -81,7 +81,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         await connection.ExecuteAsync(sql, new { id });
     }
 
-    public override async Task<Incident> GetByIdAsync(string id)
+    public async Task<Incident> GetByIdAsync(string id)
     {
         var sql = @"
             SELECT  i.id,

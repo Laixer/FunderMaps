@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface INeighborhoodRepository : IAsyncRepository<Neighborhood, string>
 {
     /// <summary>
+    ///     Get neighborhood by identifier.
+    /// </summary>
+    Task<Neighborhood> GetByIdAsync(string id);
+
+    /// <summary>
     ///     Get neighborhood by external identifier.
     /// </summary>
     /// <param name="id">External identifier.</param>

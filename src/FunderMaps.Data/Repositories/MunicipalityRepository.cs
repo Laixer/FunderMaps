@@ -113,7 +113,7 @@ internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IM
             ?? throw new EntityNotFoundException(nameof(Municipality));
     }
 
-    public override async Task<Municipality> GetByIdAsync(string id)
+    public async Task<Municipality> GetByIdAsync(string id)
     {
         var sql = @"
             SELECT  -- Municipality

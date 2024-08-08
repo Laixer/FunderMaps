@@ -60,7 +60,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         await connection.ExecuteAsync(sql, new { id });
     }
 
-    public override async Task<User> GetByIdAsync(Guid id)
+    public async Task<User> GetByIdAsync(Guid id)
     {
         if (Cache.TryGetValue(id, out User? value))
         {

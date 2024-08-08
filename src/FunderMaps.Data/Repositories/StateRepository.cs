@@ -131,7 +131,7 @@ internal class StateRepository : RepositoryBase<State, string>, IStateRepository
             ?? throw new EntityNotFoundException(nameof(State));
     }
 
-    public override async Task<State> GetByIdAsync(string id)
+    public async Task<State> GetByIdAsync(string id)
     {
         var sql = @"
             SELECT  -- State
