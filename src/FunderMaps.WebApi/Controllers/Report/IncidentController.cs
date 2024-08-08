@@ -20,19 +20,19 @@ public sealed class IncidentController(
     GeocoderTranslation geocoderTranslation) : FunderMapsController
 {
     // GET: api/incident/stats
-    /// <summary>
-    ///     Return incident statistics.
-    /// </summary>
-    [HttpGet("stats")]
-    public async Task<IActionResult> GetStatsAsync()
-    {
-        var output = new DatasetStatsDto()
-        {
-            Count = await incidentRepository.CountAsync(),
-        };
+    // / <summary>
+    // /     Return incident statistics.
+    // / </summary>
+    // [HttpGet("stats")]
+    // public async Task<IActionResult> GetStatsAsync()
+    // {
+    //     var output = new DatasetStatsDto()
+    //     {
+    //         Count = await incidentRepository.CountAsync(),
+    //     };
 
-        return Ok(output);
-    }
+    //     return Ok(output);
+    // }
 
     // GET: api/incident/{id}
     /// <summary>

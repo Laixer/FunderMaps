@@ -58,16 +58,16 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new InvalidOperationException();
     }
 
-    public async Task<long> CountAsync()
-    {
-        var sql = @"
-            SELECT  COUNT(*)
-            FROM    report.incident";
+    // public async Task<long> CountAsync()
+    // {
+    //     var sql = @"
+    //         SELECT  COUNT(*)
+    //         FROM    report.incident";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+    //     await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await connection.ExecuteScalarAsync<long>(sql);
-    }
+    //     return await connection.ExecuteScalarAsync<long>(sql);
+    // }
 
     public async Task DeleteAsync(string id)
     {
