@@ -17,10 +17,10 @@ public interface IIncidentRepository
     /// </summary>
     Task<string> AddAsync(Incident entity);
 
-    /// <summary>
-    ///     Count number of incidents.
-    /// </summary>
-    Task<long> CountAsync();
+    // /// <summary>
+    // ///     Count number of incidents.
+    // /// </summary>
+    // Task<long> CountAsync();
 
     /// <summary>
     ///     Retrieve all incidents.
