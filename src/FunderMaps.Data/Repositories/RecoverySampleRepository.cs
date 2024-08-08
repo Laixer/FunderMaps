@@ -222,51 +222,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         // }
     }
 
-    public async IAsyncEnumerable<RecoverySample> ListAllAsync(Navigation navigation, Guid tenantId)
-    {
-        var sql = @"
-            SELECT  -- RecoverySample
-                    s.id,
-                    s.recovery,
-                    b.external_id,
-                    s.create_date,
-                    s.update_date,
-                    s.delete_date,
-                    s.note,
-                    s.status,
-                    s.type,
-                    s.pile_type,
-                    s.contractor,
-                    s.facade,
-                    s.permit,
-                    s.permit_date,
-                    s.recovery_date
-            FROM    report.recovery_sample AS s
-            JOIN    report.recovery AS r ON r.id = s.recovery
-            JOIN    application.attribution AS a ON a.id = r.attribution
-            JOIN    geocoder.building b ON b.id = s.building
-            WHERE   a.owner = @tenant
-            ORDER BY s.create_date DESC";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        await foreach (var item in connection.QueryUnbufferedAsync<RecoverySample>(sql, new { tenant = tenantId }))
-        {
-            yield return item;
-        }
-
-        // sql = ConstructNavigation(sql, navigation);
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("tenant", tenantId);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return MapFromReader(reader);
-        // }
-    }
-
     public async IAsyncEnumerable<RecoverySample> ListAllAsync(int recovery, Navigation navigation, Guid tenantId)
     {
         var sql = @"

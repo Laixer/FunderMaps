@@ -12,9 +12,6 @@ public interface IInquirySampleRepository
     // TODO: Add tenantId
     IAsyncEnumerable<InquirySample> ListAllByBuildingIdAsync(string id);
 
-    // TOOD: Remove
-    Task<long> CountAsync(Guid tenantId);
-
     /// <summary>
     ///     Retrieve number of entities and filter on report.
     /// </summary>
@@ -24,9 +21,6 @@ public interface IInquirySampleRepository
     Task DeleteAsync(int id, Guid tenantId);
 
     Task<InquirySample> GetByIdAsync(int id, Guid tenantId);
-
-    // TOOD: Remove
-    IAsyncEnumerable<InquirySample> ListAllAsync(Navigation navigation, Guid tenantId);
 
     /// <summary>
     ///     Retrieve all entities and filter on report.

@@ -28,6 +28,4 @@ public interface IRecoverySampleRepository
     /// </summary>
     /// <returns>List of <see cref="RecoverySample"/>.</returns>
     IAsyncEnumerable<RecoverySample> ListAllAsync(int recovery, Navigation navigation, Guid tenantId);
-
-    IAsyncEnumerable<RecoverySample> ListAllAsync(Navigation navigation, Guid tenantId);
 }

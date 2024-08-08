@@ -26,5 +26,8 @@ public interface IBuildingRepository
     /// <returns>A single building.</returns>
     Task<Building> GetByExternalAddressIdAsync(string id);
 
+    /// <summary>
+    ///    Get building by incident id.
+    /// </summary>
     Task<Building> GetByIncidentIdAsync(string id);
 }
