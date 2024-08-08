@@ -46,7 +46,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
     // FUTURE: If user is in use it violates foreign key constraint, returning
     //         a ReferenceNotFoundException, which is invalid.
-    public override async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
         Cache.Remove(id);
 

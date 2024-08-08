@@ -69,7 +69,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         return await connection.ExecuteScalarAsync<long>(sql);
     }
 
-    public override async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string id)
     {
         var sql = @"
             DELETE

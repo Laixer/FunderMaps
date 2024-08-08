@@ -19,7 +19,7 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         return await connection.ExecuteScalarAsync<long>(sql);
     }
 
-    public override async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
         Cache.Remove(id);
 
@@ -32,14 +32,6 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
 
         await connection.ExecuteAsync(sql, new { id });
     }
-
-    // private static Organization MapFromReader(DbDataReader reader, int offset = 0)
-    //     => new()
-    //     {
-    //         Id = reader.GetGuid(offset++),
-    //         Name = reader.GetString(offset++),
-    //         Email = reader.GetString(offset++),
-    //     };
 
     public override async Task<Organization> GetByIdAsync(Guid id)
     {
@@ -55,16 +47,6 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
 
         return await connection.QuerySingleOrDefaultAsync<Organization>(sql, new { id })
             ?? throw new EntityNotFoundException(nameof(Organization));
-
-        // return await connection.QuerySingleOrDefaultAsync<Organization>(sql, new { id });
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("id", id);
-
-        // await using var reader = await context.ReaderAsync();
-
-        // return CacheEntity(MapFromReader(reader));
     }
 
     public async IAsyncEnumerable<Organization> ListAllAsync(Navigation navigation)
@@ -83,13 +65,6 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         {
             yield return item;
         }
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return CacheEntity(MapFromReader(reader));
-        // }
     }
 
     public override async Task UpdateAsync(Organization entity)

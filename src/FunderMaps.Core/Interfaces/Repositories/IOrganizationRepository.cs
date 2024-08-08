@@ -16,4 +16,9 @@ public interface IOrganizationRepository : IAsyncRepository<Organization, Guid>
     ///     Retrieve all organizations.
     /// </summary>
     IAsyncEnumerable<Organization> ListAllAsync(Navigation navigation);
+
+    /// <summary>
+    ///     Delete organization by identifier.
+    /// </summary>
+    Task DeleteAsync(Guid id);
 }

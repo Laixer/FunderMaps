@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IUserRepository : IAsyncRepository<User, Guid>
 {
     /// <summary>
+    ///    Delete user by identifier.
+    /// </summary>
+    Task DeleteAsync(Guid id);
+
+    /// <summary>
     ///     Retrieve <see cref="User"/> by email.
     /// </summary>
     /// <param name="email">User email.</param>

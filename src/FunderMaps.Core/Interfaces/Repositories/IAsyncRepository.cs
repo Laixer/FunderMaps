@@ -29,10 +29,4 @@ public interface IAsyncRepository<TEntity, TEntityPrimaryKey>
     /// </summary>
     /// <param name="entity">Entity object.</param>
     Task UpdateAsync(TEntity entity);
-
-    /// <summary>
-    ///     Delete <typeparamref name="TEntity"/>.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
-    Task DeleteAsync(TEntityPrimaryKey id);
 }

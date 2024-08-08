@@ -18,6 +18,11 @@ public interface IIncidentRepository : IAsyncRepository<Incident, string>
     IAsyncEnumerable<Incident> ListAllAsync(Navigation navigation);
 
     /// <summary>
+    ///    Delete incident by identifier.
+    /// </summary>
+    Task DeleteAsync(string id);
+
+    /// <summary>
     ///    Retrieve all incidents by building identifier.
     /// </summary>
     IAsyncEnumerable<Incident> ListAllByBuildingIdAsync(string id);

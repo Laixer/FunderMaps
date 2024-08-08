@@ -48,12 +48,6 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     public virtual Task<TEntity> GetByIdAsync(TEntityPrimaryKey id)
         => throw new InvalidOperationException();
 
-    // / <summary>
-    // /     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>
-    // / </summary>
-    // public virtual IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation)
-    //     => throw new InvalidOperationException();
-
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddAsync"/>
     /// </summary>
@@ -65,16 +59,4 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     /// </summary>
     public virtual Task UpdateAsync(TEntity entity)
         => throw new InvalidOperationException();
-
-    /// <summary>
-    ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.DeleteAsync"/>
-    /// </summary>
-    public virtual Task DeleteAsync(TEntityPrimaryKey id)
-        => throw new InvalidOperationException();
-
-    // /// <summary>
-    // ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
-    // /// </summary>
-    // public virtual Task<long> CountAsync()
-    //     => throw new InvalidOperationException();
 }
