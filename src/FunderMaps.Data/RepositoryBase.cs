@@ -2,7 +2,6 @@
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data;
 
@@ -66,11 +65,11 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     public virtual Task<TEntity> GetByIdAsync(TEntityPrimaryKey id)
         => throw new InvalidOperationException();
 
-    /// <summary>
-    ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>
-    /// </summary>
-    public virtual IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation)
-        => throw new InvalidOperationException();
+    // / <summary>
+    // /     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>
+    // / </summary>
+    // public virtual IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation)
+    //     => throw new InvalidOperationException();
 
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddAsync"/>
@@ -90,9 +89,9 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     public virtual Task DeleteAsync(TEntityPrimaryKey id)
         => throw new InvalidOperationException();
 
-    /// <summary>
-    ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
-    /// </summary>
-    public virtual Task<long> CountAsync()
-        => throw new InvalidOperationException();
+    // /// <summary>
+    // ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
+    // /// </summary>
+    // public virtual Task<long> CountAsync()
+    //     => throw new InvalidOperationException();
 }

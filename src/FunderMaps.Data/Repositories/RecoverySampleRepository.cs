@@ -86,7 +86,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         // return await context.ScalarAsync<int>();
     }
 
-    public override async Task<long> CountAsync()
+    public async Task<long> CountAsync()
     {
         var sql = @"
             SELECT  COUNT(*)

@@ -1,4 +1,3 @@
-using FunderMaps.Core;
 using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -22,5 +21,5 @@ public sealed class ContractorController(IContractorRepository contractorReposit
     /// </remarks>
     [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 12)]
     public ValueTask<List<Contractor>> GetAllAsync()
-        => contractorRepository.ListAllAsync(Navigation.All).ToListAsync();
+        => contractorRepository.ListAllAsync().ToListAsync();
 }

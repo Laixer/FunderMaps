@@ -7,4 +7,13 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IOrganizationRepository : IAsyncRepository<Organization, Guid>
 {
+    /// <summary>
+    ///     Count number of organizations.
+    /// </summary>
+    Task<long> CountAsync();
+
+    /// <summary>
+    ///     Retrieve all organizations.
+    /// </summary>
+    IAsyncEnumerable<Organization> ListAllAsync(Navigation navigation);
 }

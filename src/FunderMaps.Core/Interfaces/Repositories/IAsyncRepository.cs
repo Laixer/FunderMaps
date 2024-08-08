@@ -18,12 +18,6 @@ public interface IAsyncRepository<TEntity, TEntityPrimaryKey>
     Task<TEntity> GetByIdAsync(TEntityPrimaryKey id);
 
     /// <summary>
-    ///     Retrieve all <typeparamref name="TEntity"/>.
-    /// </summary>
-    /// <returns>List of <typeparamref name="TEntity"/>.</returns>
-    IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation);
-
-    /// <summary>
     ///     Create new <typeparamref name="TEntity"/>.
     /// </summary>
     /// <param name="entity">Entity object.</param>
@@ -41,10 +35,4 @@ public interface IAsyncRepository<TEntity, TEntityPrimaryKey>
     /// </summary>
     /// <param name="id">Entity identifier.</param>
     Task DeleteAsync(TEntityPrimaryKey id);
-
-    /// <summary>
-    ///     Count number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
-    Task<long> CountAsync();
 }

@@ -8,7 +8,7 @@ namespace FunderMaps.Data.Repositories;
 
 internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrganizationRepository
 {
-    public override async Task<long> CountAsync()
+    public async Task<long> CountAsync()
     {
         var sql = @"
             SELECT  COUNT(*)
@@ -67,7 +67,7 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         // return CacheEntity(MapFromReader(reader));
     }
 
-    public override async IAsyncEnumerable<Organization> ListAllAsync(Navigation navigation)
+    public async IAsyncEnumerable<Organization> ListAllAsync(Navigation navigation)
     {
         var sql = @"
             SELECT  id,

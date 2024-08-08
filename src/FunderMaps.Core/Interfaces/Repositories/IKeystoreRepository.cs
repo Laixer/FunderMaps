@@ -7,4 +7,8 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IKeystoreRepository : IAsyncRepository<KeyStore, string>
 {
+    /// <summary>
+    ///     Retrieve all key stores.
+    /// </summary>
+    IAsyncEnumerable<KeyStore> ListAllAsync();
 }

@@ -13,7 +13,7 @@ public class KeystoreXmlRepository(IKeystoreRepository keystoreRepository) : IXm
     public IReadOnlyCollection<XElement> GetAllElements()
     {
         // TODO: Use async/await.
-        var rr = keystoreRepository.ListAllAsync(Navigation.All).ToListAsync().GetAwaiter().GetResult();
+        var rr = keystoreRepository.ListAllAsync().ToListAsync().GetAwaiter().GetResult();
 
         return rr.Select(x => XElement.Parse(x.Value)).ToList().AsReadOnly();
     }

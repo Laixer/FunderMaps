@@ -33,7 +33,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         return await connection.ExecuteScalarAsync<Guid>(sql, entity);
     }
 
-    public override async Task<long> CountAsync()
+    public async Task<long> CountAsync()
     {
         var sql = @"
             SELECT  COUNT(*)
@@ -210,7 +210,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         return await connection.ExecuteScalarAsync<int>(sql, new { id });
     }
 
-    public override async IAsyncEnumerable<User> ListAllAsync(Navigation navigation)
+    public async IAsyncEnumerable<User> ListAllAsync(Navigation navigation)
     {
         var sql = @"
             SELECT  -- User

@@ -58,7 +58,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new InvalidOperationException();
     }
 
-    public override async Task<long> CountAsync()
+    public async Task<long> CountAsync()
     {
         var sql = @"
             SELECT  COUNT(*)
@@ -159,7 +159,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         }
     }
 
-    public override async IAsyncEnumerable<Incident> ListAllAsync(Navigation navigation)
+    public async IAsyncEnumerable<Incident> ListAllAsync(Navigation navigation)
     {
         var sql = @"
             SELECT  i.id,

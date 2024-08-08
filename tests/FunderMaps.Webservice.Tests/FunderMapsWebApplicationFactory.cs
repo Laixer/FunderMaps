@@ -266,10 +266,10 @@ internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, 
         return await GetByIdAsync(id);
     }
 
-    IAsyncEnumerable<User> IAsyncRepository<User, Guid>.ListAllAsync(Navigation navigation)
-    {
-        return ListAllAsync(navigation);
-    }
+    // IAsyncEnumerable<User> IAsyncRepository<User, Guid>.ListAllAsync(Navigation navigation)
+    // {
+    //     return ListAllAsync(navigation);
+    // }
 }
 
 internal class MemoryOrganizationRepository : MemoryRepositoryBase<Organization, Guid>, IOrganizationRepository

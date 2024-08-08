@@ -7,4 +7,8 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IContractorRepository : IAsyncRepository<Contractor, int>
 {
+    /// <summary>
+    ///     Retrieve all contractors.
+    /// </summary>
+    IAsyncEnumerable<Contractor> ListAllAsync();
 }

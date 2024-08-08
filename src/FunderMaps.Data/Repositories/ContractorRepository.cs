@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 
@@ -7,7 +6,7 @@ namespace FunderMaps.Data.Repositories;
 
 internal class ContractorRepository : RepositoryBase<Contractor, int>, IContractorRepository
 {
-    public override async IAsyncEnumerable<Contractor> ListAllAsync(Navigation navigation)
+    public async IAsyncEnumerable<Contractor> ListAllAsync()
     {
         var sql = "SELECT id, name FROM application.contractor ORDER BY id";
 

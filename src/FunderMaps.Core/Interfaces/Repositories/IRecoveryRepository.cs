@@ -7,6 +7,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IRecoveryRepository : IAsyncRepository<Recovery, int>
 {
+    /// <summary>
+    ///     Count number of recoveries.
+    /// </summary>
+    Task<long> CountAsync();
+
     Task DeleteAsync(int id, Guid tenantId);
 
     Task<Recovery> GetByIdAsync(int id, Guid tenantId);
