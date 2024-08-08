@@ -1,21 +1,11 @@
 using FunderMaps.Core.Controllers;
 using FunderMaps.Core.DataTransferObjects;
-using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Services;
+using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers.Report;
-
-// TOOD: Move
-public record ReportDto
-{
-    public List<Incident> Incidents { get; init; } = [];
-    public List<Inquiry> Inquiries { get; init; } = [];
-    public List<InquirySample> InquirySamples { get; init; } = [];
-    public List<Recovery> Recoveries { get; init; } = [];
-    public List<RecoverySample> RecoverySamples { get; init; } = [];
-}
 
 [Route("api/report")]
 public sealed class ReportController(
@@ -27,9 +17,6 @@ public sealed class ReportController(
     GeocoderTranslation geocoderTranslation) : FunderMapsController
 {
     // GET: api/report/{id}
-    /// <summary>
-    ///    Return all inquiries by building id.
-    /// </summary>
     [HttpGet("{id}")]
     public async Task<ReportDto> GetAsync(string id, [FromQuery] PaginationDto pagination)
     {

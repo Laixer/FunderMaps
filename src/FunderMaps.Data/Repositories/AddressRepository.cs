@@ -73,36 +73,4 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
         return Cache.Set(id, address, options);
     }
-
-    public override async Task<Address> GetByIdAsync(string id)
-    {
-        if (Cache.TryGetValue(id, out Address? value))
-        {
-            return value ?? throw new InvalidOperationException();
-        }
-
-        var sql = @"
-            SELECT  -- Address
-                    a.id,
-                    a.building_number,
-                    a.postal_code,
-                    a.street,
-                    a.external_id,
-                    a.city,
-                    a.building_id
-            FROM    geocoder.address AS a
-            WHERE   a.id = @id
-            LIMIT   1";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { id })
-            ?? throw new EntityNotFoundException(nameof(Address));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
-
-        return Cache.Set(id, address, options);
-    }
 }

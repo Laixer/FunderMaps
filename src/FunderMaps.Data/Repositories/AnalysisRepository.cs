@@ -60,16 +60,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
 
         return Cache.Set(id, analysis, options);
-
-        // return analysis;
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("id", id);
-
-        // await using var reader = await context.ReaderAsync();
-
-        // return MapFromReader(reader);
     }
 
     public async Task<bool> RegisterProductMatch(string buildingId, string id, string product, Guid tenantId)
@@ -105,37 +95,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
 
         await connection.ExecuteAsync(sql, new { id, organization_id = tenantId });
     }
-
-    // private static AnalysisProduct MapFromReader(DbDataReader reader, int offset = 0)
-    //     => new()
-    //     {
-    //         BuildingId = reader.GetString(offset++),
-    //         ExternalBuildingId = reader.GetString(offset++),
-    //         NeighborhoodId = reader.GetSafeString(offset++),
-    //         ConstructionYear = reader.GetSafeInt(offset++),
-    //         ConstructionYearReliability = reader.GetFieldValue<Reliability>(offset++),
-    //         FoundationType = reader.GetFieldValue<FoundationType>(offset++),
-    //         FoundationTypeReliability = reader.GetFieldValue<Reliability>(offset++),
-    //         RestorationCosts = reader.GetSafeInt(offset++),
-    //         Height = reader.GetSafeDouble(offset++),
-    //         Velocity = reader.GetSafeDouble(offset++),
-    //         GroundWaterLevel = reader.GetSafeDouble(offset++),
-    //         GroundLevel = reader.GetSafeDouble(offset++),
-    //         Soil = reader.GetSafeString(offset++),
-    //         SurfaceArea = reader.GetSafeDouble(offset++),
-    //         DamageCause = reader.GetFieldValue<FoundationDamageCause?>(offset++),
-    //         InquiryType = reader.GetFieldValue<InquiryType?>(offset++),
-    //         Drystand = reader.GetSafeDouble(offset++),
-    //         DrystandRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
-    //         DrystandReliability = reader.GetFieldValue<Reliability>(offset++),
-    //         BioInfectionRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
-    //         BioInfectionReliability = reader.GetFieldValue<Reliability>(offset++),
-    //         DewateringDepth = reader.GetSafeDouble(offset++),
-    //         DewateringDepthRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
-    //         DewateringDepthReliability = reader.GetFieldValue<Reliability>(offset++),
-    //         UnclassifiedRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
-    //         RecoveryType = reader.GetFieldValue<RecoveryType?>(offset++),
-    //     };
 
     public async IAsyncEnumerable<AnalysisProduct> ListAllAsync(Navigation navigation)
     {
