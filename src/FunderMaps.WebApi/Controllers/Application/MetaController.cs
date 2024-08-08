@@ -18,8 +18,9 @@ public sealed class MetaController(IUserdataRepository userdataRepository) : Fun
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
-        var rs = await userdataRepository.GetAsync(UserId, "app-0blu4s39"); // TODO: Move to ENV
-        return Content(rs.ToString(), "application/json"); // TODO
+        // TODO: Create a UserData entity
+        var metadata = await userdataRepository.GetAsync(UserId, "app-0blu4s39"); // TODO: Move to ENV
+        return Content(metadata.ToString() ?? "{}", "application/json");
     }
 
     // PUT: api/metadata

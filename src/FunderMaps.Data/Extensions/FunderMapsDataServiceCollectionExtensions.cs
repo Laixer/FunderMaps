@@ -5,8 +5,9 @@ using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace FunderMaps.Data.Extensions;
 
 /// <summary>
 ///     Provides extension methods for services from this assembly.

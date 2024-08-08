@@ -1,4 +1,5 @@
 using FunderMaps.Worker;
+using FunderMaps.Data.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
