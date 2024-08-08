@@ -261,7 +261,7 @@ internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, 
         memory[id].LoginCount++;
     }
 
-    async Task<User> IAsyncRepository<User, Guid>.GetByIdAsync(Guid id)
+    async Task<User> IUserRepository.GetByIdAsync(Guid id)
     {
         return await GetByIdAsync(id);
     }
