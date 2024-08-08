@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Operations for the recovery repository.
 /// </summary>
-public interface IRecoveryRepository : IAsyncRepository<Recovery, int>
+public interface IRecoveryRepository
 {
     /// <summary>
     ///     Add new recovery.

@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     State repository.
 /// </summary>
-public interface IStateRepository : IAsyncRepository<State, string>
+public interface IStateRepository
 {
     /// <summary>
     ///     Retrieve state by identifier.

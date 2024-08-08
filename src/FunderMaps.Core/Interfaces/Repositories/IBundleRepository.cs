@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Operations for the contractor repository.
 /// </summary>
-public interface IBundleRepository : IAsyncRepository<Bundle, string>
+public interface IBundleRepository
 {
     /// <summary>
     ///     Retrieve all enabled <see cref="Bundle"/>.

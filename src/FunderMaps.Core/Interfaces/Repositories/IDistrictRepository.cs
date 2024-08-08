@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     District repository.
 /// </summary>
-public interface IDistrictRepository : IAsyncRepository<District, string>
+public interface IDistrictRepository
 {
     /// <summary>
     ///     Retrieve district by identifier.

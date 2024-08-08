@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace FunderMaps.Webservice.Tests;
 
-internal class MemoryRepositoryBase<TEntity, TEntityPrimaryKey> : IAsyncRepository<TEntity, TEntityPrimaryKey>
+internal class MemoryRepositoryBase<TEntity, TEntityPrimaryKey>
     where TEntity : IEntityIdentifier<TEntityPrimaryKey>
     where TEntityPrimaryKey : notnull
 {

@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     User repository.
 /// </summary>
-public interface IUserRepository : IAsyncRepository<User, Guid>
+public interface IUserRepository
 {
     /// <summary>
     ///     Retrieve <see cref="User"/> by id.

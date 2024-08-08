@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Operations for the contractor repository.
 /// </summary>
-public interface IContractorRepository : IAsyncRepository<Contractor, int>
+public interface IContractorRepository
 {
     /// <summary>
     ///     Retrieve all contractors.

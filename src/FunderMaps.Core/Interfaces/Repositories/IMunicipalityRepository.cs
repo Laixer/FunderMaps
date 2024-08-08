@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Municipality repository.
 /// </summary>
-public interface IMunicipalityRepository : IAsyncRepository<Municipality, string>
+public interface IMunicipalityRepository
 {
     /// <summary>
     ///     Retrieve municipality by identifier.

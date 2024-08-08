@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Organization repository.
 /// </summary>
-public interface IOrganizationRepository : IAsyncRepository<Organization, Guid>
+public interface IOrganizationRepository
 {
     /// <summary>
     ///     Retrieve organization by identifier.

@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Operations for the recovery sample repository.
 /// </summary>
-public interface IRecoverySampleRepository : IAsyncRepository<RecoverySample, int>
+public interface IRecoverySampleRepository
 {
     Task<int> AddAsync(RecoverySample entity);
 

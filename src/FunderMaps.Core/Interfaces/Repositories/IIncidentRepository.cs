@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Operations for the incident repository.
 /// </summary>
-public interface IIncidentRepository : IAsyncRepository<Incident, string>
+public interface IIncidentRepository
 {
     /// <summary>
     ///     Retrieve incident by identifier.

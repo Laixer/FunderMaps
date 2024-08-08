@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Operations for the inquiry sample repository.
 /// </summary>
-public interface IInquirySampleRepository : IAsyncRepository<InquirySample, int>
+public interface IInquirySampleRepository
 {
     Task<int> AddAsync(InquirySample entity);
 

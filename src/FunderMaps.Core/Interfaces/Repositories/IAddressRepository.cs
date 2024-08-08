@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Address repository.
 /// </summary>
-public interface IAddressRepository : IAsyncRepository<Address, string>
+public interface IAddressRepository
 {
     /// <summary>
     ///     Get address by external id.

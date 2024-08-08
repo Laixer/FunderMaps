@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Residence repository.
 /// </summary>
-public interface IResidenceRepository : IAsyncRepository<Residence, string>
+public interface IResidenceRepository
 {
     /// <summary>
     ///     Retrieve residence by identifier.

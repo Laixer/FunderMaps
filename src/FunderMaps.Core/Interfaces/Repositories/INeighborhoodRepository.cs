@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Neighborhood repository.
 /// </summary>
-public interface INeighborhoodRepository : IAsyncRepository<Neighborhood, string>
+public interface INeighborhoodRepository
 {
     /// <summary>
     ///     Get neighborhood by identifier.

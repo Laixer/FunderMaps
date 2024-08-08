@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data;
@@ -10,7 +9,7 @@ namespace FunderMaps.Data;
 /// </summary>
 /// <typeparam name="TEntity">Derivative of base entity.</typeparam>
 /// <typeparam name="TEntityPrimaryKey">Primary key of entity.</typeparam>
-internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
+internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBase
     where TEntity : IEntityIdentifier<TEntityPrimaryKey>
 {
     // TODO: Remove
@@ -41,10 +40,4 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
 
         return cmdText;
     }
-
-    // /// <summary>
-    // ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
-    // /// </summary>
-    // public virtual Task<TEntity> GetByIdAsync(TEntityPrimaryKey id)
-    //     => throw new InvalidOperationException();
 }

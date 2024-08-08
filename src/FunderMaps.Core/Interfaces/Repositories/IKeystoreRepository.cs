@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Operations for the keystore repository.
 /// </summary>
-public interface IKeystoreRepository : IAsyncRepository<KeyStore, string>
+public interface IKeystoreRepository
 {
     /// <summary>
     ///     Create new key store.

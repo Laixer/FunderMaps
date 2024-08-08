@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// <summary>
 ///     Building repository.
 /// </summary>
-public interface IBuildingRepository : IAsyncRepository<Building, string>
+public interface IBuildingRepository
 {
     /// <summary>
     ///     Retrieve building by identifier.
