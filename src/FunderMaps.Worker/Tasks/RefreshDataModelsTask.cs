@@ -8,9 +8,6 @@ internal sealed class RefreshDataModelsTask(
     IOperationRepository operationRepository,
     ILogger<RefreshDataModelsTask> logger) : ITaskService
 {
-    /// <summary>
-    ///    Triggered when the application host is ready to start the service.
-    /// </summary>
     public async Task RunAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Refreshing model");

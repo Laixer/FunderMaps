@@ -7,21 +7,12 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Worker.Tasks;
 
-/// <summary>
-///     Construct new instance.
-/// </summary>
 internal sealed class ModelExportTask(
     IBlobStorageService blobStorageService,
     IAnalysisRepository analysisRepository,
     ILogger<ModelExportTask> logger) : ITaskService
 {
     // TODO: Move into service/helper. See #801
-    /// <summary>
-    ///    Write CSV file.
-    /// </summary>
-    /// <param name="filePath">File path.</param>
-    /// <param name="productCalls">Product calls.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     private static async Task WriteCsvAsync(string filePath, IAsyncEnumerable<AnalysisProduct> productCalls, CancellationToken cancellationToken = default)
     {
         using var writer = new StreamWriter(filePath);
@@ -35,9 +26,6 @@ internal sealed class ModelExportTask(
         await csv.WriteRecordsAsync(productCalls, cancellationToken);
     }
 
-    /// <summary>
-    ///    Triggered when the application host is ready to start the service.
-    /// </summary>
     public async Task RunAsync(CancellationToken cancellationToken)
     {
         try

@@ -7,9 +7,6 @@ using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Worker.Tasks;
 
-/// <summary>
-///     Construct new instance.
-/// </summary>
 internal sealed class LoadBag3DTask(
     IOptions<DbProviderOptions> dbProviderOptions,
     IGDALService gdalService,
@@ -20,9 +17,6 @@ internal sealed class LoadBag3DTask(
 
     private readonly DbProviderOptions _dbProviderOptions = dbProviderOptions?.Value ?? throw new ArgumentNullException(nameof(dbProviderOptions));
 
-    /// <summary>
-    ///    Triggered when the application host is ready to start the service.
-    /// </summary>
     public async Task RunAsync(CancellationToken cancellationToken)
     {
         try

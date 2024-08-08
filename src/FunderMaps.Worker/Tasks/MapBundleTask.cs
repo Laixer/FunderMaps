@@ -8,9 +8,6 @@ using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Worker.Tasks;
 
-/// <summary>
-///     Construct new instance.
-/// </summary>
 internal sealed class MapBundleTask(
     IOptions<DbProviderOptions> dbProviderOptions,
     IBlobStorageService blobStorageService,
@@ -76,9 +73,6 @@ internal sealed class MapBundleTask(
         }
     }
 
-    /// <summary>
-    ///    Triggered when the application host is ready to start the service.
-    /// </summary>
     public async Task RunAsync(CancellationToken cancellationToken)
     {
         await foreach (var bundle in bundleRepository.ListAllEnabledAsync())

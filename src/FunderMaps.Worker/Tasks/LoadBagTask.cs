@@ -7,9 +7,6 @@ using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Worker.Tasks;
 
-/// <summary>
-///     Construct new instance.
-/// </summary>
 internal sealed class LoadBagTask(
     IOptions<DbProviderOptions> dbProviderOptions,
     IGDALService gdalService,
@@ -34,9 +31,6 @@ internal sealed class LoadBagTask(
         await fileStream.FlushAsync(cancellationToken);
     }
 
-    /// <summary>
-    ///    Triggered when the application host is ready to start the service.
-    /// </summary>
     public async Task RunAsync(CancellationToken cancellationToken)
     {
         try
