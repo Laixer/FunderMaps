@@ -72,13 +72,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         // return MapFromReader(reader);
     }
 
-    /// <summary>
-    ///     Register a product match.
-    /// </summary>
-    /// <param name="buildingId">Internal building id.</param>
-    /// <param name="id">External identifier.</param>
-    /// <param name="product">Product name.</param>
-    /// <param name="tenantId">Tenant identifier.</param>
     public async Task<bool> RegisterProductMatch(string buildingId, string id, string product, Guid tenantId)
     {
         var sql = @"
@@ -102,11 +95,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         return await connection.ExecuteScalarAsync<bool>(sql, new { building_id = buildingId, id, product, organization_id = tenantId });
     }
 
-    /// <summary>
-    ///     Register a product mismatch.
-    /// </summary>
-    /// <param name="id">External identifier.</param>
-    /// <param name="tenantId">Tenant identifier.</param>
     public async Task RegisterProductMismatch(string id, Guid tenantId)
     {
         var sql = @"
@@ -118,9 +106,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         await connection.ExecuteAsync(sql, new { id, organization_id = tenantId });
     }
 
-    /// <summary>
-    ///     Maps a reader to an <see cref="AnalysisProduct"/>.
-    /// </summary>
     // private static AnalysisProduct MapFromReader(DbDataReader reader, int offset = 0)
     //     => new()
     //     {
@@ -152,10 +137,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     //         RecoveryType = reader.GetFieldValue<RecoveryType?>(offset++),
     //     };
 
-    /// <summary>
-    ///     Retrieve all <see cref="AnalysisProduct"/>.
-    /// </summary>
-    /// <returns>List of <see cref="AnalysisProduct"/>.</returns>
     public async IAsyncEnumerable<AnalysisProduct> ListAllAsync(Navigation navigation)
     {
         var sql = @"
