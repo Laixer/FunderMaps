@@ -136,8 +136,6 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
     public async Task DeleteAsync(int id, Guid tenantId)
     {
-        ResetCacheEntity(id);
-
         var sql = @"
             DELETE
             FROM    report.inquiry AS i

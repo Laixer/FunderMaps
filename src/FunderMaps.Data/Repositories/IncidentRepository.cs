@@ -71,8 +71,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
 
     public override async Task DeleteAsync(string id)
     {
-        ResetCacheEntity(id);
-
         var sql = @"
             DELETE
             FROM    report.incident
@@ -117,8 +115,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var incident = await connection.QuerySingleOrDefaultAsync<Incident>(sql, new { id });
-        return incident is null ? throw new EntityNotFoundException(nameof(Incident)) : CacheEntity(incident);
+        return await connection.QuerySingleOrDefaultAsync<Incident>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(Incident));
     }
 
     public async IAsyncEnumerable<Incident> ListAllByBuildingIdAsync(string id)

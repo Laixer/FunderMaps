@@ -167,8 +167,8 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var recovery_sample = await connection.QuerySingleOrDefaultAsync<RecoverySample>(sql, new { id });
-        return recovery_sample is null ? throw new EntityNotFoundException(nameof(RecoverySample)) : CacheEntity(recovery_sample);
+        return await connection.QuerySingleOrDefaultAsync<RecoverySample>(sql, new { id })
+            ?? throw new EntityNotFoundException(nameof(RecoverySample));
 
         // await using var context = await DbContextFactory.CreateAsync(sql);
 

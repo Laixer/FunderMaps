@@ -4,10 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers.Application;
 
+/// <summary>
+///     Endpoint controller for application metadata.
+/// </summary>
+/// <param name="userdataRepository"></param>
 [Route("api/metadata")]
 public sealed class MetaController(IUserdataRepository userdataRepository) : FunderMapsController
 {
     // GET: api/metadata
+    /// <summary>
+    ///     Return all metadata.
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
@@ -16,6 +23,9 @@ public sealed class MetaController(IUserdataRepository userdataRepository) : Fun
     }
 
     // PUT: api/metadata
+    /// <summary>
+    ///     Update metadata.
+    /// </summary>
     [HttpPut]
     public async Task<IActionResult> UpdateAsync([FromBody] object metadata)
     {

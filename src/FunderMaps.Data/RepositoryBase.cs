@@ -14,25 +14,6 @@ namespace FunderMaps.Data;
 internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
     where TEntity : IEntityIdentifier<TEntityPrimaryKey>
 {
-    #region Cache
-
-    /// <summary>
-    ///     Cache entity.
-    /// </summary>
-    protected TEntity CacheEntity(TEntity value)
-    {
-        if (value.Id is null)
-        {
-            return value;
-        }
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromMinutes(10))
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(90));
-
-        return Cache.Set(value.Id, value, options);
-    }
-
     /// <summary>
     ///     Remove entity from cache.
     /// </summary>
@@ -49,8 +30,6 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     /// </summary>
     protected void ResetCacheEntity(TEntity value)
         => ResetCacheEntity(value.Id);
-
-    #endregion Cache
 
     // TODO: Remove
     // FUTURE: Maybe too npgsql specific.
