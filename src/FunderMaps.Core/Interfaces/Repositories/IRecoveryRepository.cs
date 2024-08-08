@@ -14,6 +14,8 @@ public interface IRecoveryRepository : IAsyncRepository<Recovery, int>
 
     Task DeleteAsync(int id, Guid tenantId);
 
+    Task UpdateAsync(Recovery entity);
+
     Task<Recovery> GetByIdAsync(int id, Guid tenantId);
 
     IAsyncEnumerable<Recovery> ListAllAsync(Navigation navigation, Guid tenantId);

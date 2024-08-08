@@ -231,7 +231,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         }
     }
 
-    public override async Task UpdateAsync(User entity)
+    public async Task UpdateAsync(User entity)
     {
         Cache.Remove(entity.Id);
 

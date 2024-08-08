@@ -11,6 +11,8 @@ public interface IInquiryRepository : IAsyncRepository<Inquiry, int>
 
     Task DeleteAsync(int id, Guid tenantId);
 
+    Task UpdateAsync(Inquiry entity);
+
     Task<Inquiry> GetByIdAsync(int id, Guid tenantId);
 
     IAsyncEnumerable<Inquiry> ListAllAsync(Navigation navigation, Guid tenantId);

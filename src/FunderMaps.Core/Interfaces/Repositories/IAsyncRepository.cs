@@ -23,10 +23,4 @@ public interface IAsyncRepository<TEntity, TEntityPrimaryKey>
     /// <param name="entity">Entity object.</param>
     /// <returns>Entity identifier.</returns>
     Task<TEntityPrimaryKey> AddAsync(TEntity entity);
-
-    /// <summary>
-    ///     Update <typeparamref name="TEntity"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    Task UpdateAsync(TEntity entity);
 }

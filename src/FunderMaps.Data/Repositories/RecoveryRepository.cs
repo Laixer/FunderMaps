@@ -315,7 +315,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         // }
     }
 
-    public override async Task UpdateAsync(Recovery entity)
+    public async Task UpdateAsync(Recovery entity)
     {
         Cache.Remove(entity.Id);
 

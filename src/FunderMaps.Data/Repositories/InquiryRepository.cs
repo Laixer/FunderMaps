@@ -343,7 +343,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         // }
     }
 
-    public override async Task UpdateAsync(Inquiry entity)
+    public async Task UpdateAsync(Inquiry entity)
     {
         Cache.Remove(entity.Id);
 

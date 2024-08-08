@@ -54,9 +54,9 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     public virtual Task<TEntityPrimaryKey> AddAsync(TEntity entity)
         => throw new InvalidOperationException();
 
-    /// <summary>
-    ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.UpdateAsync"/>
-    /// </summary>
-    public virtual Task UpdateAsync(TEntity entity)
-        => throw new InvalidOperationException();
+    // /// <summary>
+    // ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.UpdateAsync"/>
+    // /// </summary>
+    // public virtual Task UpdateAsync(TEntity entity)
+    //     => throw new InvalidOperationException();
 }

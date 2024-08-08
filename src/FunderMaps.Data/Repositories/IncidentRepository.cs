@@ -199,7 +199,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         }
     }
 
-    public override async Task UpdateAsync(Incident entity)
+    public async Task UpdateAsync(Incident entity)
     {
         Cache.Remove(entity.Id);
 
