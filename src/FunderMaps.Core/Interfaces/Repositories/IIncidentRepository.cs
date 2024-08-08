@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IIncidentRepository : IAsyncRepository<Incident, string>
 {
     /// <summary>
+    ///     Create new incident.
+    /// </summary>
+    Task<string> AddAsync(Incident entity);
+
+    /// <summary>
     ///     Count number of incidents.
     /// </summary>
     Task<long> CountAsync();

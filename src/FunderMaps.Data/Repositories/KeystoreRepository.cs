@@ -7,7 +7,7 @@ namespace FunderMaps.Data.Repositories;
 
 internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreRepository
 {
-    public override async Task<string> AddAsync(KeyStore entity)
+    public async Task<string> AddAsync(KeyStore entity)
     {
         var sql = @"
             INSERT INTO application.key_store(name, value)

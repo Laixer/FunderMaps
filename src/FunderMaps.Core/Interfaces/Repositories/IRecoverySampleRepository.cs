@@ -7,6 +7,8 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IRecoverySampleRepository : IAsyncRepository<RecoverySample, int>
 {
+    Task<int> AddAsync(RecoverySample entity);
+
     IAsyncEnumerable<RecoverySample> ListAllByBuildingIdAsync(string id);
 
     /// <summary>

@@ -56,7 +56,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             },
         };
 
-    public override async Task<int> AddAsync(Recovery entity)
+    public async Task<int> AddAsync(Recovery entity)
     {
         var sql = @"
             WITH attribution AS (

@@ -21,4 +21,9 @@ public interface IOrganizationRepository : IAsyncRepository<Organization, Guid>
     ///     Delete organization by identifier.
     /// </summary>
     Task DeleteAsync(Guid id);
+
+    /// <summary>
+    ///     Retrieve organization by identifier.
+    /// </summary>
+    Task UpdateAsync(Organization entity);
 }

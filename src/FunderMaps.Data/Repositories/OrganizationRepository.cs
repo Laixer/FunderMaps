@@ -67,7 +67,7 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         }
     }
 
-    public override async Task UpdateAsync(Organization entity)
+    public async Task UpdateAsync(Organization entity)
     {
         Cache.Remove(entity.Id);
 

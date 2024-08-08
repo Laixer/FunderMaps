@@ -9,7 +9,7 @@ namespace FunderMaps.Data.Repositories;
 
 internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IInquirySampleRepository
 {
-    public override async Task<int> AddAsync(InquirySample entity)
+    public async Task<int> AddAsync(InquirySample entity)
     {
         var sql = @"
             INSERT INTO report.inquiry_sample(

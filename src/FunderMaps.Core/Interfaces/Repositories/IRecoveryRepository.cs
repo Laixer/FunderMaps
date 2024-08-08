@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IRecoveryRepository : IAsyncRepository<Recovery, int>
 {
     /// <summary>
+    ///     Add new recovery.
+    /// </summary>
+    Task<int> AddAsync(Recovery entity);
+
+    /// <summary>
     ///     Count number of recoveries.
     /// </summary>
     Task<long> CountAsync();

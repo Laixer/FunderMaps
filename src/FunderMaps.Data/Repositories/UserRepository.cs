@@ -9,7 +9,7 @@ namespace FunderMaps.Data.Repositories;
 
 internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 {
-    public override async Task<Guid> AddAsync(User entity)
+    public async Task<Guid> AddAsync(User entity)
     {
         var sql = @$"
             INSERT INTO application.user (

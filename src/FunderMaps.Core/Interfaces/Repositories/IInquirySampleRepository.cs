@@ -7,6 +7,8 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IInquirySampleRepository : IAsyncRepository<InquirySample, int>
 {
+    Task<int> AddAsync(InquirySample entity);
+
     // TODO: Add tenantId
     IAsyncEnumerable<InquirySample> ListAllByBuildingIdAsync(string id);
 

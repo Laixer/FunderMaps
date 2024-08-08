@@ -8,7 +8,7 @@ namespace FunderMaps.Data.Repositories;
 
 internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentRepository
 {
-    public override async Task<string> AddAsync(Incident entity)
+    public async Task<string> AddAsync(Incident entity)
     {
         var sql = @"
             INSERT INTO report.incident(

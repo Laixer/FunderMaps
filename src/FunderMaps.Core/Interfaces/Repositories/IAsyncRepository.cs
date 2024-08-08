@@ -17,10 +17,10 @@ public interface IAsyncRepository<TEntity, TEntityPrimaryKey>
     /// <returns><typeparamref name="TEntity"/>.</returns>
     Task<TEntity> GetByIdAsync(TEntityPrimaryKey id);
 
-    /// <summary>
-    ///     Create new <typeparamref name="TEntity"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Entity identifier.</returns>
-    Task<TEntityPrimaryKey> AddAsync(TEntity entity);
+    // /// <summary>
+    // ///     Create new <typeparamref name="TEntity"/>.
+    // /// </summary>
+    // /// <param name="entity">Entity object.</param>
+    // /// <returns>Entity identifier.</returns>
+    // Task<TEntityPrimaryKey> AddAsync(TEntity entity);
 }

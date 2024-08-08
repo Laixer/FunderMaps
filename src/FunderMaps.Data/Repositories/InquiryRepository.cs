@@ -67,7 +67,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             },
         };
 
-    public override async Task<int> AddAsync(Inquiry entity)
+    public async Task<int> AddAsync(Inquiry entity)
     {
         var sql = @"
             WITH attribution AS (

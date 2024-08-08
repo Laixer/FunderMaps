@@ -46,7 +46,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             RecoveryDate = reader.GetSafeDateTime(offset++),
         };
 
-    public override async Task<int> AddAsync(RecoverySample entity)
+    public async Task<int> AddAsync(RecoverySample entity)
     {
         var sql = @"
             INSERT INTO report.recovery_sample(

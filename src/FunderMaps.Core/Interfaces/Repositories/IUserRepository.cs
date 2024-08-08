@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 public interface IUserRepository : IAsyncRepository<User, Guid>
 {
     /// <summary>
+    ///    Add a new user.
+    /// </summary>
+    Task<Guid> AddAsync(User entity);
+
+    /// <summary>
     ///     Delete user by identifier.
     /// </summary>
     Task DeleteAsync(Guid id);

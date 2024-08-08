@@ -7,6 +7,8 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IInquiryRepository : IAsyncRepository<Inquiry, int>
 {
+    Task<int> AddAsync(Inquiry entity);
+
     Task<long> CountAsync(Guid tenantId);
 
     Task DeleteAsync(int id, Guid tenantId);
