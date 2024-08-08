@@ -48,7 +48,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     //         a ReferenceNotFoundException, which is invalid.
     public override async Task DeleteAsync(Guid id)
     {
-        ResetCacheEntity(id);
+        Cache.Remove(id);
 
         var sql = @"
             DELETE
@@ -233,7 +233,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
     public override async Task UpdateAsync(User entity)
     {
-        ResetCacheEntity(entity);
+        Cache.Remove(entity.Id);
 
         var sql = @"
             UPDATE  application.user

@@ -345,7 +345,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
     public override async Task UpdateAsync(Inquiry entity)
     {
-        ResetCacheEntity(entity);
+        Cache.Remove(entity.Id);
 
         var sql = @"
             -- Attribution
@@ -388,7 +388,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
     public async Task SetAuditStatusAsync(int id, Inquiry entity, Guid tenantId)
     {
-        ResetCacheEntity(id);
+        Cache.Remove(id);
 
         var sql = @"
             UPDATE  report.inquiry AS i

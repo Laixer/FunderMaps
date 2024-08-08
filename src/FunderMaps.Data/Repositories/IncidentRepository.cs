@@ -201,7 +201,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
 
     public override async Task UpdateAsync(Incident entity)
     {
-        ResetCacheEntity(entity);
+        Cache.Remove(entity.Id);
 
         var sql = @"
             UPDATE  report.incident

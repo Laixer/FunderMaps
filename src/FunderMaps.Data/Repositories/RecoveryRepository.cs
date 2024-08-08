@@ -118,7 +118,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
     public async Task DeleteAsync(int id, Guid tenantId)
     {
-        ResetCacheEntity(id);
+        Cache.Remove(id);
 
         var sql = @"
             DELETE
@@ -317,7 +317,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
     public override async Task UpdateAsync(Recovery entity)
     {
-        ResetCacheEntity(entity);
+        Cache.Remove(entity.Id);
 
         var sql = @"
             -- Attribution
@@ -356,7 +356,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
     public async Task SetAuditStatusAsync(int id, Recovery entity, Guid tenantId)
     {
-        ResetCacheEntity(id);
+        Cache.Remove(id);
 
         var sql = @"
             UPDATE  report.recovery AS r

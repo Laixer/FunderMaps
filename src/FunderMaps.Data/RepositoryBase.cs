@@ -13,23 +13,6 @@ namespace FunderMaps.Data;
 internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
     where TEntity : IEntityIdentifier<TEntityPrimaryKey>
 {
-    /// <summary>
-    ///     Remove entity from cache.
-    /// </summary>
-    protected void ResetCacheEntity(TEntityPrimaryKey key)
-    {
-        if (key is not null)
-        {
-            Cache.Remove(key);
-        }
-    }
-
-    /// <summary>
-    ///     Remove entity from cache.
-    /// </summary>
-    protected void ResetCacheEntity(TEntity value)
-        => ResetCacheEntity(value.Id);
-
     // TODO: Remove
     // FUTURE: Maybe too npgsql specific.
     // FUTURE: Extension ?

@@ -199,7 +199,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
 
     public async Task DeleteAsync(int id, Guid tenantId)
     {
-        ResetCacheEntity(id);
+        Cache.Remove(id);
 
         var sql = @"
             DELETE
@@ -765,7 +765,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
 
     public async Task UpdateAsync(InquirySample entity, Guid tenantId)
     {
-        ResetCacheEntity(entity);
+        Cache.Remove(entity.Id);
 
         var sql = @"
             UPDATE  report.inquiry_sample AS s

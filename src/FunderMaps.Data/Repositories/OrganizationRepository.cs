@@ -21,7 +21,7 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
 
     public override async Task DeleteAsync(Guid id)
     {
-        ResetCacheEntity(id);
+        Cache.Remove(id);
 
         var sql = @"
             DELETE
@@ -94,7 +94,7 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
 
     public override async Task UpdateAsync(Organization entity)
     {
-        ResetCacheEntity(entity);
+        Cache.Remove(entity.Id);
 
         var sql = @"
             UPDATE  application.organization
