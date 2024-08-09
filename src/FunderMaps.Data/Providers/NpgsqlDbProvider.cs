@@ -14,7 +14,6 @@ namespace FunderMaps.Data.Providers;
 /// </summary>
 internal class NpgsqlDbProvider : DbProvider, IDisposable, IAsyncDisposable
 {
-    private readonly NpgsqlDataSourceBuilder _dataSourceBuilder;
     private readonly NpgsqlDataSource _dataSource;
     private readonly ILogger<NpgsqlDbProvider> _logger;
 
@@ -61,8 +60,6 @@ internal class NpgsqlDbProvider : DbProvider, IDisposable, IAsyncDisposable
         dataSourceBuilder.MapEnum<WoodEncroachement>();
         dataSourceBuilder.MapEnum<WoodQuality>();
         dataSourceBuilder.MapEnum<WoodType>();
-
-        _dataSourceBuilder = dataSourceBuilder;
 
         _dataSource = dataSourceBuilder.Build();
     }

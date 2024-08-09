@@ -21,18 +21,9 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
                 @organization_id,
                 @role)";
 
-
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         await connection.ExecuteAsync(sql, new { user_id = userId, organization_id = organizationId, role });
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("user_id", userId);
-        // context.AddParameterWithValue("organization_id", organizationId);
-        // context.AddParameterWithValue("role", role);
-
-        // await context.NonQueryAsync();
     }
 
     public async IAsyncEnumerable<OrganizationUser> ListAllAsync(Guid organizationId, Navigation navigation)
@@ -57,25 +48,6 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
         {
             yield return item;
         }
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("organization_id", organizationId);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return new()
-        //     {
-        //         Id = reader.GetGuid(0),
-        //         GivenName = reader.GetSafeString(1),
-        //         LastName = reader.GetSafeString(2),
-        //         Email = reader.GetString(3),
-        //         JobTitle = reader.GetSafeString(4),
-        //         PhoneNumber = reader.GetSafeString(5),
-        //         Role = reader.GetFieldValue<ApplicationRole>(6),
-        //         OrganizationRole = reader.GetFieldValue<OrganizationRole>(7),
-        //     };
-        // }
     }
 
     public async IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] role, Navigation navigation)
@@ -92,16 +64,6 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
         {
             yield return item;
         }
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("organization_id", organizationId);
-        // context.AddParameterWithValue("role", role);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return reader.GetGuid(0);
-        // }
     }
 
     public async Task<bool> IsUserInOrganization(Guid organizationId, Guid userId)
@@ -118,13 +80,6 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         return await connection.ExecuteScalarAsync<bool>(sql, new { user_id = userId, organization_id = organizationId });
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("user_id", userId);
-        // context.AddParameterWithValue("organization_id", organizationId);
-
-        // return await context.ScalarAsync<bool>();
     }
 
     public async IAsyncEnumerable<Guid> ListAllOrganizationIdByUserIdAsync(Guid userId)
@@ -140,15 +95,6 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
         {
             yield return item;
         }
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("user_id", userId);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return reader.GetGuid(0);
-        // }
     }
 
     public async Task<OrganizationRole?> GetOrganizationRoleByUserIdAsync(Guid userId, Guid organizationId)
@@ -162,15 +108,6 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         return await connection.QuerySingleOrDefaultAsync<OrganizationRole?>(sql, new { user_id = userId, organization_id = organizationId });
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("user_id", userId);
-        // context.AddParameterWithValue("organization_id", organizationId);
-
-        // await using var reader = await context.ReaderAsync();
-
-        // return reader.GetSafeStructValue<OrganizationRole>(0);
     }
 
     // TODO: Also request the organization for which this role must be set.
@@ -184,12 +121,5 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         await connection.ExecuteAsync(sql, new { user_id = userId, role });
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("user_id", userId);
-        // context.AddParameterWithValue("role", role);
-
-        // await context.NonQueryAsync();
     }
 }

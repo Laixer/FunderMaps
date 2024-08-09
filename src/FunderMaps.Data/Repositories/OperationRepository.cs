@@ -4,18 +4,8 @@ using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Various data operations.
-/// </summary>
 internal sealed class OperationRepository : DbServiceBase, IOperationRepository
 {
-    /// <summary>
-    ///     Check if backend is online.
-    /// </summary>
-    /// <remarks>
-    ///     Explicit check on result, not all commands are submitted
-    ///     to the database.
-    /// </remarks>
     public async Task<bool> IsAliveAsync()
     {
         var sql = @"SELECT 1";
@@ -25,9 +15,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
         return await connection.ExecuteScalarAsync<int>(sql) == 1;
     }
 
-    /// <summary>
-    ///    Refresh data models.
-    /// </summary>
     public async Task RefreshModelAsync()
     {
         {
@@ -50,9 +37,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
         }
     }
 
-    /// <summary>
-    ///   Refresh statistics.
-    /// </summary>
     public async Task RefreshStatisticsAsync()
     {
         var sql = @"
@@ -72,9 +56,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
         await connection.ExecuteAsync(sql, commandTimeout: 3600);
     }
 
-    /// <summary>
-    ///   Cleanup BAG data.
-    /// </summary>
     public async Task CleanupBAGAsync()
     {
         var sql = @"
@@ -88,9 +69,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
         await connection.ExecuteAsync(sql, commandTimeout: 10800);
     }
 
-    /// <summary>
-    ///     Load building data from BAG.
-    /// </summary>
     public async Task LoadBuildingAsync()
     {
         // TODO: Move this into a prepare method
@@ -234,9 +212,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
         }
     }
 
-    /// <summary>
-    ///     Load address data from BAG.
-    /// </summary>
     public async Task LoadAddressAsync()
     {
         {
@@ -304,9 +279,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
         }
     }
 
-    /// <summary>
-    ///     Load residence data from BAG.
-    /// </summary>
     public async Task LoadResidenceAsync()
     {
         {
