@@ -4,11 +4,12 @@ using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
+using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
 
 namespace FunderMaps.Data.Repositories;
 
-internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepository
+internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
 {
     private static void MapToWriter(DbContext context, Recovery entity)
     {
@@ -231,7 +232,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             WHERE   a.owner = @tenant
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
-        sql = ConstructNavigation(sql, navigation);
+        // sql = ConstructNavigation(sql, navigation);
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -294,7 +295,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             GROUP BY r.id, a.reviewer, u.email, a.creator, u2.email, a.owner, o.name, a.contractor, c.name
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
-        sql = ConstructNavigation(sql, navigation);
+        // sql = ConstructNavigation(sql, navigation);
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 

@@ -3,11 +3,12 @@ using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
-internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IInquirySampleRepository
+internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
 {
     public async Task<int> AddAsync(InquirySample entity)
     {

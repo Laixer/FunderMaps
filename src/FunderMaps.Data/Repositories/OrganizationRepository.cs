@@ -3,10 +3,11 @@ using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
-internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrganizationRepository
+internal class OrganizationRepository : DbServiceBase, IOrganizationRepository
 {
     public async Task<long> CountAsync()
     {

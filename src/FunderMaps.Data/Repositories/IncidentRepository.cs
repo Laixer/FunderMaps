@@ -3,10 +3,11 @@ using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
-internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentRepository
+internal class IncidentRepository : DbServiceBase, IIncidentRepository
 {
     public async Task<string> AddAsync(Incident entity)
     {
@@ -189,7 +190,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
             JOIN    geocoder.building b ON b.id = i.building
             LEFT JOIN    application.portal p ON p.id = substring(i.id from 'FIR(\d{2})')::int";
 
-        sql = ConstructNavigation(sql, navigation);
+        // sql = ConstructNavigation(sql, navigation);
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 

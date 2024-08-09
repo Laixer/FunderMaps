@@ -5,13 +5,14 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
 using FunderMaps.Core.Types;
 using Dapper;
+using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
 /// <summary>
 ///     Inquiry repository.
 /// </summary>
-internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryRepository
+internal class InquiryRepository : DbServiceBase, IInquiryRepository
 {
     private static void MapToWriter(DbContext context, Inquiry entity)
     {
@@ -255,7 +256,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             WHERE   a.owner = @tenant
             ORDER BY coalesce(i.update_date, i.create_date) DESC";
 
-        sql = ConstructNavigation(sql, navigation);
+        // sql = ConstructNavigation(sql, navigation);
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -322,7 +323,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
             GROUP BY i.id, a.reviewer, u.email, a.creator, u2.email, a.owner, o.name, a.contractor, c.name
             ORDER BY coalesce(i.update_date, i.create_date) DESC";
 
-        sql = ConstructNavigation(sql, navigation);
+        // sql = ConstructNavigation(sql, navigation);
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 

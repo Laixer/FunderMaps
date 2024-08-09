@@ -4,12 +4,13 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
+using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
 using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
-internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, IRecoverySampleRepository
+internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleRepository
 {
     private static void MapToWriter(DbContext context, RecoverySample entity)
     {
