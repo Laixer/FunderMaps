@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     State entity.
 /// </summary>
-public sealed class State : IEntityIdentifier<string>
+public sealed class State
 {
     /// <summary>
     ///     Unique identifier.

@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Mapset entity.
 /// </summary>
-public sealed class Mapset : IEntityIdentifier<string>
+public sealed class Mapset
 {
     /// <summary>
     ///     Unique identifier.

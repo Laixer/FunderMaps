@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Contractor entity.
 /// </summary>
-public sealed class Contractor : IEntityIdentifier<int>
+public sealed class Contractor
 {
     /// <summary>
     ///     Unique identifier.

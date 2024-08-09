@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Municipality entity.
 /// </summary>
-public sealed class Municipality : IEntityIdentifier<string>
+public sealed class Municipality
 {
     /// <summary>
     ///     Unique identifier.

@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Key store entity.
 /// </summary>
-public sealed class KeyStore : IEntityIdentifier<string>
+public sealed class KeyStore
 {
     /// <summary>
     ///     Unique identifier.

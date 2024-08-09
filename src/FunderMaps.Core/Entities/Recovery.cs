@@ -7,7 +7,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Foundation recovery entity.
 /// </summary>
-public sealed class Recovery : IEntityIdentifier<int>
+public sealed class Recovery
 {
     /// <summary>
     ///     Unique identifier.

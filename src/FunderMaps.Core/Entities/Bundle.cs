@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Bundle entity.
 /// </summary>
-public sealed class Bundle : IEntityIdentifier<string>
+public sealed class Bundle
 {
     /// <summary>
     ///     Unique identifier.

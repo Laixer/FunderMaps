@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     District entity.
 /// </summary>
-public sealed class District : IEntityIdentifier<string>
+public sealed class District
 {
     /// <summary>
     ///     Unique identifier.

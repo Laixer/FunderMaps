@@ -7,7 +7,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Inquiry entity.
 /// </summary>
-public class Inquiry : IEntityIdentifier<int>
+public class Inquiry
 {
     /// <summary>
     ///     Unique identifier.
