@@ -2,10 +2,11 @@ using Dapper;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
-internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreRepository
+internal class KeystoreRepository : DbServiceBase, IKeystoreRepository
 {
     public async Task<string> AddAsync(KeyStore entity)
     {

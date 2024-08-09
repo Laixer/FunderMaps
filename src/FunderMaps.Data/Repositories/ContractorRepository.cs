@@ -1,10 +1,11 @@
 ﻿using Dapper;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
-internal class ContractorRepository : RepositoryBase<Contractor, int>, IContractorRepository
+internal class ContractorRepository : DbServiceBase, IContractorRepository
 {
     public async IAsyncEnumerable<Contractor> ListAllAsync()
     {

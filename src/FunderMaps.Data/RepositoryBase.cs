@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core;
-using FunderMaps.Core.Entities;
 using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data;
@@ -10,7 +9,6 @@ namespace FunderMaps.Data;
 /// <typeparam name="TEntity">Derivative of base entity.</typeparam>
 /// <typeparam name="TEntityPrimaryKey">Primary key of entity.</typeparam>
 internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBase
-    // where TEntity : IEntityIdentifier<TEntityPrimaryKey>
 {
     // TODO: Remove
     // FUTURE: Maybe too npgsql specific.

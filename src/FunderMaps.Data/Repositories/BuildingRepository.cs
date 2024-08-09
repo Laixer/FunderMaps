@@ -1,13 +1,13 @@
 using Dapper;
-using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
-internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingRepository
+internal class BuildingRepository : DbServiceBase, IBuildingRepository
 {
     public async Task<Building> GetByExternalIdAsync(string id)
     {

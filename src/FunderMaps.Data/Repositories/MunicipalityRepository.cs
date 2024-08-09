@@ -2,10 +2,11 @@ using Dapper;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
-internal class MunicipalityRepository : RepositoryBase<Municipality, string>, IMunicipalityRepository
+internal class MunicipalityRepository : DbServiceBase, IMunicipalityRepository
 {
     public async Task<Municipality> GetByExternalIdAsync(string id)
     {
