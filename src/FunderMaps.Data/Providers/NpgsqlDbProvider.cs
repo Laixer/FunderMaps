@@ -68,23 +68,6 @@ internal class NpgsqlDbProvider : DbProvider, IDisposable, IAsyncDisposable
     }
 
     /// <summary>
-    ///     Get the connection as URI.
-    /// </summary>
-    public override string ConnectionUri
-    {
-        get
-        {
-            var username = _dataSourceBuilder.ConnectionStringBuilder.Username;
-            var password = _dataSourceBuilder.ConnectionStringBuilder.Password;
-            var host = _dataSourceBuilder.ConnectionStringBuilder.Host;
-            var port = _dataSourceBuilder.ConnectionStringBuilder.Port;
-            var database = _dataSourceBuilder.ConnectionStringBuilder.Database;
-
-            return $"postgresql://{username}:{password}@{host}:{port}/{database}"; // ?connect_timeout=10&application_name=myapp        
-        }
-    }
-
-    /// <summary>
     ///     <see cref="DbProvider.ConnectionScope"/>
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

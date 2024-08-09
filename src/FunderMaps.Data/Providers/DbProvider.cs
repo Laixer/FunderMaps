@@ -18,11 +18,6 @@ public abstract class DbProvider(IOptions<DbProviderOptions> options)
     public abstract DbConnection ConnectionScope();
 
     /// <summary>
-    ///     Get the connection as URI.
-    /// </summary>
-    public abstract string ConnectionUri { get; }
-
-    /// <summary>
     ///     Create command on the database connection.
     /// </summary>
     /// <param name="cmdText">The text of the query.</param>
