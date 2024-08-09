@@ -664,7 +664,7 @@ internal class MemoryAnalysisRepository : IAnalysisRepository
         return memory.Values.FirstOrDefault(x => x.ExternalBuildingId == id) ?? throw new EntityNotFoundException(nameof(AnalysisProduct));
     }
 
-    public IAsyncEnumerable<AnalysisProduct> ListAllAsync(Navigation navigation)
+    public IAsyncEnumerable<AnalysisProduct> ListAllAsync()
         => memory.Values.ToAsyncEnumerable();
 
     public async Task<bool> RegisterProductMatch(string buildingId, string id, string product, Guid tenantId)

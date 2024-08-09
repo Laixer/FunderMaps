@@ -1,5 +1,4 @@
 using Dapper;
-using FunderMaps.Core;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
@@ -96,7 +95,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         await connection.ExecuteAsync(sql, new { id, organization_id = tenantId });
     }
 
-    public async IAsyncEnumerable<AnalysisProduct> ListAllAsync(Navigation navigation)
+    public async IAsyncEnumerable<AnalysisProduct> ListAllAsync()
     {
         var sql = @"
             SELECT
@@ -132,7 +131,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var item in connection.QueryUnbufferedAsync<AnalysisProduct>(sql, navigation))
+        await foreach (var item in connection.QueryUnbufferedAsync<AnalysisProduct>(sql))
         {
             yield return item;
         }

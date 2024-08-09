@@ -32,7 +32,7 @@ internal sealed class ModelExportTask(
         {
             string filePath = $"model_export.csv";
 
-            await WriteCsvAsync(filePath, analysisRepository.ListAllAsync(Navigation.All), cancellationToken);
+            await WriteCsvAsync(filePath, analysisRepository.ListAllAsync(), cancellationToken);
 
             DateTime currentDate = DateTime.Now;
             string dateString = currentDate.ToString("yyyy-MM-dd");

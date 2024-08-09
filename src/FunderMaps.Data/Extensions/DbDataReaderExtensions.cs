@@ -34,21 +34,21 @@ internal static class DbDataReaderExtensions
         return reader.GetInt(ordinal);
     }
 
-    /// <summary>
-    ///     Return value as nullable double.
-    /// </summary>
-    /// <param name="reader">Input reader to extend.</param>
-    /// <param name="ordinal">Column ordinal.</param>
-    /// <returns>Value as nullable double.</returns>
-    public static double? GetSafeDouble(this DbDataReader reader, int ordinal)
-    {
-        if (reader.IsDBNull(ordinal))
-        {
-            return null;
-        }
+    // /// <summary>
+    // ///     Return value as nullable double.
+    // /// </summary>
+    // /// <param name="reader">Input reader to extend.</param>
+    // /// <param name="ordinal">Column ordinal.</param>
+    // /// <returns>Value as nullable double.</returns>
+    // public static double? GetSafeDouble(this DbDataReader reader, int ordinal)
+    // {
+    //     if (reader.IsDBNull(ordinal))
+    //     {
+    //         return null;
+    //     }
 
-        return reader.GetDouble(ordinal);
-    }
+    //     return reader.GetDouble(ordinal);
+    // }
 
     /// <summary>
     ///     Return value as nullable string.
@@ -72,27 +72,27 @@ internal static class DbDataReaderExtensions
         return reader.IsDBNull(ordinal) ? null : (DateTime?)reader.GetDateTime(ordinal);
     }
 
-    /// <summary>
-    ///     Return value as nullable boolean.
-    /// </summary>
-    /// <param name="reader">Input reader to extend.</param>
-    /// <param name="ordinal">Column ordinal.</param>
-    /// <returns>Boolean or null.</returns>
-    public static bool? GetSafeBoolean(this DbDataReader reader, int ordinal)
-    {
-        return reader.IsDBNull(ordinal) ? null : (bool?)reader.GetBoolean(ordinal);
-    }
+    // /// <summary>
+    // ///     Return value as nullable boolean.
+    // /// </summary>
+    // /// <param name="reader">Input reader to extend.</param>
+    // /// <param name="ordinal">Column ordinal.</param>
+    // /// <returns>Boolean or null.</returns>
+    // public static bool? GetSafeBoolean(this DbDataReader reader, int ordinal)
+    // {
+    //     return reader.IsDBNull(ordinal) ? null : (bool?)reader.GetBoolean(ordinal);
+    // }
 
-    /// <summary>
-    ///     Return value as nullable decimal.
-    /// </summary>
-    /// <param name="reader">Input reader to extend.</param>
-    /// <param name="ordinal">Column ordinal.</param>
-    /// <returns>decimal or null.</returns>
-    public static decimal? GetSafeDecimal(this DbDataReader reader, int ordinal)
-    {
-        return reader.IsDBNull(ordinal) ? null : (decimal?)reader.GetDecimal(ordinal);
-    }
+    // /// <summary>
+    // ///     Return value as nullable decimal.
+    // /// </summary>
+    // /// <param name="reader">Input reader to extend.</param>
+    // /// <param name="ordinal">Column ordinal.</param>
+    // /// <returns>decimal or null.</returns>
+    // public static decimal? GetSafeDecimal(this DbDataReader reader, int ordinal)
+    // {
+    //     return reader.IsDBNull(ordinal) ? null : (decimal?)reader.GetDecimal(ordinal);
+    // }
 
     /// <summary>
     ///     Return value as nullable <typeparamref name="TFieldType"/>.

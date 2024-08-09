@@ -35,5 +35,5 @@ public interface IAnalysisRepository
     ///     Retrieve all <typeparamref name="AnalysisProduct"/>.
     /// </summary>
     /// <returns>List of <typeparamref name="AnalysisProduct"/>.</returns>
-    IAsyncEnumerable<AnalysisProduct> ListAllAsync(Navigation navigation);
+    IAsyncEnumerable<AnalysisProduct> ListAllAsync();
 }
