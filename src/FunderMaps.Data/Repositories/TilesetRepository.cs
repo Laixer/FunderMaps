@@ -5,6 +5,7 @@ using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
 
+// TODO: Experimental, not yet in use.
 internal sealed class TilesetRepository : DbServiceBase, ITilesetRepository
 {
     public async Task<byte[]> GetTileAsync(string name, int zoom, int x, int y)

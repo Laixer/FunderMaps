@@ -6,15 +6,8 @@ using FunderMaps.Data.Extensions;
 
 namespace FunderMaps.Data.Repositories;
 
-/// <summary>
-///     Repository for statistics.
-/// </summary>
 internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepository
 {
-    /// <summary>
-    ///     Get foundation type distribution by id.
-    /// </summary>
-    /// <param name="id">Neighborhood identifier.</param>
     public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string id)
     {
         var sql = @"
@@ -44,10 +37,6 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
         };
     }
 
-    /// <summary>
-    ///     Get construction year distribution by id.
-    /// </summary>
-    /// <param name="id">Neighborhood identifier.</param>
     public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string id)
     {
         var sql = @"
@@ -77,10 +66,6 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
         };
     }
 
-    /// <summary>
-    ///     Get data collection percentage by id.
-    /// </summary>
-    /// <param name="id">Neighborhood identifier.</param>
     public async Task<decimal> GetDataCollectedPercentageByIdAsync(string id)
     {
         var sql = @"
@@ -97,10 +82,6 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
         return await context.ScalarAsync<decimal>(resultGuard: false);
     }
 
-    /// <summary>
-    ///     Get foundation risk distribution by id.
-    /// </summary>
-    /// <param name="id">Neighborhood identifier.</param>
     public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string id)
     {
         var sql = @"
@@ -138,10 +119,6 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
         };
     }
 
-    /// <summary>
-    ///     Get total building restored count by id.
-    /// </summary>
-    /// <param name="id">Neighborhood identifier.</param>
     public async Task<long> GetTotalBuildingRestoredCountByIdAsync(string id)
     {
         var sql = @"
@@ -158,10 +135,6 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
         return await context.ScalarAsync<long>(resultGuard: false);
     }
 
-    /// <summary>
-    ///     Get total incident count by id.
-    /// </summary>
-    /// <param name="id">Neighborhood identifier.</param>
     public async Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByIdAsync(string id)
     {
         var sql = @"
@@ -188,10 +161,6 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
         return pairs;
     }
 
-    /// <summary>
-    ///     Get total incident count by id.
-    /// </summary>
-    /// <param name="id">Municipality identifier.</param>
     public async Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByIdAsync(string id)
     {
         var sql = @"
@@ -218,10 +187,6 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
         return pairs;
     }
 
-    /// <summary>
-    ///     Get total report count by id.
-    /// </summary>
-    /// <param name="id">Neighborhood identifier.</param>
     public async Task<List<InquiryYearPair>> GetTotalReportCountByIdAsync(string id)
     {
         var sql = @"
@@ -249,10 +214,6 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
         return pairs;
     }
 
-    /// <summary>
-    ///     Get total report count by id.
-    /// </summary>
-    /// <param name="id">Municipality identifier.</param>
     public async Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByIdAsync(string id)
     {
         var sql = @"
