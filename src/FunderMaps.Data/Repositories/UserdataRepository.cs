@@ -1,4 +1,5 @@
 using Dapper;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 
@@ -6,7 +7,7 @@ namespace FunderMaps.Data.Repositories;
 
 internal sealed class UserdataRepository : DbServiceBase, IUserdataRepository
 {
-    public async Task<object> GetAsync(Guid user_id, string application_id)
+    public async Task<UserData> GetAsync(Guid user_id, string application_id)
     {
         var sql = @"
             SELECT  metadata
@@ -16,21 +17,22 @@ internal sealed class UserdataRepository : DbServiceBase, IUserdataRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await connection.ExecuteScalarAsync<object>(sql, new { user_id, application_id })
-            ?? new { };
+        return await connection.QuerySingleOrDefaultAsync<UserData>(sql, new { user_id, application_id })
+            ?? new UserData();
     }
 
-    public async Task UpdateAsync(Guid user_id, string application_id, object metadata)
+    public async Task UpdateAsync(Guid user_id, string application_id, UserData userdata)
     {
         var sql = @"
             INSERT INTO application.application_user (user_id, application_id, metadata)
             VALUES (@user_id, @application_id, @metadata)
             ON CONFLICT (user_id, application_id)
             DO UPDATE SET
-                metadata = @metadata";
+                metadata = @metadata,
+                update_date = NOW()";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await connection.ExecuteAsync(sql, new { user_id, application_id, metadata });
+        await connection.ExecuteAsync(sql, new { user_id, application_id, userdata.Metadata });
     }
 }
