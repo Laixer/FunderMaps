@@ -10,7 +10,7 @@ internal sealed class UserdataRepository : DbServiceBase, IUserdataRepository
     public async Task<UserData> GetAsync(Guid user_id, string application_id)
     {
         var sql = @"
-            SELECT  metadata
+            SELECT  metadata, update_date
             FROM    application.application_user
             WHERE   user_id = @user_id AND application_id = @application_id
             LIMIT   1";
