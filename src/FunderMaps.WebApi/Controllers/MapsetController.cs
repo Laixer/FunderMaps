@@ -50,14 +50,6 @@ public sealed class MapsetController(IMapsetRepository mapsetRepository) : Funde
             {
                 mapSets.Add(set);
             }
-
-            // foreach (var organization in _appContext.Organizations)
-            // {
-            //     await foreach (var set in _mapsetRepository.GetByOrganizationIdAsync2(organization.Id))
-            //     {
-            //         mapSetList.Add(set);
-            //     }
-            // }
         }
 
         return Ok(mapSets);
