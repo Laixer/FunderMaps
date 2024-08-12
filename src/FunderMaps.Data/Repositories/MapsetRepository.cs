@@ -16,38 +16,25 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             return value ?? throw new EntityNotFoundException(nameof(Mapset));
         }
 
-        // TODO: Refactor to use a view.
         var sql = @"
-            SELECT  -- Mapset
-                    m.id::text,
-                    m.name,
-                    LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) AS slug,
-                    m.style,
-                    m.layers,
-                    m.options,
-                    m.public,
-                    m.consent,
-                    m.note,
-                    m.icon,
-                    NULL AS fence_neighborhood,
-                    NULL AS fence_district,
-                    NULL as fence_municipality,
-                    (
-                        SELECT jsonb_agg(maplayers.layer)
-                        FROM (
-                            SELECT l AS layer
-                            FROM maplayer.layer l
-                            WHERE l.id IN (
-                                SELECT  unnest(m2.layers)
-                                FROM    maplayer.mapset m2
-                                WHERE   m2.id = m.id
-                            )
-                            ORDER BY l.order ASC
-                        ) AS maplayers
-                    ) AS layerset
-            FROM    maplayer.mapset AS m
-            WHERE   m.id::text = @id
-            AND     m.public = true
+            SELECT  c.id,
+                    c.name,
+                    c.slug,
+                    c.style,
+                    c.layers,
+                    c.options,
+                    c.public,
+                    c.consent,
+                    c.note,
+                    c.icon,
+                    c.fence_neighborhood,
+                    c.fence_district,
+                    c.fence_municipality,
+                    c.order,
+                    c.layerset
+            FROM    maplayer.mapset_collection AS c
+            WHERE   c.id = @id
+            AND     c.public = true
             LIMIT   1";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
@@ -69,38 +56,25 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             return value ?? throw new EntityNotFoundException(nameof(Mapset));
         }
 
-        // TODO: Refactor to use a view.
         var sql = @"
-            SELECT  -- Mapset
-                    m.id::text,
-                    m.name,
-                    LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) AS slug,
-                    m.style,
-                    m.layers,
-                    m.options,
-                    m.public,
-                    m.consent,
-                    m.note,
-                    m.icon,
-                    NULL AS fence_neighborhood,
-                    NULL AS fence_district,
-                    NULL AS fence_municipality,
-                    (
-                        SELECT jsonb_agg(maplayers.layer)
-                        FROM (
-                            SELECT l AS layer
-                            FROM maplayer.layer l
-                            WHERE l.id IN (
-                                SELECT  unnest(m2.layers)
-                                FROM    maplayer.mapset m2
-                                WHERE   m2.id = m.id
-                            )
-                            ORDER BY l.order ASC
-                        ) AS maplayers
-                    ) AS layerset
-            FROM    maplayer.mapset AS m
-            WHERE   LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) = LOWER(@name)
-            AND     m.public = true
+            SELECT  c.id,
+                    c.name,
+                    c.slug,
+                    c.style,
+                    c.layers,
+                    c.options,
+                    c.public,
+                    c.consent,
+                    c.note,
+                    c.icon,
+                    c.fence_neighborhood,
+                    c.fence_district,
+                    c.fence_municipality,
+                    c.order,
+                    c.layerset
+            FROM    maplayer.mapset_collection AS c
+            WHERE   LOWER(REGEXP_REPLACE(c.name, '\s+', '-', 'g')) = LOWER(@name)
+            AND     c.public = true
             LIMIT   1";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
@@ -119,41 +93,26 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
     public async IAsyncEnumerable<Mapset> GetByOrganizationIdAsync(Guid id)
     {
-        // TODO: Refactor to use a view.
         var sql = @"
-            SELECT  -- Mapset
-                    m.id::text,
-                    m.name,
-                    LOWER(REGEXP_REPLACE(m.name, '\s+', '-', 'g')) AS slug,
-                    m.style,
-                    m.layers,
-                    COALESCE(mo.options, m.options),
-                    m.public,
-                    m.consent,
-                    m.note,
-                    m.icon,
-                    o.fence_neighborhood,
-                    o.fence_district,
-                    o.fence_municipality,
-                    (
-                        SELECT jsonb_agg(maplayers.layer)
-                        FROM (
-                            SELECT l AS layer
-                            FROM maplayer.layer l
-                            WHERE l.id IN (
-                                SELECT  unnest(m2.layers)
-                                FROM    maplayer.mapset m2
-                                WHERE   m2.id = m.id
-                            )
-                            ORDER BY l.order ASC
-                        ) AS maplayers
-                    ) AS layerset
-            FROM    maplayer.map_organization mo
-            JOIN    maplayer.mapset AS m on m.id = mo.map_id
-            JOIN    application.organization o on o.id = mo.organization_id 
+            SELECT  c.id,
+                    c.name,
+                    c.slug,
+                    c.style,
+                    c.layers,
+                    c.options,
+                    c.public,
+                    c.consent,
+                    c.note,
+                    c.icon,
+                    c.fence_neighborhood,
+                    c.fence_district,
+                    c.fence_municipality,
+                    c.order,
+                    c.layerset
+            FROM    maplayer.mapset_collection AS c
             WHERE   mo.organization_id = @id
-            AND     m.public = false
-            ORDER BY m.order ASC";
+            AND     c.public = false
+            ORDER BY c.order ASC";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 

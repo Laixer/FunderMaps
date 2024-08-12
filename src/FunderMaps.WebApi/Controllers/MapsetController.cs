@@ -32,6 +32,10 @@ public sealed class MapsetController(IMapsetRepository mapsetRepository) : Funde
                 {
                     mapSets.Add(await mapsetRepository.GetPublicAsync(name));
                 }
+                else if (name.Trim().StartsWith("ck", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    mapSets.Add(await mapsetRepository.GetPublicAsync(name));
+                }
                 else
                 {
                     mapSets.Add(await mapsetRepository.GetPublicByNameAsync(name));
