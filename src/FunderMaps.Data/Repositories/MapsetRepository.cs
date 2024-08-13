@@ -111,7 +111,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     c.layerset
             FROM    maplayer.mapset_collection AS c
             JOIN    maplayer.map_organization mo ON mo.map_id = c.id
-            JOIN    organization.organization AS o ON o.id = mo.organization_id
+            JOIN    application.organization AS o ON o.id = mo.organization_id
             WHERE   mo.organization_id = @id
             AND     c.public = false
             ORDER BY c.order ASC";
