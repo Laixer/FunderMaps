@@ -27,9 +27,9 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     c.consent,
                     c.note,
                     c.icon,
-                    c.fence_neighborhood,
-                    c.fence_district,
-                    c.fence_municipality,
+                    NULL::text AS fence_neighborhood,
+                    NULL::text AS fence_district,
+                    NULL::text AS fence_municipality,
                     c.order,
                     c.layerset
             FROM    maplayer.mapset_collection AS c
@@ -67,9 +67,9 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     c.consent,
                     c.note,
                     c.icon,
-                    c.fence_neighborhood,
-                    c.fence_district,
-                    c.fence_municipality,
+                    NULL::text AS fence_neighborhood,
+                    NULL::text AS fence_district,
+                    NULL::text AS fence_municipality,
                     c.order,
                     c.layerset
             FROM    maplayer.mapset_collection AS c
@@ -104,13 +104,14 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     c.consent,
                     c.note,
                     c.icon,
-                    c.fence_neighborhood,
-                    c.fence_district,
-                    c.fence_municipality,
+                    o.fence_neighborhood,
+                    o.fence_district,
+                    o.fence_municipality,
                     c.order,
                     c.layerset
             FROM    maplayer.mapset_collection AS c
             JOIN    maplayer.map_organization mo ON mo.map_id = c.id
+            JOIN    organization.organization AS o ON o.id = mo.organization_id
             WHERE   mo.organization_id = @id
             AND     c.public = false
             ORDER BY c.order ASC";
