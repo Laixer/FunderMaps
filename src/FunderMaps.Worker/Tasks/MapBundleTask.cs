@@ -53,12 +53,12 @@ internal sealed class MapBundleTask(
                 await mapboxService.UploadAsync(bundle.Name, bundle.Tileset, $"{bundle.Tileset}.mbtiles");
             }
 
-            logger.LogInformation("Storing tileset '{Tileset}'", bundle.Tileset);
+            // logger.LogInformation("Storing tileset '{Tileset}'", bundle.Tileset);
 
-            DateTime currentDate = DateTime.Now;
-            string dateString = currentDate.ToString("yyyy-MM-dd");
-            await blobStorageService.StoreFileAsync($"tileset/archive/{dateString}/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
-            await blobStorageService.StoreFileAsync($"tileset/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
+            // DateTime currentDate = DateTime.Now;
+            // string dateString = currentDate.ToString("yyyy-MM-dd");
+            // await blobStorageService.StoreFileAsync($"tileset/archive/{dateString}/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
+            // await blobStorageService.StoreFileAsync($"tileset/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
 
             await bundleRepository.LogBuiltTimeAsync(bundle.Tileset);
         }
