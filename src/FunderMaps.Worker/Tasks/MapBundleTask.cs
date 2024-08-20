@@ -41,17 +41,17 @@ internal sealed class MapBundleTask(
             var input = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
             gdalService.Convert(input, $"{bundle.Tileset}.gpkg", $"maplayer.{bundle.Tileset}");
 
-            if (bundle.MapEnabled)
-            {
-                logger.LogInformation("Generating map for tileset '{Tileset}'", bundle.Tileset);
+            // if (bundle.MapEnabled)
+            // {
+            logger.LogInformation("Generating map for tileset '{Tileset}'", bundle.Tileset);
 
-                gdalService.Convert($"{bundle.Tileset}.gpkg", $"{bundle.Tileset}.geojson");
-                tilesetGeneratorService.Generate($"{bundle.Tileset}.geojson", $"{bundle.Tileset}.mbtiles", bundle.Tileset, bundle.MaxZoomLevel, bundle.MinZoomLevel, cancellationToken);
+            gdalService.Convert($"{bundle.Tileset}.gpkg", $"{bundle.Tileset}.geojson");
+            tilesetGeneratorService.Generate($"{bundle.Tileset}.geojson", $"{bundle.Tileset}.mbtiles", bundle.Tileset, bundle.MaxZoomLevel, bundle.MinZoomLevel, cancellationToken);
 
-                logger.LogInformation("Uploading tileset to mapbox '{Tileset}'", bundle.Tileset);
+            logger.LogInformation("Uploading tileset to mapbox '{Tileset}'", bundle.Tileset);
 
-                await mapboxService.UploadAsync(bundle.Name, bundle.Tileset, $"{bundle.Tileset}.mbtiles");
-            }
+            await mapboxService.UploadAsync(bundle.Name, bundle.Tileset, $"{bundle.Tileset}.mbtiles");
+            // }
 
             // logger.LogInformation("Storing tileset '{Tileset}'", bundle.Tileset);
 
@@ -84,6 +84,12 @@ internal sealed class MapBundleTask(
                     logger.LogInformation("Precondition for bundle '{Tileset}' not met, skipping", bundle.Tileset);
                     continue;
                 }
+            }
+
+            if (!bundle.MapEnabled)
+            {
+                logger.LogInformation("Map generation disabled for bundle '{Tileset}'", bundle.Tileset);
+                continue;
             }
 
             await GenerateBundleAsync(bundle, cancellationToken);
