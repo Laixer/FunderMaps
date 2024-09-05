@@ -54,9 +54,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         // Register external services in DI container.
         services.AddSingleton<IEmailService, MailgunService>();
         services.AddSingleton<IBlobStorageService, S3StorageService>();
-        services.AddSingleton<ITilesetGeneratorService, TippecanoeService>();
         services.AddSingleton<IMapboxService, MapboxService>();
-        services.AddSingleton<IGDALService, GeospatialAbstractionService>();
 
         // NOTE: Register the HttpContextAccessor service to the container.
         //       The HttpContextAccessor exposes a singleton holding the
@@ -69,9 +67,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
             .AddCheck<MapboxHealthCheck>("mapbox_health_check", tags: externalTags)
             .AddCheck<RepositoryHealthCheck>("data_health_check", tags: externalTags)
             .AddCheck<EmailHealthCheck>("email_health_check", tags: externalTags)
-            .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check", tags: externalTags)
-            .AddCheck<IOHealthCheck>("io_health_check", tags: localTags)
-            .AddCheck<TippecanoeHealthCheck>("tileset_generator_health_check", tags: localTags);
+            .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check", tags: externalTags);
 
         var serviceProvider = services.BuildServiceProvider();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
