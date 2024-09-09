@@ -13,5 +13,5 @@ public sealed class SubsidenceHistory
     /// <summary>
     ///     Mark date.
     /// </summary>
-    public DateTime MarkDate { get; set; }
+    public DateOnly MarkAt { get; set; }
 }
