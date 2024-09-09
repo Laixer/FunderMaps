@@ -194,8 +194,7 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
                     spi.year,
                     spi.count
             FROM    data.statistics_product_inquiries AS spi
-            WHERE   spi.neighborhood_id = @id
-            LIMIT   1";
+            WHERE   spi.neighborhood_id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
