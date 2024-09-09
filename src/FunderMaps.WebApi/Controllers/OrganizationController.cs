@@ -25,18 +25,18 @@ public class OrganizationController(IOrganizationRepository organizationReposito
     public Task<Organization> GetAsync()
         => organizationRepository.GetByIdAsync(TenantId);
 
-    // PUT: organization
-    /// <summary>
-    ///     Update session organization.
-    /// </summary>
-    [Authorize(Policy = "SuperuserPolicy")]
-    [HttpPut]
-    public async Task<IActionResult> UpdateAsync([FromBody] Organization organization)
-    {
-        organization.Id = TenantId;
+    // // PUT: organization
+    // /// <summary>
+    // ///     Update session organization.
+    // /// </summary>
+    // [Authorize(Policy = "SuperuserPolicy")]
+    // [HttpPut]
+    // public async Task<IActionResult> UpdateAsync([FromBody] Organization organization)
+    // {
+    //     organization.Id = TenantId;
 
-        await organizationRepository.UpdateAsync(organization);
+    //     await organizationRepository.UpdateAsync(organization);
 
-        return NoContent();
-    }
+    //     return NoContent();
+    // }
 }

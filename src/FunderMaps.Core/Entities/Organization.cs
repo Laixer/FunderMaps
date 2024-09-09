@@ -21,8 +21,8 @@ public sealed class Organization : IEntityIdentifier<Guid>
     /// <summary>
     ///     Gets or sets the email address for the organization.
     /// </summary>
-    [Required, EmailAddress]
-    public string Email { get; set; } = default!;
+    // [Required, EmailAddress]
+    // public string Email { get; set; } = default!;
 
     /// <summary>
     ///     Print object as name.

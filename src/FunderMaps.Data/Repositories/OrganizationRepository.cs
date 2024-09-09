@@ -68,17 +68,17 @@ internal class OrganizationRepository : DbServiceBase, IOrganizationRepository
         }
     }
 
-    public async Task UpdateAsync(Organization entity)
-    {
-        Cache.Remove(entity.Id);
+    // public async Task UpdateAsync(Organization entity)
+    // {
+    //     Cache.Remove(entity.Id);
 
-        var sql = @"
-            UPDATE  application.organization
-            SET     email = trim(@email)
-            WHERE   id = @id";
+    //     var sql = @"
+    //         UPDATE  application.organization
+    //         SET     email = trim(@email)
+    //         WHERE   id = @id";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+    //     await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await connection.ExecuteAsync(sql, new { entity.Id, entity.Email });
-    }
+    //     await connection.ExecuteAsync(sql, new { entity.Id, entity.Email });
+    // }
 }
