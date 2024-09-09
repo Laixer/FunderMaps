@@ -79,6 +79,7 @@ public static class FunderMapsDataServiceCollectionExtensions
         services.AddContextRepository<IResidenceRepository, ResidenceRepository>();
         services.AddContextRepository<IStateRepository, StateRepository>();
         services.AddContextRepository<IStatisticsRepository, StatisticsRepository>();
+        services.AddContextRepository<ISubsidenceRepository, SubsidenceRepository>();
         services.AddContextRepository<ITaskRepository, TaskRepository>();
         services.AddContextRepository<ITelemetryRepository, TelemetryRepository>();
         services.AddContextRepository<ITilesetRepository, TilesetRepository>();
