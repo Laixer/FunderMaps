@@ -26,23 +26,6 @@ public sealed class OrganizationUserAdminController(
     IOrganizationUserRepository organizationUserRepository,
     SignInService signInService) : FunderMapsController
 {
-    // POST: api/admin/organization/{id}/user
-    /// <summary>
-    ///     Add user to organization.
-    /// </summary>
-    // [HttpPost]
-    // public async Task<User> AddUserAsync(Guid id, [FromBody] user + role + passwd input)
-    // {
-    //     var user = _mapper.Map<User>(input);
-
-    //     // FUTURE: Do in 1 call.
-    //     user = await _userRepository.AddGetAsync(user);
-    //     await _signInService.SetPasswordAsync(user.Id, input.Password);
-    //     await _organizationUserRepository.AddAsync(id, user.Id, input.OrganizationRole);
-
-    //     return user;
-    // }
-
     // GET: api/admin/organization/{id}/user
     /// <summary>
     ///     Get all users in the organization.

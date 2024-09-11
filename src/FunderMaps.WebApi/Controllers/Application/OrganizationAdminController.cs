@@ -55,20 +55,6 @@ public sealed class OrganizationAdminController(IOrganizationRepository organiza
     public async Task<IEnumerable<Organization>> GetAllAsync([FromQuery] PaginationDto pagination)
         => await organizationRepository.ListAllAsync(pagination.Navigation).ToListAsync();
 
-    // // PUT: api/admin/organization/{id}
-    // /// <summary>
-    // ///     Update organization by id.
-    // /// </summary>
-    // [HttpPut("{id:guid}")]
-    // public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] Organization organization)
-    // {
-    //     organization.Id = id;
-
-    //     await organizationRepository.UpdateAsync(organization);
-
-    //     return NoContent();
-    // }
-
     // DELETE: api/admin/organization/{id}
     /// <summary>
     ///     Delete organization by id.

@@ -1,7 +1,6 @@
 using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers;
@@ -24,19 +23,4 @@ public class OrganizationController(IOrganizationRepository organizationReposito
     [ResponseCache(Duration = 60 * 60, VaryByHeader = "Authorization", Location = ResponseCacheLocation.Client)]
     public Task<Organization> GetAsync()
         => organizationRepository.GetByIdAsync(TenantId);
-
-    // // PUT: organization
-    // /// <summary>
-    // ///     Update session organization.
-    // /// </summary>
-    // [Authorize(Policy = "SuperuserPolicy")]
-    // [HttpPut]
-    // public async Task<IActionResult> UpdateAsync([FromBody] Organization organization)
-    // {
-    //     organization.Id = TenantId;
-
-    //     await organizationRepository.UpdateAsync(organization);
-
-    //     return NoContent();
-    // }
 }
