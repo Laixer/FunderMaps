@@ -170,22 +170,6 @@ public sealed class RecoveryController(
         return NoContent();
     }
 
-    // POST: api/recovery/{id}/reset
-    /// <summary>
-    ///     Reset recovery status to pending by id.
-    /// </summary>
-    [HttpPost("{id:int}/reset")]
-    [Authorize(Policy = "SuperuserAdministratorPolicy")]
-    public async Task<IActionResult> ResetAsync(int id)
-    {
-        var recovery = await recoveryRepository.GetByIdAsync(id, TenantId);
-
-        recovery.State.TransitionToPending();
-        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, TenantId);
-
-        return NoContent();
-    }
-
     // POST: api/recovery/{id}/status_review
     /// <summary>
     ///     Set recovery status to review by id.
@@ -287,19 +271,6 @@ public sealed class RecoveryController(
                 { "documentName", recovery.DocumentName },
             }
         });
-
-        return NoContent();
-    }
-
-    // DELETE: api/recovery/{id}
-    /// <summary>
-    ///     Delete recovery by id.
-    /// </summary>
-    [HttpDelete("{id:int}")]
-    [Authorize(Policy = "SuperuserAdministratorPolicy")]
-    public async Task<IActionResult> DeleteAsync(int id)
-    {
-        await recoveryRepository.DeleteAsync(id, TenantId);
 
         return NoContent();
     }

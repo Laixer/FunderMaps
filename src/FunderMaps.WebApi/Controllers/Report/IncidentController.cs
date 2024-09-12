@@ -19,21 +19,6 @@ public sealed class IncidentController(
     IIncidentRepository incidentRepository,
     GeocoderTranslation geocoderTranslation) : FunderMapsController
 {
-    // GET: api/incident/stats
-    // / <summary>
-    // /     Return incident statistics.
-    // / </summary>
-    // [HttpGet("stats")]
-    // public async Task<IActionResult> GetStatsAsync()
-    // {
-    //     var output = new DatasetStatsDto()
-    //     {
-    //         Count = await incidentRepository.CountAsync(),
-    //     };
-
-    //     return Ok(output);
-    // }
-
     // GET: api/incident/{id}
     /// <summary>
     ///     Return incident by id.
@@ -85,19 +70,6 @@ public sealed class IncidentController(
         incident.Id = id;
 
         await incidentRepository.UpdateAsync(incident);
-
-        return NoContent();
-    }
-
-    // DELETE: api/incident/{id}
-    /// <summary>
-    ///     Delete incident by id.
-    /// </summary>
-    [HttpDelete("{id}")]
-    [Authorize(Policy = "SuperuserAdministratorPolicy")]
-    public async Task<IActionResult> DeleteAsync(string id)
-    {
-        await incidentRepository.DeleteAsync(id);
 
         return NoContent();
     }

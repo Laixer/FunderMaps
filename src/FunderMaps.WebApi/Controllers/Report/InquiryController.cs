@@ -170,22 +170,6 @@ public sealed class InquiryController(
         return NoContent();
     }
 
-    // POST: api/inquiry/{id}/reset
-    /// <summary>
-    ///     Reset inquiry status to pending by id.
-    /// </summary>
-    [HttpPost("{id:int}/reset")]
-    [Authorize(Policy = "SuperuserAdministratorPolicy")]
-    public async Task<IActionResult> ResetAsync(int id)
-    {
-        var inquiry = await inquiryRepository.GetByIdAsync(id, TenantId);
-
-        inquiry.State.TransitionToPending();
-        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, TenantId);
-
-        return NoContent();
-    }
-
     // POST: api/inquiry/{id}/status_review
     /// <summary>
     ///     Set inquiry status to review by id.
@@ -286,19 +270,6 @@ public sealed class InquiryController(
                 { "documentName", inquiry.DocumentName },
             }
         });
-
-        return NoContent();
-    }
-
-    // DELETE: api/inquiry/{id}
-    /// <summary>
-    ///     Delete inquiry by id.
-    /// </summary>
-    [HttpDelete("{id:int}")]
-    [Authorize(Policy = "SuperuserAdministratorPolicy")]
-    public async Task<IActionResult> DeleteAsync(int id)
-    {
-        await inquiryRepository.DeleteAsync(id, TenantId);
 
         return NoContent();
     }
