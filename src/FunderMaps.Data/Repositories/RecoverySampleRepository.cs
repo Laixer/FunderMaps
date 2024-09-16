@@ -186,7 +186,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    b.external_id,
+                    s.building_id,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -200,10 +200,8 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
                     s.permit_date,
                     s.recovery_date
             FROM    report.recovery_sample AS s
-            JOIN    report.recovery AS r ON r.id = s.recovery
-            JOIN    application.attribution AS a ON a.id = r.attribution
-            JOIN    geocoder.building b ON b.id = s.building
-            WHERE   s.building = @building
+            JOIN    geocoder.building b ON b.external_id = s.building_id
+            WHERE   b.id = @building
             ORDER BY s.create_date DESC";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
@@ -212,15 +210,6 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
         {
             yield return item;
         }
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("building", id);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return MapFromReader(reader);
-        // }
     }
 
     public async IAsyncEnumerable<RecoverySample> ListAllAsync(int recovery, Navigation navigation, Guid tenantId)
