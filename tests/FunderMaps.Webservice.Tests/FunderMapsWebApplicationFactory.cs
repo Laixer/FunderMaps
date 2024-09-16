@@ -627,7 +627,7 @@ internal class MemoryAnalysisRepository : IAnalysisRepository
         memory.Add("gfm-4f5e73d478ff452b86023a06e5b8d834", new()
         {
             BuildingId = "gfm-4f5e73d478ff452b86023a06e5b8d834",
-            ExternalBuildingId = "NL.IMBAG.PAND.0599100000685769",
+            // ExternalBuildingId = "NL.IMBAG.PAND.0599100000685769",
             NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
             ConstructionYear = 1908,
             ConstructionYearReliability = Reliability.Indicative,
@@ -657,12 +657,12 @@ internal class MemoryAnalysisRepository : IAnalysisRepository
         return memory.Values.FirstOrDefault(x => x.BuildingId == id) ?? throw new EntityNotFoundException(nameof(AnalysisProduct));
     }
 
-    public async Task<AnalysisProduct> GetByExternalIdAsync(string id)
-    {
-        await Task.CompletedTask;
+    // public async Task<AnalysisProduct> GetByExternalIdAsync(string id)
+    // {
+    //     await Task.CompletedTask;
 
-        return memory.Values.FirstOrDefault(x => x.ExternalBuildingId == id) ?? throw new EntityNotFoundException(nameof(AnalysisProduct));
-    }
+    //     return memory.Values.FirstOrDefault(x => x.ExternalBuildingId == id) ?? throw new EntityNotFoundException(nameof(AnalysisProduct));
+    // }
 
     public IAsyncEnumerable<AnalysisProduct> ListAllAsync()
         => memory.Values.ToAsyncEnumerable();

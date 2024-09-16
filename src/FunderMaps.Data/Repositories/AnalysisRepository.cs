@@ -19,8 +19,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
 
         var sql = @"
             SELECT
-                    mrs.building_id,
-                    mrs.external_building_id,
+                    mrs.external_building_id AS building_id,
                     mrs.neighborhood_id,
                     mrs.construction_year,
                     mrs.construction_year_reliability,
