@@ -148,7 +148,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    b.external_id,
+                    s.building_id,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -162,7 +162,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
                     s.permit_date,
                     s.recovery_date
             FROM    report.recovery_sample AS s
-            JOIN    geocoder.building b ON b.id = s.building
+            JOIN    geocoder.building b ON b.external_id = s.building_id
             WHERE   s.id = @id
             LIMIT   1";
 
@@ -245,18 +245,6 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
         {
             yield return item;
         }
-
-        // sql = ConstructNavigation(sql, navigation);
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("id", recovery);
-        // context.AddParameterWithValue("tenant", tenantId);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return CacheEntity(MapFromReader(reader));
-        // }
     }
 
     public async Task UpdateAsync(RecoverySample entity, Guid tenantId)
@@ -279,13 +267,5 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         await connection.ExecuteAsync(sql, entity);
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("id", entity.Id);
-
-        // MapToWriter(context, entity);
-
-        // await context.NonQueryAsync();
     }
 }
