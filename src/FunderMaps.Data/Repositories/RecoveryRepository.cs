@@ -286,34 +286,33 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
                     r.delete_date
             FROM    report.recovery_sample AS s
             JOIN    report.recovery AS r ON r.id = s.recovery
+            JOIN    geocoder.building b ON b.external_id = s.building_id
             JOIN    application.attribution AS a ON a.id = r.attribution
             JOIN    application.user u ON u.id = a.reviewer
             JOIN    application.user u2 ON u2.id = a.creator
             JOIN    application.organization o ON o.id = a.owner
             JOIN    application.contractor c ON c.id = a.contractor
-            WHERE   s.building = @building
+            WHERE   b.id = @building
             GROUP BY r.id, a.reviewer, u.email, a.creator, u2.email, a.owner, o.name, a.contractor, c.name
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
-        // sql = ConstructNavigation(sql, navigation);
+        // await using var context = await DbContextFactory.CreateAsync(sql);
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        // context.AddParameterWithValue("building", id);
 
-        context.AddParameterWithValue("building", id);
-
-        await foreach (var reader in context.EnumerableReaderAsync())
-        {
-            yield return MapFromReader(reader);
-        }
+        // await foreach (var reader in context.EnumerableReaderAsync())
+        // {
+        //     yield return MapFromReader(reader);
+        // }
 
         // TODO: Dapper can't handle multiple result sets in one go.
 
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        // await foreach (var item in connection.QueryUnbufferedAsync<Recovery>(sql, new { building = id }))
-        // {
-        //     yield return CacheEntity(item);
-        // }
+        await foreach (var item in connection.QueryUnbufferedAsync<Recovery>(sql, new { building = id }))
+        {
+            yield return item;
+        }
     }
 
     public async Task UpdateAsync(Recovery entity)
