@@ -218,7 +218,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    b.external_id,
+                    s.building_id,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -232,9 +232,9 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
                     s.permit_date,
                     s.recovery_date
             FROM    report.recovery_sample AS s
+            JOIN    geocoder.building b ON b.external_id = s.building_id
             JOIN    report.recovery AS r ON r.id = s.recovery
             JOIN    application.attribution AS a ON a.id = r.attribution
-            JOIN    geocoder.building b ON b.id = s.building
             WHERE   a.owner = @tenant
             AND     r.id = @id
             ORDER BY s.create_date DESC";
