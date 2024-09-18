@@ -8,12 +8,6 @@ namespace FunderMaps.Core.Types.Products;
 /// </summary>
 public sealed record AnalysisProduct
 {
-    // /// <summary>
-    // ///     Building identifier.
-    // /// </summary>
-    // [Required, Geocoder]
-    // public string BuildingId { get; init; } = default!;
-
     /// <summary>
     ///     Building external identifier.
     /// </summary>
