@@ -18,7 +18,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                 chained_building,
                 owner,
                 foundation_recovery,
-                neightbor_recovery, -- Typo in database
+                neightbor_recovery,
                 foundation_damage_cause,
                 document_file,
                 note,
@@ -30,33 +30,102 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                 environment_damage_characteristics,
                 building,
                 audit_status,
-                question_type,
-                meta)
+                question_type)
             VALUES (
-                report.fir_generate_id(@ClientId),
-                @FoundationType,
-                @ChainedBuilding,
-                @Owner,
-                @FoundationRecovery,
-                @NeighborRecovery,
-                @FoundationDamageCause,
-                NULLIF(@DocumentFile, '{}'::text[]),
-                NULLIF(trim(@Note), ''),
-                NULLIF(trim(@InternalNote), ''),
-                trim(lower(@Email)),
-                NULLIF(trim(@Name), ''),
-                NULLIF(trim(@PhoneNumber), ''),
-                NULLIF(@FoundationDamageCharacteristics, '{}'::report.foundation_damage_characteristics[]),
-                NULLIF(@EnvironmentDamageCharacteristics, '{}'::report.environment_damage_characteristics[]),
-                @Building,
-                @AuditStatus,
-                @QuestionType,
-                @Meta)
+                report.fir_generate_id(@client_id),
+                @foundation_type,
+                @chained_building,
+                @owner,
+                @foundation_recovery,
+                @neightbor_recovery,
+                @foundation_damage_cause,
+                NULLIF(@document_file, '{}'::text[]),
+                NULLIF(trim(@note), ''),
+                NULLIF(trim(@internal_note), ''),
+                trim(lower(@email)),
+                NULLIF(trim(@name), ''),
+                NULLIF(trim(@phone_number), ''),
+                NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
+                NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
+                @building,
+                @audit_status,
+                @question_type)
             RETURNING id";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-        return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new InvalidOperationException();
+        context.AddParameterWithValue("client_id", entity.ClientId);
+
+        context.AddParameterWithValue("foundation_type", entity.FoundationType);
+        context.AddParameterWithValue("chained_building", entity.ChainedBuilding);
+        context.AddParameterWithValue("owner", entity.Owner);
+        context.AddParameterWithValue("foundation_recovery", entity.FoundationRecovery);
+        context.AddParameterWithValue("neightbor_recovery", entity.NeighborRecovery);
+        context.AddParameterWithValue("foundation_damage_cause", entity.FoundationDamageCause);
+        context.AddParameterWithValue("document_file", entity.DocumentFile);
+        context.AddParameterWithValue("note", entity.Note);
+        context.AddParameterWithValue("internal_note", entity.InternalNote);
+        context.AddParameterWithValue("foundation_damage_characteristics", entity.FoundationDamageCharacteristics);
+        context.AddParameterWithValue("environment_damage_characteristics", entity.EnvironmentDamageCharacteristics);
+        context.AddParameterWithValue("email", entity.Email);
+        context.AddParameterWithValue("name", entity.Name);
+        context.AddParameterWithValue("phone_number", entity.PhoneNumber);
+        context.AddParameterWithValue("building", entity.Building);
+        context.AddParameterWithValue("audit_status", entity.AuditStatus);
+        context.AddParameterWithValue("question_type", entity.QuestionType);
+        // context.AddJsonParameterWithValue("meta", entity.Meta);
+
+        await using var reader = await context.ReaderAsync();
+
+        return reader.GetString(0);
+
+
+        // var sql = @"
+        //     INSERT INTO report.incident(
+        //         id,
+        //         foundation_type,
+        //         chained_building,
+        //         owner,
+        //         foundation_recovery,
+        //         neightbor_recovery, -- Typo in database
+        //         foundation_damage_cause,
+        //         document_file,
+        //         note,
+        //         internal_note,
+        //         contact,
+        //         contact_name,
+        //         contact_phone_number,
+        //         foundation_damage_characteristics,
+        //         environment_damage_characteristics,
+        //         building,
+        //         audit_status,
+        //         question_type,
+        //         meta)
+        //     VALUES (
+        //         report.fir_generate_id(@ClientId),
+        //         @FoundationType,
+        //         @ChainedBuilding,
+        //         @Owner,
+        //         @FoundationRecovery,
+        //         @NeighborRecovery,
+        //         @FoundationDamageCause,
+        //         NULLIF(@DocumentFile, '{}'::text[]),
+        //         NULLIF(trim(@Note), ''),
+        //         NULLIF(trim(@InternalNote), ''),
+        //         trim(lower(@Email)),
+        //         NULLIF(trim(@Name), ''),
+        //         NULLIF(trim(@PhoneNumber), ''),
+        //         NULLIF(@FoundationDamageCharacteristics, '{}'::report.foundation_damage_characteristics[]),
+        //         NULLIF(@EnvironmentDamageCharacteristics, '{}'::report.environment_damage_characteristics[]),
+        //         @Building,
+        //         @AuditStatus,
+        //         @QuestionType,
+        //         @Meta)
+        //     RETURNING id";
+
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new InvalidOperationException();
     }
 
     // public async Task<long> CountAsync()
