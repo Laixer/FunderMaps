@@ -18,7 +18,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                 chained_building,
                 owner,
                 foundation_recovery,
-                neightbor_recovery,
+                neightbor_recovery, -- Typo in database
                 foundation_damage_cause,
                 document_file,
                 note,
@@ -38,7 +38,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                 @ChainedBuilding,
                 @Owner,
                 @FoundationRecovery,
-                @NeightborRecovery,
+                @NeighborRecovery,
                 @FoundationDamageCause,
                 NULLIF(@DocumentFile, '{}'::text[]),
                 NULLIF(trim(@Note), ''),
