@@ -44,7 +44,7 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var item in connection.QueryUnbufferedAsync<OrganizationUser>(sql, navigation))
+        await foreach (var item in connection.QueryUnbufferedAsync<OrganizationUser>(sql, new { organization_id = organizationId }, navigation))
         {
             yield return item;
         }
