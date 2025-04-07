@@ -145,15 +145,15 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                 @facade_scan_risk)
             RETURNING id";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await connection.ExecuteScalarAsync<int>(sql, entity);
+        // return await connection.ExecuteScalarAsync<int>(sql, entity);
 
-        // await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-        // MapToWriter(context, entity);
+        MapToWriter(context, entity);
 
-        // return await context.ScalarAsync<int>();
+        return await context.ScalarAsync<int>();
     }
 
     public async Task<long> CountAsync(int report, Guid tenantId)
