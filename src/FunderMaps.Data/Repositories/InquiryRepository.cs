@@ -399,8 +399,16 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
             AND     i.id = @id
             AND     a.owner = @tenant";
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-        await connection.ExecuteAsync(sql, new { id, tenant = tenantId, status = entity.State.AuditStatus });
+        context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("tenant", tenantId);
+        context.AddParameterWithValue("status", entity.State.AuditStatus);
+
+        await context.NonQueryAsync();
+
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // await connection.ExecuteAsync(sql, new { id, tenant = tenantId, status = entity.State.AuditStatus });
     }
 }
