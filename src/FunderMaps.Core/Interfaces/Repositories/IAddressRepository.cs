@@ -7,6 +7,8 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IAddressRepository
 {
+    Task<Address> GetByIdAsync(string id);
+
     /// <summary>
     ///     Get address by external id.
     /// </summary>
