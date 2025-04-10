@@ -64,9 +64,9 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddHttpContextAccessor();
 
         services.AddHealthChecks()
-            .AddCheck<MapboxHealthCheck>("mapbox_health_check", tags: externalTags)
+            // .AddCheck<MapboxHealthCheck>("mapbox_health_check", tags: externalTags)
             .AddCheck<RepositoryHealthCheck>("data_health_check", tags: externalTags)
-            .AddCheck<EmailHealthCheck>("email_health_check", tags: externalTags)
+            // .AddCheck<EmailHealthCheck>("email_health_check", tags: externalTags)
             .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check", tags: externalTags);
 
         var serviceProvider = services.BuildServiceProvider();
