@@ -276,7 +276,7 @@ public sealed class InquiryController(
 
     [HttpDelete("{id:int}")]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> DeleteAsync(string id)
+    public async Task<IActionResult> DeleteAsync(int id)
     {
         var inquiry = await inquiryRepository.GetByIdAsync(id, TenantId);
         if (inquiry == null)
