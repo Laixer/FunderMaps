@@ -73,4 +73,19 @@ public sealed class IncidentController(
 
         return NoContent();
     }
+
+    [HttpDelete("{id}")]
+    [Authorize(Policy = "WriterAdministratorPolicy")]
+    public async Task<IActionResult> DeleteAsync(string id)
+    {
+        var incident = await incidentRepository.GetByIdAsync(id);
+        if (incident == null)
+        {
+            return NotFound();
+        }
+
+        await incidentRepository.DeleteAsync(incident);
+
+        return NoContent();
+    }
 }
