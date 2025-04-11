@@ -84,7 +84,7 @@ public sealed class IncidentController(
             return NotFound();
         }
 
-        await incidentRepository.DeleteAsync(incident);
+        await incidentRepository.DeleteAsync(incident.Id);
 
         return NoContent();
     }
