@@ -88,4 +88,21 @@ public sealed class IncidentController(
 
         return NoContent();
     }
+
+    [HttpPost("{id}/reset")]
+    [Authorize(Policy = "WriterAdministratorPolicy")]
+    public async Task<IActionResult> ResetAsync(string id)
+    {
+        var incident = await incidentRepository.GetByIdAsync(id);
+        if (incident == null)
+        {
+            return NotFound();
+        }
+
+        // incident.Reset();
+
+        await incidentRepository.UpdateAsync(incident);
+
+        return NoContent();
+    }
 }

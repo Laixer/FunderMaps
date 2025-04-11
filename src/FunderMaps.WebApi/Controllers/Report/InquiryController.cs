@@ -273,4 +273,35 @@ public sealed class InquiryController(
 
         return NoContent();
     }
+
+    [HttpDelete("{id:int}")]
+    [Authorize(Policy = "WriterAdministratorPolicy")]
+    public async Task<IActionResult> DeleteAsync(string id)
+    {
+        var inquiry = await inquiryRepository.GetByIdAsync(id, TenantId);
+        if (inquiry == null)
+        {
+            return NotFound();
+        }
+
+        await inquiryRepository.DeleteAsync(inquiry.Id, TenantId);
+
+        return NoContent();
+    }
+
+    [HttpPost("{id:int}/reset")]
+    [Authorize(Policy = "WriterAdministratorPolicy")]
+    public async Task<IActionResult> ResetAsync(int id)
+    {
+        var inquiry = await inquiryRepository.GetByIdAsync(id, TenantId);
+        if (inquiry == null)
+        {
+            return NotFound();
+        }
+
+        inquiry.State.TransitionToPending();
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, TenantId);
+
+        return NoContent();
+    }
 }
