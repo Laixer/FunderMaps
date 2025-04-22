@@ -176,7 +176,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     b.external_id AS building,
                     i.audit_status,
                     i.question_type,
-                    i.meta
+                    i.metadata
             FROM    report.incident AS i
             JOIN    geocoder.building b ON b.id = i.building
             LEFT JOIN    application.portal p ON p.id = substring(i.id from 'FIR(\d{2})')::int
@@ -215,7 +215,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     b.external_id AS building,
                     i.audit_status,
                     i.question_type,
-                    i.meta
+                    i.metadata
             FROM    report.incident AS i
             JOIN    geocoder.building b ON b.id = i.building
             LEFT JOIN    application.portal p ON p.id = substring(i.id from 'FIR(\d{2})')::int
@@ -254,7 +254,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     b.external_id AS building,
                     i.audit_status,
                     i.question_type,
-                    i.meta
+                    i.metadata
             FROM    report.incident AS i
             JOIN    geocoder.building b ON b.id = i.building
             LEFT JOIN    application.portal p ON p.id = substring(i.id from 'FIR(\d{2})')::int";
@@ -287,8 +287,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     foundation_damage_characteristics = NULLIF(@FoundationDamageCharacteristics, '{}'::report.foundation_damage_characteristics[]),
                     environment_damage_characteristics = NULLIF(@EnvironmentDamageCharacteristics, '{}'::report.environment_damage_characteristics[]),
                     audit_status = @AuditStatus,
-                    question_type = @QuestionType,
-                    meta = @Meta
+                    question_type = @QuestionType
             WHERE   id = upper(@Id)";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
