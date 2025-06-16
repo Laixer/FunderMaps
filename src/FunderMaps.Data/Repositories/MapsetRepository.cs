@@ -32,7 +32,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     NULL::text AS fence_municipality,
                     c.order,
                     c.layerset
-            FROM    maplayer.mapset_collection AS c
+            FROM    application.mapset_collection AS c
             WHERE   c.id = @id
             AND     c.public = true
             LIMIT   1";
@@ -72,7 +72,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     NULL::text AS fence_municipality,
                     c.order,
                     c.layerset
-            FROM    maplayer.mapset_collection AS c
+            FROM    application.mapset_collection AS c
             WHERE   LOWER(REGEXP_REPLACE(c.name, '\s+', '-', 'g')) = LOWER(@name)
             AND     c.public = true
             LIMIT   1";
