@@ -104,14 +104,25 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     c.consent,
                     c.note,
                     c.icon,
-                    o.fence_neighborhood,
-                    o.fence_district,
-                    o.fence_municipality,
+                    (
+                        SELECT array_agg(neighborhood_id)
+                        FROM   application.organization_geolock_neighborhood
+                        WHERE  organization_id = mo.organization_id
+                    ) AS fence_neighborhood,
+                    (
+                        SELECT array_agg(district_id)
+                        FROM   application.organization_geolock_district
+                        WHERE  organization_id = mo.organization_id
+                    ) AS fence_district,
+                    (
+                        SELECT array_agg(municipality_id)
+                        FROM   application.organization_geolock_municipality
+                        WHERE  organization_id = mo.organization_id
+                    ) AS fence_municipality,
                     c.order,
                     c.layerset
             FROM    maplayer.mapset_collection AS c
             JOIN    maplayer.map_organization mo ON mo.map_id = c.id
-            JOIN    application.organization AS o ON o.id = mo.organization_id
             WHERE   mo.organization_id = @id
             AND     c.public = false
             ORDER BY c.order ASC";
