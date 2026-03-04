@@ -15,7 +15,6 @@ jobs:
           - FunderMaps.WebApi
           - FunderMaps.Webservice
           - FunderMaps.RazorMaps
-          - FunderMaps.Incident
 
     steps:
     - name: Checkout repository
