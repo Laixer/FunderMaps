@@ -81,6 +81,8 @@ public sealed class RecoveryController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<Recovery> CreateAsync([FromBody] Recovery recovery)
     {
+        ArgumentNullException.ThrowIfNull(recovery);
+
         recovery.Attribution ??= new();
         recovery.Attribution.Creator = UserId;
         recovery.Attribution.Owner = TenantId;
@@ -148,6 +150,8 @@ public sealed class RecoveryController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] Recovery recovery)
     {
+        ArgumentNullException.ThrowIfNull(recovery);
+
         recovery.Id = id;
         recovery.Attribution ??= new();
         recovery.Attribution.Creator = UserId;
