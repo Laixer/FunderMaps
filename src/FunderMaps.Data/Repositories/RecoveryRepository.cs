@@ -27,7 +27,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             Id = reader.GetInt(offset + 0),
             Note = reader.GetSafeString(offset + 1),
             Type = reader.GetFieldValue<RecoveryDocumentType>(offset + 2),
-            DocumentDate = reader.GetDateTime(offset + 3),
+            DocumentDate = reader.GetDateOnly(offset + 3),
             DocumentFile = reader.GetString(offset + 4),
             DocumentName = reader.GetString(offset + 5),
             Attribution = new()

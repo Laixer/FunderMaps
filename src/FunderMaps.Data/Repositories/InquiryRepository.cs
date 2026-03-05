@@ -37,7 +37,7 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
             JointMeasurement = reader.GetBoolean(offset + 3),
             FloorMeasurement = reader.GetBoolean(offset + 4),
             Note = reader.GetSafeString(offset + 5),
-            DocumentDate = reader.GetDateTime(offset + 6),
+            DocumentDate = reader.GetDateOnly(offset + 6),
             DocumentFile = reader.GetString(offset + 7),
             Type = reader.GetFieldValue<InquiryType>(offset + 8),
             StandardF3o = reader.GetBoolean(offset + 9),

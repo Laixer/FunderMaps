@@ -43,8 +43,8 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
             Contractor = reader.GetSafeInt(offset++),
             Facade = reader.GetSafeFieldValue<Facade[]>(offset++),
             Permit = reader.GetSafeString(offset++),
-            PermitDate = reader.GetSafeDateTime(offset++),
-            RecoveryDate = reader.GetSafeDateTime(offset++),
+            PermitDate = reader.GetSafeDateOnly(offset++),
+            RecoveryDate = reader.GetSafeDateOnly(offset++),
         };
 
     public async Task<int> AddAsync(RecoverySample entity)

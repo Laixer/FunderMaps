@@ -524,7 +524,7 @@ internal class MemoryBuildingRepository : MemoryRepositoryBase<Building, string>
         memory.Add("gfm-4f5e73d478ff452b86023a06e5b8d834", new()
         {
             Id = "gfm-4f5e73d478ff452b86023a06e5b8d834",
-            BuiltYear = new DateTime(1908, 1, 1),
+            BuiltYear = new DateOnly(1908, 1, 1),
             ExternalId = "NL.IMBAG.PAND.0599100000685769",
             NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
         });
@@ -574,7 +574,7 @@ internal class MemoryNeighborhoodRepository : MemoryRepositoryBase<Neighborhood,
         ["gfm-4f5e73d478ff452b86023a06e5b8d834"] = new()
         {
             Id = "gfm-4f5e73d478ff452b86023a06e5b8d834",
-            BuiltYear = new DateTime(1908, 1, 1),
+            BuiltYear = new DateOnly(1908, 1, 1),
             IsActive = true,
             ExternalId = "NL.IMBAG.PAND.0599100000685769",
             NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",

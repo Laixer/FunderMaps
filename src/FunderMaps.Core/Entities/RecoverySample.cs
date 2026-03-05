@@ -63,10 +63,10 @@ public sealed class RecoverySample : RecordControl
     /// <summary>
     ///     Permit date.
     /// </summary>
-    public DateTime? PermitDate { get; set; }
+    public DateOnly? PermitDate { get; set; }
 
     /// <summary>
     ///     Recovery date.
     /// </summary>
-    public DateTime? RecoveryDate { get; set; }
+    public DateOnly? RecoveryDate { get; set; }
 }

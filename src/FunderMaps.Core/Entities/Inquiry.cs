@@ -44,9 +44,8 @@ public class Inquiry
     /// <summary>
     ///     Original document creation.
     /// </summary>
-    [DataType(DataType.DateTime)]
-    [Required, Range(typeof(DateTime), "01/01/1000", "01/01/2100")]
-    public DateTime DocumentDate { get; set; }
+    [Required, Range(typeof(DateOnly), "01/01/1000", "01/01/2100")]
+    public DateOnly DocumentDate { get; set; }
 
     /// <summary>
     ///     Document file name.

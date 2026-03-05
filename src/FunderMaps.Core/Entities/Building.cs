@@ -17,8 +17,7 @@ public sealed class Building : IEntityIdentifier<string>
     /// <summary>
     ///     Building built year.
     /// </summary>
-    [DataType(DataType.DateTime)]
-    public DateTime? BuiltYear { get; set; }
+    public DateOnly? BuiltYear { get; set; }
 
     /// <summary>
     ///     Building is active or not.

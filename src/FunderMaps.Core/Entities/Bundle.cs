@@ -30,7 +30,7 @@ public sealed class Bundle
     /// <summary>
     ///     Last build date.
     /// </summary>
-    public DateTime? BuiltDate { get; set; }
+    public DateOnly? BuiltDate { get; set; }
 
     /// <summary>
     ///     Gets or sets the name for the bundle.

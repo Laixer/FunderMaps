@@ -40,7 +40,7 @@ public sealed class InquirySample : RecordControl
     /// <summary>
     ///     Built year.
     /// </summary>
-    public DateTime? BuiltYear { get; set; }
+    public DateOnly? BuiltYear { get; set; }
 
     /// <summary>
     ///     Substructure.

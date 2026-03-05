@@ -72,6 +72,22 @@ internal static class DbDataReaderExtensions
         return reader.IsDBNull(ordinal) ? null : (DateTime?)reader.GetDateTime(ordinal);
     }
 
+    /// <summary>
+    ///     Return value as DateOnly.
+    /// </summary>
+    public static DateOnly GetDateOnly(this DbDataReader reader, int ordinal)
+    {
+        return reader.GetFieldValue<DateOnly>(ordinal);
+    }
+
+    /// <summary>
+    ///     Return value as nullable DateOnly.
+    /// </summary>
+    public static DateOnly? GetSafeDateOnly(this DbDataReader reader, int ordinal)
+    {
+        return reader.IsDBNull(ordinal) ? null : reader.GetFieldValue<DateOnly>(ordinal);
+    }
+
     // /// <summary>
     // ///     Return value as nullable boolean.
     // /// </summary>
