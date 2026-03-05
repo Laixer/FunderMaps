@@ -9,20 +9,20 @@ namespace FunderMaps.WebApi.Controllers.Application;
 ///     Endpoint controller for application metadata.
 /// </summary>
 [Route("api/metadata")]
-public sealed class MetaController(IUserdataRepository userdataRepository, IConfiguration configuration) : FunderMapsController
+public sealed class MetaController(IUserdataRepository userdataRepository) : FunderMapsController
 {
-    private string ApplicationId => configuration["Application:Id"] ?? throw new InvalidOperationException("Application:Id not found in configuration.");
+    private const string DefaultApplicationId = "app-0blu4s39";
 
     // GET: api/metadata
     [HttpGet]
     public async ValueTask<UserData> GetAllAsync()
-        => await userdataRepository.GetAsync(UserId, ApplicationId);
+        => await userdataRepository.GetAsync(UserId, DefaultApplicationId);
 
     // PUT: api/metadata
     [HttpPut]
     public async Task<IActionResult> UpdateAsync([FromBody] UserData userdata)
     {
-        await userdataRepository.UpdateAsync(UserId, ApplicationId, userdata);
+        await userdataRepository.UpdateAsync(UserId, DefaultApplicationId, userdata);
 
         return NoContent();
     }
