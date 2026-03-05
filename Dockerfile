@@ -1,7 +1,7 @@
 # FunderMaps Ecosystem
 
 # Build application solution
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /source
 
 # The subtool must be defined. The build container will only build the
@@ -28,7 +28,7 @@ RUN dotnet publish -c Release -o /app \
     && cp /source/contrib/etc/_appsettings.Production.json /app/appsettings.Production.json
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 ENV DOTNET_PRINT_TELEMETRY_MESSAGE=false
 ENV Logging__Console__FormatterName=Simple
 WORKDIR /app
