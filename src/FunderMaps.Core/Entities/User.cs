@@ -27,7 +27,7 @@ public class User : IEntityIdentifier<Guid>
     ///     Unique email address.
     /// </summary>
     [Required, EmailAddress]
-    public string Email { get; set; } = default!;
+    public required string Email { get; set; }
 
     /// <summary>
     ///     Job title.

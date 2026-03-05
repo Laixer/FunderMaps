@@ -191,7 +191,7 @@ public sealed class RecoveryController(
             ToAddresses = new[] { new EmailAddress(reviewer.Email, reviewer.ToString()) },
             Subject = "FunderMaps - Rapportage ter review",
             Template = "report-reviewer",
-            Varaibles = new Dictionary<string, object>
+            Variables = new Dictionary<string, object>
             {
                 { "id", recovery.Id },
                 { "creatorName", creator.ToString() },
@@ -228,7 +228,7 @@ public sealed class RecoveryController(
             },
             Subject = "FunderMaps - Rapportage is afgekeurd",
             Template = "report-declined",
-            Varaibles = new Dictionary<string, object>
+            Variables = new Dictionary<string, object>
             {
                 { "id", recovery.Id },
                 { "reviewerName", reviewer.ToString() },
@@ -264,7 +264,7 @@ public sealed class RecoveryController(
             },
             Subject = "FunderMaps - Rapportage is goedgekeurd",
             Template = "report-approved",
-            Varaibles = new Dictionary<string, object>
+            Variables = new Dictionary<string, object>
             {
                 { "id", recovery.Id },
                 { "reviewerName", reviewer.ToString() },

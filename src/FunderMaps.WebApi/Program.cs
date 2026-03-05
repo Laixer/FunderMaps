@@ -36,7 +36,7 @@ if (!app.Environment.IsDevelopment())
         ForwardedHeaders = ForwardedHeaders.All,
     };
 
-    forwardedOptions.KnownNetworks.Clear();
+    forwardedOptions.KnownIPNetworks.Clear();
     forwardedOptions.KnownProxies.Clear();
     forwardedOptions.AllowedHosts.Clear();
 

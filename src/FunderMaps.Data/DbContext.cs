@@ -84,7 +84,7 @@ internal class DbContext : IAsyncDisposable
         parameter.ParameterName = parameterName;
         parameter.Value = value ?? DBNull.Value;
 
-        if (value is string && string.IsNullOrEmpty(value as string))
+        if (value is string str && string.IsNullOrEmpty(str))
         {
             parameter.Value = DBNull.Value;
         }

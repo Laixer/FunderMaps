@@ -11,17 +11,17 @@ public sealed record ResetNewPasswordDto
     ///     User email address.
     /// </summary>
     [Required, EmailAddress]
-    public string Email { get; init; } = default!;
+    public required string Email { get; init; }
 
     /// <summary>
     ///    User reset key.
     /// </summary>
     [Required]
-    public Guid ResetKey { get; init; } = default!;
+    public required Guid ResetKey { get; init; }
 
     /// <summary>
     ///     User new password.
     /// </summary>
     [Required]
-    public string NewPassword { get; init; } = default!;
+    public required string NewPassword { get; init; }
 }

@@ -12,7 +12,7 @@ public sealed class Building : IEntityIdentifier<string>
     ///     Unique identifier.
     /// </summary>
     [Required, Geocoder]
-    public string Id { get; set; } = default!;
+    public required string Id { get; set; }
 
     /// <summary>
     ///     Building built year.
@@ -30,7 +30,7 @@ public sealed class Building : IEntityIdentifier<string>
     ///     External data source id.
     /// </summary>
     [Required]
-    public string ExternalId { get; set; } = default!;
+    public required string ExternalId { get; set; }
 
     // TODO: Add building type
 

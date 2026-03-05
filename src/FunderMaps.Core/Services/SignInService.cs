@@ -43,10 +43,10 @@ public class SignInService(
                 ToAddresses = [new EmailAddress(user.Email, user.ToString())],
                 Subject = "FunderMaps - Wachtwoord reset",
                 Template = "reset-password",
-                Varaibles = new Dictionary<string, object>
+                Variables = new Dictionary<string, object>
                 {
-                    { "creatorName", user.ToString() },
-                    { "resetToken", reset_key },
+                    ["creatorName"] = user.ToString(),
+                    ["resetToken"] = reset_key,
                 }
             });
         }
@@ -81,9 +81,9 @@ public class SignInService(
                 ToAddresses = [new EmailAddress(user.Email, user.ToString())],
                 Subject = "FunderMaps - Wachtwoord is gewijzigd",
                 Template = "reset-password-done",
-                Varaibles = new Dictionary<string, object>
+                Variables = new Dictionary<string, object>
                 {
-                    { "creatorName", user.ToString() },
+                    ["creatorName"] = user.ToString(),
                 }
             });
         }
@@ -139,13 +139,13 @@ public class SignInService(
         await userRepository.ResetResetKey(user.Id);
         await userRepository.RegisterAccess(user.Id);
 
-        var claims = new List<Claim>
-        {
+        List<Claim> claims =
+        [
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.ToString()),
             new(ClaimTypes.Email, user.Email.Trim().ToLowerInvariant()),
             new(ClaimTypes.Role, user.Role.ToString()),
-        };
+        ];
 
         var organizationIds = await organizationUserRepository.ListAllOrganizationIdByUserIdAsync(user.Id).ToListAsync();
         foreach (var organizationId in organizationIds)

@@ -11,5 +11,5 @@ public sealed record ResetPasswordDto
     ///     User email address.
     /// </summary>
     [Required, EmailAddress]
-    public string Email { get; init; } = default!;
+    public required string Email { get; init; }
 }

@@ -8,7 +8,7 @@ public record EmailMessage
     /// <summary>
     ///     Email recipients.
     /// </summary>
-    public IEnumerable<EmailAddress> ToAddresses { get; set; } = new List<EmailAddress>();
+    public IEnumerable<EmailAddress> ToAddresses { get; set; } = [];
 
     /// <summary>
     ///     Message subject.
@@ -23,7 +23,7 @@ public record EmailMessage
     /// <summary>
     ///     Template variables.
     /// </summary>
-    public IDictionary<string, object> Varaibles { get; set; } = new Dictionary<string, object>();
+    public IDictionary<string, object> Variables { get; set; } = new Dictionary<string, object>();
 
     /// <summary>
     ///     Message template.

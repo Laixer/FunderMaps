@@ -191,7 +191,7 @@ public sealed class InquiryController(
             ToAddresses = new[] { new EmailAddress(reviewer.Email, reviewer.ToString()) },
             Subject = "FunderMaps - Rapportage ter review",
             Template = "report-reviewer",
-            Varaibles = new Dictionary<string, object>
+            Variables = new Dictionary<string, object>
             {
                 { "id", inquiry.Id },
                 { "creatorName", creator.ToString() },
@@ -228,7 +228,7 @@ public sealed class InquiryController(
             },
             Subject = "FunderMaps - Rapportage is afgekeurd",
             Template = "report-declined",
-            Varaibles = new Dictionary<string, object>
+            Variables = new Dictionary<string, object>
             {
                 { "id", inquiry.Id },
                 { "reviewerName", reviewer.ToString() },
@@ -263,7 +263,7 @@ public sealed class InquiryController(
             ],
             Subject = "FunderMaps - Rapportage is goedgekeurd",
             Template = "report-approved",
-            Varaibles = new Dictionary<string, object>
+            Variables = new Dictionary<string, object>
             {
                 { "id", inquiry.Id },
                 { "reviewerName", reviewer.ToString() },

@@ -4,7 +4,6 @@ using Amazon.S3.Transfer;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Options;
 using FunderMaps.Core.Storage;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Core.ExternalServices;
@@ -16,27 +15,19 @@ namespace FunderMaps.Core.ExternalServices;
 ///     This creates an <see cref="IAmazonS3"/> client once in its constructor.
 ///     Register this service as a singleton if dependency injection is used.
 /// </remarks>
-internal class S3StorageService : IBlobStorageService
+internal class S3StorageService(IOptions<S3StorageOptions> options) : IBlobStorageService
 {
-    private readonly S3StorageOptions _options;
-    private readonly ILogger<S3StorageService> _logger;
-    private readonly AmazonS3Client _s3Client;
+    private readonly S3StorageOptions _options = options.Value;
+    private readonly AmazonS3Client _s3Client = CreateClient(options.Value);
 
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public S3StorageService(IOptions<S3StorageOptions> options, ILogger<S3StorageService> logger)
+    private static AmazonS3Client CreateClient(S3StorageOptions opts)
     {
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-        var clientConfig = new AmazonS3Config();
-        if (!string.IsNullOrEmpty(_options.ServiceUri))
+        var config = new AmazonS3Config();
+        if (!string.IsNullOrEmpty(opts.ServiceUri))
         {
-            clientConfig.ServiceURL = _options.ServiceUri;
+            config.ServiceURL = opts.ServiceUri;
         }
-
-        _s3Client = new AmazonS3Client(_options.AccessKeyId, _options.SecretKey, clientConfig);
+        return new AmazonS3Client(opts.AccessKeyId, opts.SecretKey, config);
     }
 
     /// <summary>

@@ -10,17 +10,17 @@ public class GeocoderInfo
     /// <summary>
     ///    Building information.
     /// </summary>
-    public Building Building { get; set; } = default!;
+    public required Building Building { get; set; }
 
     /// <summary>
     ///     Address information.
     /// </summary>
-    public Address Address { get; set; } = default!;
+    public required Address Address { get; set; }
 
     /// <summary>
     ///    Residence information.
     /// </summary>
-    public Residence Residence { get; set; } = default!;
+    public required Residence Residence { get; set; }
 
     /// <summary>
     ///     Neighborhood information.

@@ -26,17 +26,13 @@ public class JwtSecurityTokenService(IOptionsMonitor<JwtBearerOptions> options, 
     /// <returns>Instance of <see cref="SecurityToken"/>.</returns>
     protected SecurityToken GenerateSecurityToken(ClaimsPrincipal principal)
     {
-        AuthenticationProperties properties = new();
+        var properties = new AuthenticationProperties();
 
-        JwtTokenValidationParameters JwtTokenValidationParameters = Options.TokenValidationParameters as JwtTokenValidationParameters
+        var jwtParams = Options.TokenValidationParameters as JwtTokenValidationParameters
             ?? throw new InvalidCastException("Cannot cast TokenValidationParameters to JwtTokenValidationParameters.");
-        var issuerSigningKey = JwtTokenValidationParameters.IssuerSigningKey;
-        SigningCredentials SigningCredentials = new(issuerSigningKey, SecurityAlgorithms.HmacSha256);
+        var signingCredentials = new SigningCredentials(jwtParams.IssuerSigningKey, SecurityAlgorithms.HmacSha256);
 
-        List<Claim> claims = new(principal.Claims)
-        {
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+        List<Claim> claims = [..principal.Claims, new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())];
 
         var nameClaim = claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Name, StringComparison.Ordinal));
         if (nameClaim is not null)
@@ -55,18 +51,18 @@ public class JwtSecurityTokenService(IOptionsMonitor<JwtBearerOptions> options, 
             properties.IssuedUtc = issuedUtc;
         }
 
-        if (!properties.ExpiresUtc.HasValue && JwtTokenValidationParameters.Valid != TimeSpan.Zero)
+        if (!properties.ExpiresUtc.HasValue && jwtParams.Valid != TimeSpan.Zero)
         {
-            properties.ExpiresUtc = issuedUtc.Add(JwtTokenValidationParameters.Valid);
+            properties.ExpiresUtc = issuedUtc.Add(jwtParams.Valid);
         }
 
         return new JwtSecurityToken(
-            issuer: JwtTokenValidationParameters.ValidIssuer,
-            audience: JwtTokenValidationParameters.ValidAudience,
+            issuer: jwtParams.ValidIssuer,
+            audience: jwtParams.ValidAudience,
             claims: claims,
             notBefore: properties.IssuedUtc?.LocalDateTime,
             expires: properties.ExpiresUtc?.LocalDateTime,
-            signingCredentials: SigningCredentials);
+            signingCredentials: signingCredentials);
     }
 
     /// <summary>
