@@ -40,7 +40,7 @@ public class ModelService(
 
             if (track_request)
             {
-                var registered = await analysisRepository.RegisterProductMatch(building.Id, id, "analysis3", tenantId);
+                var registered = await analysisRepository.RegisterProductMatch(building.ExternalId, id, "analysis3", tenantId);
                 if (registered)
                 {
                     logger.LogInformation("{Name} registered 'analysis3' match for identifier: {id}", organization.Name, id);
