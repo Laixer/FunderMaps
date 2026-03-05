@@ -105,13 +105,13 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
         var neighborhood = building.NeighborhoodId is not null
             ? await geocoderTranslation.GetNeighborhoodIdAsync(building.NeighborhoodId)
             : null;
-        var district = neighborhood!.DistrictId is not null
+        var district = neighborhood?.DistrictId is not null
             ? await geocoderTranslation.GetDistrictIdAsync(neighborhood.DistrictId)
             : null;
-        var municipality = district!.MunicipalityId is not null
+        var municipality = district?.MunicipalityId is not null
             ? await geocoderTranslation.GetMunicipalityIdAsync(district.MunicipalityId)
             : null;
-        var state = municipality!.StateId is not null
+        var state = municipality?.StateId is not null
             ? await geocoderTranslation.GetStateIdAsync(municipality.StateId)
             : null;
 

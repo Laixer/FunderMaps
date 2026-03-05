@@ -14,11 +14,10 @@ jobs:
         subtool:
           - FunderMaps.WebApi
           - FunderMaps.Webservice
-          - FunderMaps.RazorMaps
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Build
       run: docker build --build-arg subtool=${{ matrix.subtool }} .
