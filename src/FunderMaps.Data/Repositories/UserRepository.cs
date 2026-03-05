@@ -23,7 +23,7 @@ internal class UserRepository : DbServiceBase, IUserRepository
             VALUES (
                 NULLIF(trim(@GivenName), ''),
                 NULLIF(trim(@LastName), ''),
-                application.normalize2(@Email),
+                lower(trim(@Email)),
                 NULLIF(trim(@JobTitle), ''),
                 REGEXP_REPLACE(@PhoneNumber,'\D','','g'),
                 @Role)
@@ -105,7 +105,7 @@ internal class UserRepository : DbServiceBase, IUserRepository
                     u.phone_number,
                     u.role
             FROM    application.user AS u
-            WHERE   u.email = application.normalize2(@email)
+            WHERE   u.email = lower(trim(@email))
             LIMIT   1";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
@@ -169,7 +169,7 @@ internal class UserRepository : DbServiceBase, IUserRepository
             FROM    application.user AS u
             JOIN    application.reset_key rk ON rk.user_id = u.id
             WHERE   rk.key = @key
-            AND     u.email = application.normalize2(@email)
+            AND     u.email = lower(trim(@email))
             AND     rk.create_date > NOW() - INTERVAL '2 hours'
             LIMIT   1";
 
