@@ -81,6 +81,7 @@ public sealed class InquiryController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<Inquiry> CreateAsync([FromBody] Inquiry inquiry)
     {
+        inquiry.Attribution ??= new();
         inquiry.Attribution.Creator = UserId;
         inquiry.Attribution.Owner = TenantId;
 
@@ -148,6 +149,7 @@ public sealed class InquiryController(
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] Inquiry inquiry)
     {
         inquiry.Id = id;
+        inquiry.Attribution ??= new();
         inquiry.Attribution.Creator = UserId;
         inquiry.Attribution.Owner = TenantId;
 

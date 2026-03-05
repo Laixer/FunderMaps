@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
@@ -38,8 +38,7 @@ internal class OrganizationRepository : DbServiceBase, IOrganizationRepository
     {
         var sql = @"
             SELECT  id,
-                    name,
-                    email
+                    name
             FROM    application.organization
             WHERE   id = @id
             LIMIT   1";
@@ -54,8 +53,7 @@ internal class OrganizationRepository : DbServiceBase, IOrganizationRepository
     {
         var sql = @"
             SELECT  id,
-                    name,
-                    email
+                    name
             FROM    application.organization";
 
         // sql = ConstructNavigation(sql, navigation);
@@ -67,18 +65,4 @@ internal class OrganizationRepository : DbServiceBase, IOrganizationRepository
             yield return item;
         }
     }
-
-    // public async Task UpdateAsync(Organization entity)
-    // {
-    //     Cache.Remove(entity.Id);
-
-    //     var sql = @"
-    //         UPDATE  application.organization
-    //         SET     email = trim(@email)
-    //         WHERE   id = @id";
-
-    //     await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-    //     await connection.ExecuteAsync(sql, new { entity.Id, entity.Email });
-    // }
 }
