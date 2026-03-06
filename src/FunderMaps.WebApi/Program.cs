@@ -11,7 +11,8 @@ builder.Services.AddFunderMapsCoreServices();
 builder.Services.AddFunderMapsDataServices();
 builder.Services.AddFunderMapsAuthServices();
 
-builder.Services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)));
+builder.Services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)))
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new FunderMaps.Core.Converters.DateOnlyJsonConverter()));
 
 if (!builder.Environment.IsDevelopment())
 {
