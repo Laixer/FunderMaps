@@ -53,7 +53,6 @@ public sealed class UserExtended : User
     public string? PasswordHash { get; set; }
     public string? AuthKey { get; set; }
     public int AccessFailedCount { get; set; } = 0;
-    public int LoginCount { get; set; } = 0;
     public OrganizationRole OrganizationRole { get; set; } = OrganizationRole.Reader;
 }
 
@@ -258,7 +257,6 @@ internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, 
     {
         await Task.CompletedTask;
 
-        memory[id].LoginCount++;
     }
 
     async Task<User> IUserRepository.GetByIdAsync(Guid id)

@@ -310,10 +310,13 @@ internal class UserRepository : DbServiceBase, IUserRepository
 
     public async Task RegisterAccess(Guid id)
     {
-        var sql = @"SELECT application.log_access(@id)";
+        var sql = @"
+            UPDATE  application.user
+            SET     last_login = CURRENT_TIMESTAMP
+            WHERE   id = @id";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await connection.ExecuteScalarAsync(sql, new { id });
+        await connection.ExecuteAsync(sql, new { id });
     }
 }
