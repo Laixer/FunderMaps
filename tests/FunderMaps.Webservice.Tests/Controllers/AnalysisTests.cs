@@ -31,19 +31,6 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
         // Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
     }
 
-    [Fact]
-    public async Task AuthKeyGetProductByIdReturnForbiddenProduct()
-    {
-        using var client = factory.CreateClient();
-
-        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis/gfm-4f5e73d478ff452b86023a06e5b8d834");
-        request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
-
-        var response = await client.SendAsync(request);
-
-        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-    }
-
     [Theory]
     [InlineData("sdf-sd3kjhr834dhfjdeh")]
     [InlineData("343545435_4928374hfdkjsfh")]

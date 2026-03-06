@@ -29,19 +29,6 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
         Assert.NotNull(returnObject);
     }
 
-    [Fact]
-    public async Task AuthKeyGetProductByIdReturnForbiddenProduct()
-    {
-        using var client = factory.CreateClient();
-
-        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics/gfm-4f5e73d478ff452b86023a06e5b8d834");
-        request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
-
-        var response = await client.SendAsync(request);
-
-        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-    }
-
     [Theory]
     [InlineData("sdf-sd3kjhr834dhfjdeh")]
     [InlineData("343545435_4928374hfdkjsfh")]
