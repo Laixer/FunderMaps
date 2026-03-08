@@ -223,7 +223,7 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                     v.openbare_ruimte_naam,
                     v.nummeraanduiding_hoofdadres_identificatie,
                     v.woonplaats_naam,
-                    b.id
+                    b.external_id
                 FROM public.verblijfsobject v
                 JOIN geocoder.building b ON b.external_id = v.pand_identificatie
                 ON CONFLICT (external_id)
@@ -240,7 +240,7 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                     l.openbare_ruimte_naam,
                     concat('NL.IMBAG.NUMMERAANDUIDING.', l.nummeraanduiding_hoofdadres_identificatie),
                     l.woonplaats_naam,
-                    b.id
+                    b.external_id
                 FROM public.ligplaats l
                 JOIN geocoder.building b ON b.external_id = l.identificatie
                 ON CONFLICT (external_id)
@@ -257,7 +257,7 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                     s.openbare_ruimte_naam,
                     concat('NL.IMBAG.NUMMERAANDUIDING.', s.nummeraanduiding_hoofdadres_identificatie),
                     s.woonplaats_naam,
-                    b.id
+                    b.external_id
                 FROM public.standplaats s
                 JOIN geocoder.building b ON b.external_id = s.identificatie
                 ON CONFLICT (external_id)

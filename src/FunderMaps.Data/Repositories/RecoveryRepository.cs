@@ -292,7 +292,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             JOIN    application.user u2 ON u2.id = a.creator
             JOIN    application.organization o ON o.id = a.owner
             JOIN    application.contractor c ON c.id = a.contractor
-            WHERE   b.id = @building
+            WHERE   s.building_id = @building
             GROUP BY r.id, a.reviewer, u.email, a.creator, u2.email, a.owner, o.name, a.contractor, c.name
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 

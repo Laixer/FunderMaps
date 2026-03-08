@@ -62,7 +62,7 @@ public sealed class InquiryController(
     public async Task<IEnumerable<Inquiry>> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
     {
         var building = await geocoderTranslation.GetBuildingIdAsync(id);
-        return await inquiryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id).ToListAsync();
+        return await inquiryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.ExternalId).ToListAsync();
     }
 
     // GET: api/inquiry

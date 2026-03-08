@@ -79,7 +79,7 @@ internal class BuildingRepository : DbServiceBase, IBuildingRepository
                     ba.external_id,
                     ba.neighborhood_id
             FROM    report.incident i
-            JOIN    geocoder.building_active AS ba ON ba.id = i.building
+            JOIN    geocoder.building_active AS ba ON ba.external_id = i.building
             WHERE   i.id = upper(@id)
             LIMIT   1";
 

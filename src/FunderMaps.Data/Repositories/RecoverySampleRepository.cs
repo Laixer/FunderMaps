@@ -201,7 +201,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
                     s.recovery_date
             FROM    report.recovery_sample AS s
             JOIN    geocoder.building b ON b.external_id = s.building_id
-            WHERE   b.id = @building
+            WHERE   s.building_id = @building
             ORDER BY s.create_date DESC";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();

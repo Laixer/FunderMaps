@@ -62,7 +62,7 @@ public sealed class RecoveryController(
     public async Task<IEnumerable<Recovery>> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
     {
         var building = await geocoderTranslation.GetBuildingIdAsync(id);
-        return await recoveryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id).ToListAsync();
+        return await recoveryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.ExternalId).ToListAsync();
     }
 
     // GET: api/recovery

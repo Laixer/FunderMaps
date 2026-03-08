@@ -24,11 +24,11 @@ public sealed class ReportController(
 
         return new ReportDto
         {
-            Incidents = await incidentRepository.ListAllByBuildingIdAsync(building.Id).ToListAsync(),
-            Inquiries = await inquiryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id).ToListAsync(),
-            InquirySamples = await inquirySampleRepository.ListAllByBuildingIdAsync(building.Id).ToListAsync(),
-            Recoveries = await recoveryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id).ToListAsync(),
-            RecoverySamples = await recoverySampleRepository.ListAllByBuildingIdAsync(building.Id).ToListAsync(),
+            Incidents = await incidentRepository.ListAllByBuildingIdAsync(building.ExternalId).ToListAsync(),
+            Inquiries = await inquiryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.ExternalId).ToListAsync(),
+            InquirySamples = await inquirySampleRepository.ListAllByBuildingIdAsync(building.ExternalId).ToListAsync(),
+            Recoveries = await recoveryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.ExternalId).ToListAsync(),
+            RecoverySamples = await recoverySampleRepository.ListAllByBuildingIdAsync(building.ExternalId).ToListAsync(),
         };
     }
 }
