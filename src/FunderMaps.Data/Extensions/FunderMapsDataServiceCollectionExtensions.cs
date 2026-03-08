@@ -1,3 +1,4 @@
+using Dapper;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Components;
@@ -6,6 +7,7 @@ using FunderMaps.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace FunderMaps.Data.Extensions;
 
@@ -71,7 +73,6 @@ public static class FunderMapsDataServiceCollectionExtensions
         services.AddContextRepository<IMapsetRepository, MapsetRepository>();
         services.AddContextRepository<IMunicipalityRepository, MunicipalityRepository>();
         services.AddContextRepository<INeighborhoodRepository, NeighborhoodRepository>();
-        services.AddContextRepository<IOperationRepository, OperationRepository>();
         services.AddContextRepository<IOrganizationRepository, OrganizationRepository>();
         services.AddContextRepository<IOrganizationUserRepository, OrganizationUserRepository>();
         services.AddContextRepository<IRecoveryRepository, RecoveryRepository>();
@@ -86,7 +87,10 @@ public static class FunderMapsDataServiceCollectionExtensions
         services.AddContextRepository<IUserdataRepository, UserdataRepository>();
         services.AddContextRepository<IUserRepository, UserRepository>();
 
-        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+        services.AddHealthChecks()
+            .AddCheck<DatabaseHealthCheck>("data_health_check", tags: ["extern"]);
+
+        DefaultTypeMap.MatchNamesWithUnderscores = true;
 
         var serviceProvider = services.BuildServiceProvider();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
