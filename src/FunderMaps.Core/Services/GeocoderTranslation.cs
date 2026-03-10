@@ -124,7 +124,7 @@ public class GeocoderTranslation(
     /// <remarks>
     /// <param name="input">Input identifier.</param>
     /// <returns>If found returns the <see cref="Address"/> entity.</returns>
-    public async Task<Address> GetAddressIdAsync(string input) => FromIdentifier(input, out string id) switch
+    public async Task<Address> GetAddressIdAsync(string input) => FromIdentifier(input ?? throw new ArgumentNullException(nameof(input)), out string id) switch
     {
         // TODO: Add NlBagResidence
         GeocoderDatasource.FunderMaps => await addressRepository.GetByIdAsync(id),
