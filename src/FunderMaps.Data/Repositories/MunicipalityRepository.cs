@@ -38,7 +38,7 @@ internal class MunicipalityRepository : DbServiceBase, IMunicipalityRepository
                     m.state_id
             FROM    geocoder.address AS a
             JOIN    geocoder.address_building AS ab ON ab.address_id = a.id
-            JOIN    geocoder.building_active AS ba ON ba.id = ab.building_id
+            JOIN    geocoder.building_active AS ba ON ba.external_id = ab.building_id
             JOIN    geocoder.neighborhood AS n ON n.id = ba.neighborhood_id
             JOIN    geocoder.district d ON d.id = n.district_id
             JOIN    geocoder.municipality m ON m.id = d.municipality_id
