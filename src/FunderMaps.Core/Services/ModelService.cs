@@ -36,7 +36,7 @@ public class ModelService(
         try
         {
             var building = await geocoderTranslation.GetBuildingIdAsync(id);
-            var product = await analysisRepository.GetAsync(building.Id);
+            var product = await analysisRepository.GetAsync(building.ExternalId);
 
             if (track_request)
             {
