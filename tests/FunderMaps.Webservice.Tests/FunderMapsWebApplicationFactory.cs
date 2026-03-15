@@ -622,10 +622,9 @@ internal class MemoryAnalysisRepository : IAnalysisRepository
 
     public MemoryAnalysisRepository()
     {
-        memory.Add("gfm-4f5e73d478ff452b86023a06e5b8d834", new()
+        memory.Add("NL.IMBAG.PAND.0599100000685769", new()
         {
-            BuildingId = "gfm-4f5e73d478ff452b86023a06e5b8d834",
-            // ExternalBuildingId = "NL.IMBAG.PAND.0599100000685769",
+            BuildingId = "NL.IMBAG.PAND.0599100000685769",
             NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
             ConstructionYear = 1908,
             ConstructionYearReliability = Reliability.Indicative,
