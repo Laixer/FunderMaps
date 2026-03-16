@@ -17,9 +17,9 @@ builder.WebHost.ConfigureKestrel(options =>
     options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(15);
 });
 
-builder.Services.AddFunderMapsCoreServices();
-builder.Services.AddFunderMapsDataServices();
-builder.Services.AddFunderMapsAuthServices();
+builder.Services.AddFunderMapsCoreServices(builder.Configuration);
+builder.Services.AddFunderMapsDataServices(builder.Configuration);
+builder.Services.AddFunderMapsAuthServices(builder.Configuration);
 
 // Concurrency limiter: cap in-flight requests to prevent memory exhaustion under load.
 // PgBouncer pool has 100 connections, so keep request concurrency aligned.

@@ -1,15 +1,17 @@
-﻿using FunderMaps.Core.Authentication;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Authorization;
 using FunderMaps.Core.DataProtection;
 using FunderMaps.Core.ExternalServices;
 using FunderMaps.Core.HealthChecks;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Options;
 using FunderMaps.Core.Services;
 using FunderMaps.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -24,28 +26,13 @@ public static class FunderMapsCoreServiceCollectionExtensions
     /// <summary>
     ///     Adds the core services to the container.
     /// </summary>
-    /// <remarks>
-    ///     Read the instructions before adding a service.
-    ///     <para>
-    ///         Add service components with their correct lifetime cycle. An invalid lifetime can
-    ///         block the dependency graph resulting in an underperforming application.
-    ///     </para>
-    /// </remarks>
     /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
+    /// <param name="configuration">The application configuration.</param>
     /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
-    public static IServiceCollection AddFunderMapsCoreServices(this IServiceCollection services)
+    public static IServiceCollection AddFunderMapsCoreServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Register core components in DI container.
-        // NOTE: These services are rarely used and should therefore be
-        //       registered as transient. They are re-instantiated on every
-        //       resolve and disposed right after.
         services.AddTransient<GeocoderTranslation>();
         services.AddTransient<ModelService>();
-        // Register application context in DI container
-        // NOTE: The application context *must* be registered with the container
-        //       in order for core services to be functional. This registration is
-        //       merely a placeholder. The front framework should bootstrap the application
-        //       context if possible.
         services.AddScoped<FunderMaps.Core.AppContext>();
 
         // Register external services in DI container.
@@ -53,29 +40,17 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddSingleton<IBlobStorageService, S3StorageService>();
         services.AddSingleton<IMapboxService, MapboxService>();
 
-        // NOTE: Register the HttpContextAccessor service to the container.
-        //       The HttpContextAccessor exposes a singleton holding the
-        //       HttpContext within a scoped resolver, or null outside the scope.
-        //       Some components require the HttpContext and its features when the
-        //       related service is being resolved within the scope.
         services.AddHttpContextAccessor();
 
         services.AddHealthChecks()
             .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check", tags: externalTags);
 
-        var serviceProvider = services.BuildServiceProvider();
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-
-        // Configure services with configuration.
-        // Any application depending on ASP.NET Core should have an IConfiguration service registered.
         services.Configure<MailgunOptions>(configuration.GetSection(MailgunOptions.Section));
         services.Configure<MapboxOptions>(configuration.GetSection(MapboxOptions.Section));
         services.Configure<S3StorageOptions>(configuration.GetSection(S3StorageOptions.Section));
         services.Configure<IncidentOptions>(configuration.GetSection(IncidentOptions.Section));
         services.Configure<FunderMapsOptions>(configuration.GetSection(FunderMapsOptions.Section));
 
-        // The application discriminator is used to isolate data protection keys. Using the same
-        // discriminator for multiple applications will result in the same keys being used.
         services.AddDataProtection(options =>
         {
             options.ApplicationDiscriminator = configuration["DataProtection:ApplicationName"] ?? "FunderMaps";
@@ -84,22 +59,19 @@ public static class FunderMapsCoreServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services)
+    public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddTransient<PasswordHasher>();
         services.AddTransient<JwtSecurityTokenService>();
-        services.AddScoped<SignInService>(); // TODO: Should be transient?
+        services.AddScoped<SignInService>();
 
-        var serviceProvider = services.BuildServiceProvider();
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-
-        // TODO: Requesting the repository directly is not the best way to do this. This cannot be replaced later on.
-        var keystoreRepository = serviceProvider.GetRequiredService<FunderMaps.Core.Interfaces.Repositories.IKeystoreRepository>();
-
-        services.Configure<KeyManagementOptions>(options =>
-        {
-            options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
-        });
+        // Resolve IKeystoreRepository from the real container at runtime, not from an intermediate one.
+        services.AddSingleton<IConfigureOptions<KeyManagementOptions>>(sp =>
+            new ConfigureOptions<KeyManagementOptions>(options =>
+            {
+                var keystoreRepository = sp.GetRequiredService<IKeystoreRepository>();
+                options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
+            }));
 
         var authBuilder = services.AddAuthentication("FunderMapsHybridAuth")
             .AddJwtBearer(options =>

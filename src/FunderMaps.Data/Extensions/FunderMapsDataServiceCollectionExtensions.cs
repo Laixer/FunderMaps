@@ -47,7 +47,7 @@ public static class FunderMapsDataServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
     /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
-    public static IServiceCollection AddFunderMapsDataServices(this IServiceCollection services)
+    public static IServiceCollection AddFunderMapsDataServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<DbProvider, NpgsqlDbProvider>();
 
@@ -84,9 +84,6 @@ public static class FunderMapsDataServiceCollectionExtensions
             .AddCheck<DatabaseHealthCheck>("data_health_check", tags: ["extern"]);
 
         DefaultTypeMap.MatchNamesWithUnderscores = true;
-
-        var serviceProvider = services.BuildServiceProvider();
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
         var connectionString = configuration.GetConnectionString("FunderMapsConnection");
         services.Configure<DbProviderOptions>(options =>

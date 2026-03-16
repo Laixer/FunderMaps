@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddFunderMapsCoreServices();
-builder.Services.AddFunderMapsDataServices();
-builder.Services.AddFunderMapsAuthServices();
+builder.Services.AddFunderMapsCoreServices(builder.Configuration);
+builder.Services.AddFunderMapsDataServices(builder.Configuration);
+builder.Services.AddFunderMapsAuthServices(builder.Configuration);
 
 builder.Services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)))
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new FunderMaps.Core.Converters.DateOnlyJsonConverter()));
