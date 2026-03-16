@@ -4,12 +4,39 @@ using FunderMaps.Data.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Kestrel: limit concurrent connections and set timeouts to prevent resource exhaustion.
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxConcurrentConnections = 200;
+    options.Limits.MaxConcurrentUpgradedConnections = 50;
+    options.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(60);
+    options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(15);
+});
 
 builder.Services.AddFunderMapsCoreServices();
 builder.Services.AddFunderMapsDataServices();
 builder.Services.AddFunderMapsAuthServices();
+
+// Concurrency limiter: cap in-flight requests to prevent memory exhaustion under load.
+// PgBouncer pool has 100 connections, so keep request concurrency aligned.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status503ServiceUnavailable;
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        RateLimitPartition.GetConcurrencyLimiter(
+            partitionKey: "global",
+            factory: _ => new ConcurrencyLimiterOptions
+            {
+                PermitLimit = 100,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 50,
+            }));
+});
 
 builder.Services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)))
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new FunderMaps.Core.Converters.DateOnlyJsonConverter()));
@@ -55,6 +82,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
