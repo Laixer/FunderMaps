@@ -128,16 +128,21 @@ public class SignInService(
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     private async Task<ClaimsIdentity> CreateClaimsIdentityAsync(User user, string authenticationType)
     {
-        if (await userRepository.GetAccessFailedCount(user.Id) > MaxFailedAccessAttempts)
+        bool isApiKey = authenticationType == Authentication.AuthKeyAuthenticationOptions.DefaultScheme;
+
+        if (!isApiKey)
         {
-            logger.LogWarning("User '{user}' locked out.", user);
+            if (await userRepository.GetAccessFailedCount(user.Id) > MaxFailedAccessAttempts)
+            {
+                logger.LogWarning("User '{user}' locked out.", user);
 
-            throw new AuthenticationException("Authentication failed.");
+                throw new AuthenticationException("Authentication failed.");
+            }
+
+            await userRepository.ResetAccessFailed(user.Id);
+            await userRepository.ResetResetKey(user.Id);
+            await userRepository.RegisterAccess(user.Id);
         }
-
-        await userRepository.ResetAccessFailed(user.Id);
-        await userRepository.ResetResetKey(user.Id);
-        await userRepository.RegisterAccess(user.Id);
 
         List<Claim> claims =
         [
