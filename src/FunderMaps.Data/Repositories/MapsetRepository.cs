@@ -3,7 +3,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -11,11 +10,6 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 {
     public async Task<Mapset> GetPublicAsync(string id)
     {
-        if (Cache.TryGetValue(id, out Mapset? value))
-        {
-            return value ?? throw new EntityNotFoundException(nameof(Mapset));
-        }
-
         var sql = @"
             SELECT  c.id,
                     c.name,
@@ -39,23 +33,12 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var mapset = await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { id })
+        return await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { id })
             ?? throw new EntityNotFoundException(nameof(Mapset));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(2))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(12));
-
-        return Cache.Set(mapset.Id, mapset, options);
     }
 
     public async Task<Mapset> GetPublicByNameAsync(string name)
     {
-        if (Cache.TryGetValue(name, out Mapset? value))
-        {
-            return value ?? throw new EntityNotFoundException(nameof(Mapset));
-        }
-
         var sql = @"
             SELECT  c.id,
                     c.name,
@@ -79,16 +62,8 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var mapset = await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { name })
+        return await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { name })
             ?? throw new EntityNotFoundException(nameof(Mapset));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(2))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(12));
-
-        Cache.Set(mapset.Name, mapset, options);
-
-        return Cache.Set(mapset.Id, mapset, options);
     }
 
     public async IAsyncEnumerable<Mapset> GetByOrganizationIdAsync(Guid id)

@@ -3,7 +3,6 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Abstractions;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -12,11 +11,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     // FUTURE: Add owner, address_count
     public async Task<AnalysisProduct> GetAsync(string id)
     {
-        if (Cache.TryGetValue(id, out AnalysisProduct? value))
-        {
-            return value ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT
                     mrs.building_id,
@@ -50,14 +44,8 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var analysis = await connection.QuerySingleOrDefaultAsync<AnalysisProduct>(sql, new { id })
+        return await connection.QuerySingleOrDefaultAsync<AnalysisProduct>(sql, new { id })
             ?? throw new EntityNotFoundException(nameof(AnalysisProduct));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
-
-        return Cache.Set(id, analysis, options);
     }
 
     public async Task<bool> RegisterProductMatch(string buildingId, string id, string product, Guid tenantId)

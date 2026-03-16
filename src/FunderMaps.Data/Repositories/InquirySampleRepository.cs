@@ -4,7 +4,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -180,8 +179,6 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
 
     public async Task DeleteAsync(int id, Guid tenantId)
     {
-        Cache.Remove(id);
-
         var sql = @"
             DELETE
             FROM    report.inquiry_sample AS s
@@ -346,11 +343,6 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
 
     public async Task<InquirySample> GetByIdAsync(int id, Guid tenantId)
     {
-        if (Cache.TryGetValue(id, out InquirySample? value))
-        {
-            return value ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- InquirySample
                     s.id,
@@ -441,14 +433,8 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var inquiry_sample = await connection.QuerySingleOrDefaultAsync<InquirySample>(sql, new { id, tenant = tenantId })
+        return await connection.QuerySingleOrDefaultAsync<InquirySample>(sql, new { id, tenant = tenantId })
             ?? throw new EntityNotFoundException(nameof(InquirySample));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromMinutes(10))
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(90));
-
-        return Cache.Set(id, inquiry_sample, options);
     }
 
     public async IAsyncEnumerable<InquirySample> ListAllByBuildingIdAsync(string id)
@@ -648,8 +634,6 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
 
     public async Task UpdateAsync(InquirySample entity, Guid tenantId)
     {
-        Cache.Remove(entity.Id);
-
         var sql = @"
             UPDATE  report.inquiry_sample AS s
             SET     -- InquirySample

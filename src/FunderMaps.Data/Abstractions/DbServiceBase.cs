@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Data.Components;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Abstractions;
 
@@ -17,11 +16,6 @@ namespace FunderMaps.Data.Abstractions;
 /// </remarks>
 internal abstract class DbServiceBase
 {
-    /// <summary>
-    ///     Memory cache.
-    /// </summary>
-    public IMemoryCache Cache { get; set; } = default!;
-
     /// <summary>
     ///     Data context factory.
     /// </summary>

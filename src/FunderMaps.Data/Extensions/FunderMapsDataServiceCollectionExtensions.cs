@@ -4,7 +4,6 @@ using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Components;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -38,7 +37,6 @@ public static class FunderMapsDataServiceCollectionExtensions
             TImplementation repository = new();
             DbServiceBase injectorBase = repository;
 
-            injectorBase.Cache = serviceProvider.GetRequiredService<IMemoryCache>();
             injectorBase.DbContextFactory = ActivatorUtilities.CreateInstance<DbContextFactory>(serviceProvider);
 
             return repository;
@@ -51,11 +49,6 @@ public static class FunderMapsDataServiceCollectionExtensions
     /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddFunderMapsDataServices(this IServiceCollection services)
     {
-        // The data layer depends upon the memory cache service to provide the ability to cache
-        // objects to memory. The memory cache may have already been registered with the container
-        // by some other package, however we cannot expect this to be the case.
-        services.AddMemoryCache();
-
         services.AddSingleton<DbProvider, NpgsqlDbProvider>();
 
         // Register context repositories with the DI container.

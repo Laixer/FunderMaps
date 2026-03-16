@@ -1,10 +1,9 @@
-﻿using Dapper;
+using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -49,8 +48,6 @@ internal class UserRepository : DbServiceBase, IUserRepository
     //         a ReferenceNotFoundException, which is invalid.
     public async Task DeleteAsync(Guid id)
     {
-        Cache.Remove(id);
-
         var sql = @"
             DELETE
             FROM    application.user
@@ -63,11 +60,6 @@ internal class UserRepository : DbServiceBase, IUserRepository
 
     public async Task<User> GetByIdAsync(Guid id)
     {
-        if (Cache.TryGetValue(id, out User? value))
-        {
-            return value ?? throw new EntityNotFoundException(nameof(User));
-        }
-
         var sql = @"
             SELECT  -- User
                     u.id,
@@ -83,14 +75,8 @@ internal class UserRepository : DbServiceBase, IUserRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { id })
+        return await connection.QuerySingleOrDefaultAsync<User>(sql, new { id })
             ?? throw new EntityNotFoundException(nameof(User));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(1))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
-
-        return Cache.Set(user.Id, user, options);
     }
 
     public async Task<User> GetByEmailAsync(string email)
@@ -110,23 +96,12 @@ internal class UserRepository : DbServiceBase, IUserRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { email })
+        return await connection.QuerySingleOrDefaultAsync<User>(sql, new { email })
             ?? throw new EntityNotFoundException(nameof(User));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(1))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
-
-        return Cache.Set(user.Id, user, options);
     }
 
     public async Task<User> GetByAuthKeyAsync(string key)
     {
-        if (Cache.TryGetValue(key, out User? value))
-        {
-            return value ?? throw new EntityNotFoundException(nameof(User));
-        }
-
         var sql = @"
             SELECT  -- User
                     u.id,
@@ -143,16 +118,8 @@ internal class UserRepository : DbServiceBase, IUserRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { key })
+        return await connection.QuerySingleOrDefaultAsync<User>(sql, new { key })
             ?? throw new EntityNotFoundException(nameof(User));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(1))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
-
-        Cache.Set(key, user, options);
-
-        return Cache.Set(user.Id, user, options);
     }
 
     public async Task<User> GetByResetKeyAsync(string email, Guid key)
@@ -175,14 +142,8 @@ internal class UserRepository : DbServiceBase, IUserRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var user = await connection.QuerySingleOrDefaultAsync<User>(sql, new { email, key })
+        return await connection.QuerySingleOrDefaultAsync<User>(sql, new { email, key })
             ?? throw new EntityNotFoundException(nameof(User));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromHours(1))
-            .SetAbsoluteExpiration(TimeSpan.FromHours(4));
-
-        return Cache.Set(user.Id, user, options);
     }
 
     public async Task<string?> GetPasswordHashAsync(Guid id)
@@ -234,8 +195,6 @@ internal class UserRepository : DbServiceBase, IUserRepository
 
     public async Task UpdateAsync(User entity)
     {
-        Cache.Remove(entity.Id);
-
         var sql = @"
             UPDATE  application.user
             SET     given_name = @GivenName,

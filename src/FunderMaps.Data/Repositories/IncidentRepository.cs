@@ -271,7 +271,6 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
 
     public async Task UpdateAsync(Incident entity)
     {
-        Cache.Remove(entity.Id);
 
         var sql = @"
             UPDATE  report.incident

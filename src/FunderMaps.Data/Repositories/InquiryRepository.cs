@@ -346,7 +346,6 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
 
     public async Task UpdateAsync(Inquiry entity)
     {
-        Cache.Remove(entity.Id);
 
         var sql = @"
             -- Attribution
@@ -389,7 +388,6 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
 
     public async Task SetAuditStatusAsync(int id, Inquiry entity, Guid tenantId)
     {
-        Cache.Remove(id);
 
         var sql = @"
             UPDATE  report.inquiry AS i

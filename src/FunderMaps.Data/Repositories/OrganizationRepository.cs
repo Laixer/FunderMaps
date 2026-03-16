@@ -22,8 +22,6 @@ internal class OrganizationRepository : DbServiceBase, IOrganizationRepository
 
     public async Task DeleteAsync(Guid id)
     {
-        Cache.Remove(id);
-
         var sql = @"
             DELETE
             FROM    application.organization

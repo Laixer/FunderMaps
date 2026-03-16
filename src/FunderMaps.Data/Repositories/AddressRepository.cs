@@ -3,7 +3,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -26,19 +25,12 @@ internal class AddressRepository : DbServiceBase, IAddressRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { id })
+        return await connection.QuerySingleOrDefaultAsync<Address>(sql, new { id })
             ?? throw new EntityNotFoundException(nameof(Address));
-
-        return address;
     }
 
     public async Task<Address> GetByExternalIdAsync(string id)
     {
-        if (Cache.TryGetValue(id, out Address? value))
-        {
-            return value ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- Address
                     a.id,
@@ -54,23 +46,12 @@ internal class AddressRepository : DbServiceBase, IAddressRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id })
+        return await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id })
             ?? throw new EntityNotFoundException(nameof(Address));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
-
-        return Cache.Set(id, address, options);
     }
 
     public async Task<Address> GetByExternalBuildingIdAsync(string id)
     {
-        if (Cache.TryGetValue(id, out Address? value))
-        {
-            return value ?? throw new InvalidOperationException();
-        }
-
         var sql = @"
             SELECT  -- Address
                     a.id,
@@ -88,13 +69,7 @@ internal class AddressRepository : DbServiceBase, IAddressRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id })
+        return await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id })
             ?? throw new EntityNotFoundException(nameof(Address));
-
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
-
-        return Cache.Set(id, address, options);
     }
 }
