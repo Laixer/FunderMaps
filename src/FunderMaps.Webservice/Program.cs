@@ -22,7 +22,7 @@ builder.Services.AddFunderMapsDataServices(builder.Configuration);
 builder.Services.AddFunderMapsAuthServices(builder.Configuration);
 
 // Concurrency limiter: cap in-flight requests to prevent memory exhaustion under load.
-// PgBouncer pool has 100 connections, so keep request concurrency aligned.
+// With auth caching, most requests need 3-4 DB queries; pool is 30 connections.
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status503ServiceUnavailable;
@@ -32,9 +32,9 @@ builder.Services.AddRateLimiter(options =>
             partitionKey: "global",
             factory: _ => new ConcurrencyLimiterOptions
             {
-                PermitLimit = 100,
+                PermitLimit = 50,
                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                QueueLimit = 50,
+                QueueLimit = 100,
             }));
 });
 

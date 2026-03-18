@@ -5,6 +5,7 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using System.Security.Authentication;
 using System.Security.Claims;
 
@@ -24,6 +25,9 @@ public class SignInService(
     ///     The number of failed access attempts allowed before a user is locked out.
     /// </summary>
     private const int MaxFailedAccessAttempts = 10;
+
+    private static readonly ConcurrentDictionary<string, (ClaimsPrincipal Principal, long ExpiryTicks)> _authKeyCache = new();
+    private static readonly TimeSpan AuthKeyCacheDuration = TimeSpan.FromMinutes(5);
 
     /// <summary>
     ///     Send a password reset email to the user.
@@ -204,16 +208,26 @@ public class SignInService(
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     public virtual async Task<ClaimsPrincipal> AuthKeySignInAsync(string key, string authenticationType)
     {
+        var trimmedKey = key.Trim();
+
+        if (_authKeyCache.TryGetValue(trimmedKey, out var cached) && cached.ExpiryTicks > Environment.TickCount64)
+        {
+            return cached.Principal;
+        }
+
         try
         {
-            if (await userRepository.GetByAuthKeyAsync(key.Trim()) is not User user)
+            if (await userRepository.GetByAuthKeyAsync(trimmedKey) is not User user)
             {
                 throw new AuthenticationException("Authentication failed.");
             }
 
             var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
+            var principal = new ClaimsPrincipal(claimsIdentity);
 
-            return new ClaimsPrincipal(claimsIdentity);
+            _authKeyCache[trimmedKey] = (principal, Environment.TickCount64 + (long)AuthKeyCacheDuration.TotalMilliseconds);
+
+            return principal;
         }
         catch (EntityNotFoundException)
         {

@@ -27,10 +27,13 @@ internal class NpgsqlDbProvider : DbProvider, IDisposable, IAsyncDisposable
 
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(_options.ConnectionString);
 
-        // Cap the connection pool to match PgBouncer pool size.
-        // Prevents Npgsql from opening more connections than PgBouncer allows.
-        dataSourceBuilder.ConnectionStringBuilder.MaxPoolSize = 100;
-        dataSourceBuilder.ConnectionStringBuilder.Timeout = 15;
+        // Size pool to match actual concurrency needs.
+        // With the rate limiter at 100 concurrent requests and sequential connection use,
+        // 30 connections handles the realistic peak with headroom.
+        dataSourceBuilder.ConnectionStringBuilder.MaxPoolSize = 30;
+        dataSourceBuilder.ConnectionStringBuilder.MinPoolSize = 5;
+        dataSourceBuilder.ConnectionStringBuilder.Timeout = 10;
+        dataSourceBuilder.ConnectionStringBuilder.ConnectionIdleLifetime = 60;
 
         if (!string.IsNullOrEmpty(_options.ApplicationName))
         {

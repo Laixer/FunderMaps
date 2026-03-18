@@ -11,13 +11,11 @@ namespace FunderMaps.Core.Services;
 /// <param name="geocoderTranslation">Geocoder translation service.</param>
 /// <param name="analysisRepository">Analysis repository.</param>
 /// <param name="statisticsRepository">Statistics repository.</param>
-/// <param name="organizationRepository">Organization repository.</param>
 /// <param name="logger">Logger.</param>
 public class ModelService(
     GeocoderTranslation geocoderTranslation,
     IAnalysisRepository analysisRepository,
     IStatisticsRepository statisticsRepository,
-    IOrganizationRepository organizationRepository,
     ILogger<ModelService> logger)
 {
     /// <summary>
@@ -31,8 +29,6 @@ public class ModelService(
     /// <param name="track_request">Tracker request.</param>
     public async Task<AnalysisProduct> GetAnalysisAsync(string id, Guid tenantId, bool track_request = true)
     {
-        var organization = await organizationRepository.GetByIdAsync(tenantId);
-
         try
         {
             var building = await geocoderTranslation.GetBuildingIdAsync(id);
@@ -43,11 +39,11 @@ public class ModelService(
                 var registered = await analysisRepository.RegisterProductMatch(building.ExternalId, id, "analysis3", tenantId);
                 if (registered)
                 {
-                    logger.LogInformation("{Name} registered 'analysis3' match for identifier: {id}", organization.Name, id);
+                    logger.LogInformation("Tenant {TenantId} registered 'analysis3' match for identifier: {id}", tenantId, id);
                 }
                 else
                 {
-                    logger.LogInformation("{Name} retrieved 'analysis3' match for identifier: {id}", organization.Name, id);
+                    logger.LogInformation("Tenant {TenantId} retrieved 'analysis3' match for identifier: {id}", tenantId, id);
                 }
             }
 
@@ -59,7 +55,7 @@ public class ModelService(
             {
                 await analysisRepository.RegisterProductMismatch(id, tenantId);
 
-                logger.LogInformation("{Name} requested product 'analysis3' mismatch for identifier: {id}", organization.Name, id);
+                logger.LogInformation("Tenant {TenantId} requested product 'analysis3' mismatch for identifier: {id}", tenantId, id);
             }
 
             throw;
@@ -77,8 +73,6 @@ public class ModelService(
     /// <param name="track_request">Tracker request.</param>
     public async Task<StatisticsProduct> GetStatisticsAsync(string id, Guid tenantId, bool track_request = true)
     {
-        var organization = await organizationRepository.GetByIdAsync(tenantId);
-
         try
         {
             var neighborhood = await geocoderTranslation.GetNeighborhoodIdAsync(id);
@@ -102,7 +96,7 @@ public class ModelService(
             {
                 await analysisRepository.RegisterProductMismatch(id, tenantId);
 
-                logger.LogInformation("{Name} requested product 'statistics' mismatch for identifier: {id}", organization.Name, id);
+                logger.LogInformation("Tenant {TenantId} requested product 'statistics' mismatch for identifier: {id}", tenantId, id);
             }
 
             throw;
@@ -112,8 +106,6 @@ public class ModelService(
     // TODO: This is a temporary solution. The statistics product should be retrieved by building id.
     public async Task<StatisticsProduct> GetStatistics2Async(string id, Guid tenantId, bool track_request = true)
     {
-        var organization = await organizationRepository.GetByIdAsync(tenantId);
-
         try
         {
             var building = await geocoderTranslation.GetBuildingIdAsync(id);
@@ -138,7 +130,7 @@ public class ModelService(
             {
                 await analysisRepository.RegisterProductMismatch(id, tenantId);
 
-                logger.LogInformation("{Name} requested product 'statistics' mismatch for identifier: {id}", organization.Name, id);
+                logger.LogInformation("Tenant {TenantId} requested product 'statistics' mismatch for identifier: {id}", tenantId, id);
             }
 
             throw;
