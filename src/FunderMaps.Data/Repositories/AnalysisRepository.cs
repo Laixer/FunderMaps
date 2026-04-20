@@ -27,8 +27,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                     mrs.soil,
                     mrs.surface_area,
                     mrs.damage_cause,
-                    mrs.enforcement_term,
-                    mrs.overall_quality,
                     mrs.inquiry_type,
                     mrs.drystand,
                     mrs.drystand_risk,
