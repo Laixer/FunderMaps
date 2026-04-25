@@ -426,7 +426,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry_id
             JOIN 	application.attribution AS a ON a.id = i.attribution_id
-            JOIN    geocoder.building b ON b.external_id = s.building
+            JOIN    geocoder.building b ON b.external_id = s.building_id
             WHERE   s.id = @id
             AND     a.owner_id = @tenant
             LIMIT   1";
@@ -522,7 +522,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry_id
             JOIN 	application.attribution AS a ON a.id = i.attribution_id
-            JOIN    geocoder.building b ON b.external_id = s.building
+            JOIN    geocoder.building b ON b.external_id = s.building_id
             WHERE   s.building_id = @building
             ORDER BY s.create_date DESC";
 
@@ -619,7 +619,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry_id
             JOIN 	application.attribution AS a ON a.id = i.attribution_id
-            JOIN    geocoder.building b ON b.external_id = s.building
+            JOIN    geocoder.building b ON b.external_id = s.building_id
             WHERE   a.owner_id = @tenant
             AND     i.id = @id
             ORDER BY s.create_date DESC";
