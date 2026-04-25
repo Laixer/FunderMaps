@@ -109,7 +109,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
             FROM    report.recovery_sample AS s
             JOIN    report.recovery AS r ON r.id = s.recovery
             JOIN    application.attribution AS a ON a.id = r.attribution
-            WHERE   a.owner = @tenant
+            WHERE   a.owner_id = @tenant
             AND     r.id = @id";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
@@ -235,7 +235,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
             JOIN    geocoder.building b ON b.external_id = s.building_id
             JOIN    report.recovery AS r ON r.id = s.recovery
             JOIN    application.attribution AS a ON a.id = r.attribution
-            WHERE   a.owner = @tenant
+            WHERE   a.owner_id = @tenant
             AND     r.id = @id
             ORDER BY s.create_date DESC";
 

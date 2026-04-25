@@ -62,10 +62,10 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
         var sql = @"
             WITH attribution AS (
                 INSERT INTO application.attribution(
-                    reviewer,
-                    creator,
-                    owner,
-                    contractor,
+                    reviewer_id,
+                    creator_id,
+                    owner_id,
+                    contractor_id,
                     contractor2)
                 VALUES (
                     @reviewer,
@@ -126,7 +126,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             USING 	application.attribution AS a
             WHERE   a.id = r.attribution
             AND     i.id = @id
-            AND     a.owner = @tenant";
+            AND     a.owner_id = @tenant";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
@@ -145,13 +145,13 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
                     r.document_name,
 
                     -- Attribution
-                    a.reviewer,
-                    u.email AS reviewer_name, 
-                    a.creator,
+                    a.reviewer_id,
+                    u.email AS reviewer_name,
+                    a.creator_id,
                     u2.email AS creator_name,
-                    a.owner,
+                    a.owner_id,
                     o.name AS owner_name,
-                    a.contractor,
+                    a.contractor_id,
                     c.name AS contractor_name,
 
                     -- State control
@@ -166,12 +166,12 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
                     r.delete_date
             FROM    report.recovery AS r
             JOIN 	application.attribution AS a ON a.id = r.attribution
-            JOIN    application.user u ON u.id = a.reviewer
-            JOIN    application.user u2 ON u2.id = a.creator
-            JOIN    application.organization o ON o.id = a.owner
-            JOIN    application.contractor c ON c.id = a.contractor
+            JOIN    application.user u ON u.id = a.reviewer_id
+            JOIN    application.user u2 ON u2.id = a.creator_id
+            JOIN    application.organization o ON o.id = a.owner_id
+            JOIN    application.contractor c ON c.id = a.contractor_id
             WHERE   r.id = @id
-            AND     a.owner = @tenant
+            AND     a.owner_id = @tenant
             LIMIT   1";
 
         // TODO: Dapper can't handle multiple result sets in one go.
@@ -203,13 +203,13 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
                     r.document_name,
 
                     -- Attribution
-                    a.reviewer,
-                    u.email AS reviewer_name, 
-                    a.creator,
+                    a.reviewer_id,
+                    u.email AS reviewer_name,
+                    a.creator_id,
                     u2.email AS creator_name,
-                    a.owner,
+                    a.owner_id,
                     o.name AS owner_name,
-                    a.contractor,
+                    a.contractor_id,
                     c.name AS contractor_name,
 
                     -- State control
@@ -224,11 +224,11 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
                     r.delete_date
             FROM    report.recovery AS r
             JOIN 	application.attribution AS a ON a.id = r.attribution
-            JOIN    application.user u ON u.id = a.reviewer
-            JOIN    application.user u2 ON u2.id = a.creator
-            JOIN    application.organization o ON o.id = a.owner
-            JOIN    application.contractor c ON c.id = a.contractor
-            WHERE   a.owner = @tenant
+            JOIN    application.user u ON u.id = a.reviewer_id
+            JOIN    application.user u2 ON u2.id = a.creator_id
+            JOIN    application.organization o ON o.id = a.owner_id
+            JOIN    application.contractor c ON c.id = a.contractor_id
+            WHERE   a.owner_id = @tenant
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
         // sql = ConstructNavigation(sql, navigation);
@@ -264,13 +264,13 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
                     r.document_name,
 
                     -- Attribution
-                    a.reviewer,
-                    u.email AS reviewer_name, 
-                    a.creator,
+                    a.reviewer_id,
+                    u.email AS reviewer_name,
+                    a.creator_id,
                     u2.email AS creator_name,
-                    a.owner,
+                    a.owner_id,
                     o.name AS owner_name,
-                    a.contractor,
+                    a.contractor_id,
                     c.name AS contractor_name,
 
                     -- State control
@@ -287,12 +287,12 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             JOIN    report.recovery AS r ON r.id = s.recovery
             JOIN    geocoder.building b ON b.external_id = s.building_id
             JOIN    application.attribution AS a ON a.id = r.attribution
-            JOIN    application.user u ON u.id = a.reviewer
-            JOIN    application.user u2 ON u2.id = a.creator
-            JOIN    application.organization o ON o.id = a.owner
-            JOIN    application.contractor c ON c.id = a.contractor
+            JOIN    application.user u ON u.id = a.reviewer_id
+            JOIN    application.user u2 ON u2.id = a.creator_id
+            JOIN    application.organization o ON o.id = a.owner_id
+            JOIN    application.contractor c ON c.id = a.contractor_id
             WHERE   s.building_id = @building
-            GROUP BY r.id, a.reviewer, u.email, a.creator, u2.email, a.owner, o.name, a.contractor, c.name
+            GROUP BY r.id, a.reviewer_id, u.email, a.creator_id, u2.email, a.owner_id, o.name, a.contractor_id, c.name
             ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
         // await using var context = await DbContextFactory.CreateAsync(sql);
@@ -320,12 +320,12 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
         var sql = @"
             -- Attribution
             UPDATE  application.attribution AS a
-            SET     reviewer = @reviewer,
-                    contractor = @contractor
+            SET     reviewer_id = @reviewer,
+                    contractor_id = @contractor
             FROM    report.recovery AS r
             WHERE   a.id = r.attribution
             AND     r.id = @id
-            AND     a.owner = @tenant;
+            AND     a.owner_id = @tenant;
             
             -- Recovery
             UPDATE  report.recovery AS r
@@ -338,7 +338,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             FROM 	application.attribution AS a
             WHERE   a.id = r.attribution
             AND     r.id = @id
-            AND     a.owner = @tenant";
+            AND     a.owner_id = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -361,7 +361,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             FROM 	application.attribution AS a
             WHERE   a.id = r.attribution
             AND     r.id = @id
-            AND     a.owner = @tenant";
+            AND     a.owner_id = @tenant";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 

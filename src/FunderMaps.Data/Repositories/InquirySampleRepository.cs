@@ -162,7 +162,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             FROM    report.inquiry_sample AS s
             JOIN    report.inquiry AS i ON i.id = s.inquiry
             JOIN    application.attribution AS a ON a.id = i.attribution
-            WHERE   a.owner = @tenant
+            WHERE   a.owner_id = @tenant
             AND     i.id = @id";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
@@ -186,7 +186,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             WHERE   i.id = s.inquiry
             AND     a.id = i.attribution
             AND     s.id = @id
-            AND     a.owner = @tenant";
+            AND     a.owner_id = @tenant";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
@@ -428,7 +428,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             JOIN 	application.attribution AS a ON a.id = i.attribution
             JOIN    geocoder.building b ON b.external_id = s.building
             WHERE   s.id = @id
-            AND     a.owner = @tenant
+            AND     a.owner_id = @tenant
             LIMIT   1";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
@@ -620,7 +620,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
             JOIN 	application.attribution AS a ON a.id = i.attribution
             JOIN    geocoder.building b ON b.external_id = s.building
-            WHERE   a.owner = @tenant
+            WHERE   a.owner_id = @tenant
             AND     i.id = @id
             ORDER BY s.create_date DESC";
 
@@ -716,7 +716,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             WHERE   i.id = s.inquiry
             AND     a.id = i.attribution
             AND     s.id = @id
-            AND     a.owner = @tenant";
+            AND     a.owner_id = @tenant";
 
         // TOOD: Dapper ORM
 
