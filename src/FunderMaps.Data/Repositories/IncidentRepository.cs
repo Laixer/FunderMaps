@@ -28,7 +28,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                 contact_phone_number,
                 foundation_damage_characteristics,
                 environment_damage_characteristics,
-                building,
+                building_id,
                 audit_status,
                 question_type)
             VALUES (

@@ -284,7 +284,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
                     r.update_date,
                     r.delete_date
             FROM    report.recovery_sample AS s
-            JOIN    report.recovery AS r ON r.id = s.recovery
+            JOIN    report.recovery AS r ON r.id = s.recovery_id
             JOIN    geocoder.building b ON b.external_id = s.building_id
             JOIN    application.attribution AS a ON a.id = r.attribution_id
             JOIN    application.user u ON u.id = a.reviewer_id

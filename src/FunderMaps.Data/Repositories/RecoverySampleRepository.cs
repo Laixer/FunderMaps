@@ -51,13 +51,13 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
     {
         var sql = @"
             INSERT INTO report.recovery_sample(
-                recovery,
-                building,
+                recovery_id,
+                building_id,
                 note,
                 status,
                 type,
                 pile_type,
-                contractor,
+                contractor_id,
                 facade,
                 permit,
                 permit_date,
@@ -107,7 +107,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
         var sql = @"
             SELECT  COUNT(*)
             FROM    report.recovery_sample AS s
-            JOIN    report.recovery AS r ON r.id = s.recovery
+            JOIN    report.recovery AS r ON r.id = s.recovery_id
             JOIN    application.attribution AS a ON a.id = r.attribution_id
             WHERE   a.owner_id = @tenant
             AND     r.id = @id";
@@ -147,7 +147,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
         var sql = @"
             SELECT  -- RecoverySample
                     s.id,
-                    s.recovery,
+                    s.recovery_id,
                     s.building_id,
                     s.create_date,
                     s.update_date,
@@ -156,7 +156,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
                     s.status,
                     s.type,
                     s.pile_type,
-                    s.contractor,
+                    s.contractor_id,
                     s.facade,
                     s.permit,
                     s.permit_date,
@@ -185,7 +185,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
         var sql = @"
             SELECT  -- RecoverySample
                     s.id,
-                    s.recovery,
+                    s.recovery_id,
                     s.building_id,
                     s.create_date,
                     s.update_date,
@@ -194,7 +194,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
                     s.status,
                     s.type,
                     s.pile_type,
-                    s.contractor,
+                    s.contractor_id,
                     s.facade,
                     s.permit,
                     s.permit_date,
@@ -217,7 +217,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
         var sql = @"
             SELECT  -- RecoverySample
                     s.id,
-                    s.recovery,
+                    s.recovery_id,
                     s.building_id,
                     s.create_date,
                     s.update_date,
@@ -226,14 +226,14 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
                     s.status,
                     s.type,
                     s.pile_type,
-                    s.contractor,
+                    s.contractor_id,
                     s.facade,
                     s.permit,
                     s.permit_date,
                     s.recovery_date
             FROM    report.recovery_sample AS s
             JOIN    geocoder.building b ON b.external_id = s.building_id
-            JOIN    report.recovery AS r ON r.id = s.recovery
+            JOIN    report.recovery AS r ON r.id = s.recovery_id
             JOIN    application.attribution AS a ON a.id = r.attribution_id
             WHERE   a.owner_id = @tenant
             AND     r.id = @id
@@ -251,13 +251,13 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
     {
         var sql = @"
             UPDATE  report.recovery_sample
-            SET     recovery = @recovery,
-                    building = @building,
+            SET     recovery_id = @recovery,
+                    building_id = @building,
                     note = NULLIF(trim(@note), ''),
                     status = @status,
                     type = @type,
                     pile_type = @pile_type,
-                    contractor = @contractor,
+                    contractor_id = @contractor,
                     facade = @facade,
                     permit = @permit,
                     permit_date = @permit_date,

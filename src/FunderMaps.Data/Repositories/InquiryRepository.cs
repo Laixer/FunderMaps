@@ -313,13 +313,13 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
                     i.update_date,
                     i.delete_date
             FROM    report.inquiry_sample AS s
-            JOIN 	report.inquiry AS i ON i.id = s.inquiry
+            JOIN 	report.inquiry AS i ON i.id = s.inquiry_id
             JOIN 	application.attribution AS a ON a.id = i.attribution_id
             JOIN    application.user u ON u.id = a.reviewer_id
             JOIN    application.user u2 ON u2.id = a.creator_id
             JOIN    application.organization o ON o.id = a.owner_id
             JOIN    application.contractor c ON c.id = a.contractor_id
-            WHERE   s.building = @building
+            WHERE   s.building_id = @building
             GROUP BY i.id, a.reviewer_id, u.email, a.creator_id, u2.email, a.owner_id, o.name, a.contractor_id, c.name
             ORDER BY coalesce(i.update_date, i.create_date) DESC";
 

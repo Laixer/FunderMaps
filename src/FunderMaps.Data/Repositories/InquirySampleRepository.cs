@@ -13,9 +13,9 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
     {
         var sql = @"
             INSERT INTO report.inquiry_sample(
-                inquiry,
+                inquiry_id,
                 address,
-                building,
+                building_id,
                 note,
                 built_year,
                 substructure,
@@ -160,7 +160,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
         var sql = @"
             SELECT  COUNT(*)
             FROM    report.inquiry_sample AS s
-            JOIN    report.inquiry AS i ON i.id = s.inquiry
+            JOIN    report.inquiry AS i ON i.id = s.inquiry_id
             JOIN    application.attribution AS a ON a.id = i.attribution_id
             WHERE   a.owner_id = @tenant
             AND     i.id = @id";
@@ -183,7 +183,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             DELETE
             FROM    report.inquiry_sample AS s
             USING 	application.attribution AS a, report.inquiry AS i
-            WHERE   i.id = s.inquiry
+            WHERE   i.id = s.inquiry_id
             AND     a.id = i.attribution_id
             AND     s.id = @id
             AND     a.owner_id = @tenant";
@@ -346,7 +346,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
         var sql = @"
             SELECT  -- InquirySample
                     s.id,
-                    s.inquiry,
+                    s.inquiry_id,
                     s.address,
                     b.external_id,
                     s.note,
@@ -424,7 +424,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     s.skewed_window_frame,
                     s.facade_scan_risk
             FROM    report.inquiry_sample AS s
-            JOIN 	report.inquiry AS i ON i.id = s.inquiry
+            JOIN 	report.inquiry AS i ON i.id = s.inquiry_id
             JOIN 	application.attribution AS a ON a.id = i.attribution_id
             JOIN    geocoder.building b ON b.external_id = s.building
             WHERE   s.id = @id
@@ -442,7 +442,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
         var sql = @"
             SELECT  -- InquirySample
                     s.id,
-                    s.inquiry,
+                    s.inquiry_id,
                     s.address,
                     b.external_id,
                     s.note,
@@ -520,10 +520,10 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     s.skewed_window_frame,
                     s.facade_scan_risk
             FROM    report.inquiry_sample AS s
-            JOIN 	report.inquiry AS i ON i.id = s.inquiry
+            JOIN 	report.inquiry AS i ON i.id = s.inquiry_id
             JOIN 	application.attribution AS a ON a.id = i.attribution_id
             JOIN    geocoder.building b ON b.external_id = s.building
-            WHERE   s.building = @building
+            WHERE   s.building_id = @building
             ORDER BY s.create_date DESC";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
@@ -539,7 +539,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
         var sql = @"
             SELECT  -- InquirySample
                     s.id,
-                    s.inquiry,
+                    s.inquiry_id,
                     s.address,
                     b.external_id,
                     s.note,
@@ -617,7 +617,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     s.skewed_window_frame,
                     s.facade_scan_risk
             FROM    report.inquiry_sample AS s
-            JOIN 	report.inquiry AS i ON i.id = s.inquiry
+            JOIN 	report.inquiry AS i ON i.id = s.inquiry_id
             JOIN 	application.attribution AS a ON a.id = i.attribution_id
             JOIN    geocoder.building b ON b.external_id = s.building
             WHERE   a.owner_id = @tenant
@@ -637,9 +637,9 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
         var sql = @"
             UPDATE  report.inquiry_sample AS s
             SET     -- InquirySample
-                    inquiry = @inquiry,
+                    inquiry_id = @inquiry,
                     address = @address,
-                    building = @building,
+                    building_id = @building,
                     note = NULLIF(trim(@note), ''),
                     built_year = @built_year,
                     substructure = @substructure,
@@ -713,7 +713,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
 
                     facade_scan_risk = @facade_scan_risk
             FROM 	application.attribution AS a, report.inquiry AS i
-            WHERE   i.id = s.inquiry
+            WHERE   i.id = s.inquiry_id
             AND     a.id = i.attribution_id
             AND     s.id = @id
             AND     a.owner_id = @tenant";
