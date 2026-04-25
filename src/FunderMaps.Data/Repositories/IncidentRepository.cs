@@ -178,7 +178,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     i.question_type,
                     i.metadata
             FROM    report.incident AS i
-            JOIN    geocoder.building b ON b.external_id = i.building
+            JOIN    geocoder.building b ON b.external_id = i.building_id
             LEFT JOIN    application.portal p ON p.id = substring(i.id from 'FIR(\d{2})')::int
             WHERE   i.id = upper(@id)
             LIMIT   1";
@@ -217,9 +217,9 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     i.question_type,
                     i.metadata
             FROM    report.incident AS i
-            JOIN    geocoder.building b ON b.external_id = i.building
+            JOIN    geocoder.building b ON b.external_id = i.building_id
             LEFT JOIN    application.portal p ON p.id = substring(i.id from 'FIR(\d{2})')::int
-            WHERE   i.building = @building";
+            WHERE   i.building_id = @building";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
@@ -256,7 +256,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     i.question_type,
                     i.metadata
             FROM    report.incident AS i
-            JOIN    geocoder.building b ON b.external_id = i.building
+            JOIN    geocoder.building b ON b.external_id = i.building_id
             LEFT JOIN    application.portal p ON p.id = substring(i.id from 'FIR(\d{2})')::int";
 
         // sql = ConstructNavigation(sql, navigation);
