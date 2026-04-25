@@ -18,7 +18,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                 chained_building,
                 owner,
                 foundation_recovery,
-                neightbor_recovery,
+                neighbor_recovery,
                 foundation_damage_cause,
                 document_file,
                 note,
@@ -37,7 +37,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                 @chained_building,
                 @owner,
                 @foundation_recovery,
-                @neightbor_recovery,
+                @neighbor_recovery,
                 @foundation_damage_cause,
                 NULLIF(@document_file, '{}'::text[]),
                 NULLIF(trim(@note), ''),
@@ -60,7 +60,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
         context.AddParameterWithValue("chained_building", entity.ChainedBuilding);
         context.AddParameterWithValue("owner", entity.Owner);
         context.AddParameterWithValue("foundation_recovery", entity.FoundationRecovery);
-        context.AddParameterWithValue("neightbor_recovery", entity.NeighborRecovery);
+        context.AddParameterWithValue("neighbor_recovery", entity.NeighborRecovery);
         context.AddParameterWithValue("foundation_damage_cause", entity.FoundationDamageCause);
         context.AddParameterWithValue("document_file", entity.DocumentFile);
         context.AddParameterWithValue("note", entity.Note);
@@ -87,7 +87,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
         //         chained_building,
         //         owner,
         //         foundation_recovery,
-        //         neightbor_recovery, -- Typo in database
+        //         neighbor_recovery,
         //         foundation_damage_cause,
         //         document_file,
         //         note,
@@ -160,7 +160,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     i.chained_building,
                     i.owner,
                     i.foundation_recovery,
-                    i.neightbor_recovery AS neighbor_recovery,
+                    i.neighbor_recovery,
                     i.foundation_damage_cause,
                     i.document_file,
                     i.note,
@@ -199,7 +199,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     i.chained_building,
                     i.owner,
                     i.foundation_recovery,
-                    i.neightbor_recovery AS neighbor_recovery,
+                    i.neighbor_recovery,
                     i.foundation_damage_cause,
                     i.document_file,
                     i.note,
@@ -238,7 +238,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     i.chained_building,
                     i.owner,
                     i.foundation_recovery,
-                    i.neightbor_recovery AS neighbor_recovery,
+                    i.neighbor_recovery,
                     i.foundation_damage_cause,
                     i.document_file,
                     i.note,
@@ -278,7 +278,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     chained_building = @ChainedBuilding,
                     owner = @Owner,
                     foundation_recovery = @FoundationRecovery,
-                    neightbor_recovery = @NeightborRecovery,
+                    neighbor_recovery = @NeighborRecovery,
                     foundation_damage_cause = @FoundationDamageCause,
                     document_file = NULLIF(@DocumentFile, '{}'::text[]),
                     note = NULLIF(trim(@Note), ''),
