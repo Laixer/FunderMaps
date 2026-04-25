@@ -36,9 +36,9 @@ public sealed class Mapset
     public string[]? Layers { get; set; }
 
     /// <summary>
-    ///     Map options.
+    ///     Mapset metadata.
     /// </summary>
-    public object? Options { get; set; }
+    public object? Metadata { get; set; }
 
     /// <summary>
     ///     If the map is public or not.
