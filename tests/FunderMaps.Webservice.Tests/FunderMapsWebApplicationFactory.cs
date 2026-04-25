@@ -635,7 +635,7 @@ internal class MemoryAnalysisRepository : IAnalysisRepository
             GroundLevel = -1.63,
             Soil = "ni-zk",
             SurfaceArea = 157.05,
-            InquiryType = InquiryType.ArchieveResearch,
+            InquiryType = InquiryType.ArchiveResearch,
             FoundationType = FoundationType.Wood,
             FoundationTypeReliability = Reliability.Cluster,
             Drystand = -0.001449942588809927,

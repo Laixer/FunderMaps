@@ -41,9 +41,9 @@ public enum InquiryType
     SecondOpinion = 6,
 
     /// <summary>
-    ///     Archieve research.
+    ///     Archive research.
     /// </summary>
-    ArchieveResearch = 7,
+    ArchiveResearch = 7,
 
     /// <summary>
     ///     Architectural research.
