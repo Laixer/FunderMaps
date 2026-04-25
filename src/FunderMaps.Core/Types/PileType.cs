@@ -11,9 +11,9 @@ public enum PileType
     Press = 0,
 
     /// <summary>
-    ///     Intgernally driven.
+    ///     Internally driven.
     /// </summary>
-    IntgernallyDriven = 1,
+    InternallyDriven = 1,
 
     /// <summary>
     ///     Segment.
