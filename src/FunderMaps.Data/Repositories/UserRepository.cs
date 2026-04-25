@@ -4,6 +4,8 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -102,7 +104,16 @@ internal class UserRepository : DbServiceBase, IUserRepository
 
     public async Task<User> GetByAuthKeyAsync(string key)
     {
-        var sql = @"
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // Hash-first lookup. Every existing key was backfilled into
+        // application.auth_key.key_hash and new keys (issued via the
+        // TS API management route) dual-write both columns. The
+        // plaintext fallback below is defense-in-depth — should never
+        // hit, but keeps customer auth working if some rogue write
+        // path ever leaves key_hash NULL.
+        var keyHash = Sha256Hex(key);
+        var user = await connection.QuerySingleOrDefaultAsync<User>(@"
             SELECT  -- User
                     u.id,
                     u.given_name,
@@ -113,14 +124,32 @@ internal class UserRepository : DbServiceBase, IUserRepository
                     u.role
             FROM    application.user AS u
             JOIN    application.auth_key ak ON ak.user_id = u.id
-            WHERE   ak.key = @key
-            LIMIT   1";
+            WHERE   ak.key_hash = @keyHash
+            LIMIT   1", new { keyHash });
 
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+        if (user is null)
+        {
+            user = await connection.QuerySingleOrDefaultAsync<User>(@"
+                SELECT  -- User
+                        u.id,
+                        u.given_name,
+                        u.last_name,
+                        u.email,
+                        u.job_title,
+                        u.phone_number,
+                        u.role
+                FROM    application.user AS u
+                JOIN    application.auth_key ak ON ak.user_id = u.id
+                WHERE   ak.key = @key
+                LIMIT   1", new { key });
+        }
 
-        return await connection.QuerySingleOrDefaultAsync<User>(sql, new { key })
-            ?? throw new EntityNotFoundException(nameof(User));
+        return user ?? throw new EntityNotFoundException(nameof(User));
     }
+
+    private static string Sha256Hex(string input) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(input)))
+            .ToLowerInvariant();
 
     public async Task<User> GetByResetKeyAsync(string email, Guid key)
     {
