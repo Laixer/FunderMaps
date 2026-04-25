@@ -573,7 +573,7 @@ internal class MemoryNeighborhoodRepository : MemoryRepositoryBase<Neighborhood,
         {
             Id = "gfm-4f5e73d478ff452b86023a06e5b8d834",
             BuiltYear = new DateOnly(1908, 1, 1),
-            IsActive = true,
+            Active = true,
             ExternalId = "NL.IMBAG.PAND.0599100000685769",
             NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
         },

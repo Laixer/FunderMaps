@@ -20,10 +20,10 @@ public sealed class Building : IEntityIdentifier<string>
     public DateOnly? BuiltYear { get; set; }
 
     /// <summary>
-    ///     Building is active or not.
+    ///     Whether the building is active in BAG.
     /// </summary>
     [Required]
-    public bool IsActive { get; set; } = true;
+    public bool Active { get; set; } = true;
 
     /// <summary>
     ///     External data source id.
