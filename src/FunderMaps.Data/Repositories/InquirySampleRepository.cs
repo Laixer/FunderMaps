@@ -161,7 +161,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             SELECT  COUNT(*)
             FROM    report.inquiry_sample AS s
             JOIN    report.inquiry AS i ON i.id = s.inquiry
-            JOIN    application.attribution AS a ON a.id = i.attribution
+            JOIN    application.attribution AS a ON a.id = i.attribution_id
             WHERE   a.owner_id = @tenant
             AND     i.id = @id";
 
@@ -184,7 +184,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
             FROM    report.inquiry_sample AS s
             USING 	application.attribution AS a, report.inquiry AS i
             WHERE   i.id = s.inquiry
-            AND     a.id = i.attribution
+            AND     a.id = i.attribution_id
             AND     s.id = @id
             AND     a.owner_id = @tenant";
 
@@ -425,7 +425,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     s.facade_scan_risk
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
-            JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN 	application.attribution AS a ON a.id = i.attribution_id
             JOIN    geocoder.building b ON b.external_id = s.building
             WHERE   s.id = @id
             AND     a.owner_id = @tenant
@@ -521,7 +521,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     s.facade_scan_risk
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
-            JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN 	application.attribution AS a ON a.id = i.attribution_id
             JOIN    geocoder.building b ON b.external_id = s.building
             WHERE   s.building = @building
             ORDER BY s.create_date DESC";
@@ -618,7 +618,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     s.facade_scan_risk
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
-            JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN 	application.attribution AS a ON a.id = i.attribution_id
             JOIN    geocoder.building b ON b.external_id = s.building
             WHERE   a.owner_id = @tenant
             AND     i.id = @id
@@ -714,7 +714,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     facade_scan_risk = @facade_scan_risk
             FROM 	application.attribution AS a, report.inquiry AS i
             WHERE   i.id = s.inquiry
-            AND     a.id = i.attribution
+            AND     a.id = i.attribution_id
             AND     s.id = @id
             AND     a.owner_id = @tenant";
 

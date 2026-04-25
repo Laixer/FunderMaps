@@ -92,7 +92,7 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
                 note,
                 document_date,
                 document_file,
-                attribution,
+                attribution_id,
                 access_policy,
                 type,
                 standard_f3o)
@@ -127,7 +127,7 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
         var sql = @"
             SELECT  COUNT(*)
             FROM    report.inquiry AS i
-            JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN 	application.attribution AS a ON a.id = i.attribution_id
             WHERE   a.owner_id = @tenant";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
@@ -141,7 +141,7 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
             DELETE
             FROM    report.inquiry AS i
             USING 	application.attribution AS a
-            WHERE   a.id = i.attribution
+            WHERE   a.id = i.attribution_id
             AND     i.id = @id
             AND     a.owner_id = @tenant";
 
@@ -186,7 +186,7 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
                     i.update_date,
                     i.delete_date
             FROM    report.inquiry AS i
-            JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN 	application.attribution AS a ON a.id = i.attribution_id
             JOIN    application.user u ON u.id = a.reviewer_id
             JOIN    application.user u2 ON u2.id = a.creator_id
             JOIN    application.organization o ON o.id = a.owner_id
@@ -248,7 +248,7 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
                     i.update_date,
                     i.delete_date
             FROM    report.inquiry AS i
-            JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN 	application.attribution AS a ON a.id = i.attribution_id
             JOIN    application.user u ON u.id = a.reviewer_id
             JOIN    application.user u2 ON u2.id = a.creator_id
             JOIN    application.organization o ON o.id = a.owner_id
@@ -314,7 +314,7 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
                     i.delete_date
             FROM    report.inquiry_sample AS s
             JOIN 	report.inquiry AS i ON i.id = s.inquiry
-            JOIN 	application.attribution AS a ON a.id = i.attribution
+            JOIN 	application.attribution AS a ON a.id = i.attribution_id
             JOIN    application.user u ON u.id = a.reviewer_id
             JOIN    application.user u2 ON u2.id = a.creator_id
             JOIN    application.organization o ON o.id = a.owner_id
@@ -353,7 +353,7 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
             SET     reviewer_id = @reviewer,
                     contractor_id = @contractor
             FROM    report.inquiry AS i
-            WHERE   a.id = i.attribution
+            WHERE   a.id = i.attribution_id
             AND     i.id = @id
             AND     a.owner_id = @tenant;
 
@@ -370,7 +370,7 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
                     type = @type,
                     standard_f3o = @standard_f3o
             FROM 	application.attribution AS a
-            WHERE   a.id = i.attribution
+            WHERE   a.id = i.attribution_id
             AND     i.id = @id
             AND     a.owner_id = @tenant";
 
@@ -393,7 +393,7 @@ internal class InquiryRepository : DbServiceBase, IInquiryRepository
             UPDATE  report.inquiry AS i
             SET     audit_status = @status
             FROM 	application.attribution AS a
-            WHERE   a.id = i.attribution
+            WHERE   a.id = i.attribution_id
             AND     i.id = @id
             AND     a.owner_id = @tenant";
 

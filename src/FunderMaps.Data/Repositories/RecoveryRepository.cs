@@ -77,7 +77,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             )
             INSERT INTO report.recovery(
                 note,
-                attribution,
+                attribution_id,
                 access_policy,
                 type,
                 document_date,
@@ -124,7 +124,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             DELETE
             FROM    report.recovery AS r
             USING 	application.attribution AS a
-            WHERE   a.id = r.attribution
+            WHERE   a.id = r.attribution_id
             AND     i.id = @id
             AND     a.owner_id = @tenant";
 
@@ -165,7 +165,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
                     r.update_date,
                     r.delete_date
             FROM    report.recovery AS r
-            JOIN 	application.attribution AS a ON a.id = r.attribution
+            JOIN 	application.attribution AS a ON a.id = r.attribution_id
             JOIN    application.user u ON u.id = a.reviewer_id
             JOIN    application.user u2 ON u2.id = a.creator_id
             JOIN    application.organization o ON o.id = a.owner_id
@@ -223,7 +223,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
                     r.update_date,
                     r.delete_date
             FROM    report.recovery AS r
-            JOIN 	application.attribution AS a ON a.id = r.attribution
+            JOIN 	application.attribution AS a ON a.id = r.attribution_id
             JOIN    application.user u ON u.id = a.reviewer_id
             JOIN    application.user u2 ON u2.id = a.creator_id
             JOIN    application.organization o ON o.id = a.owner_id
@@ -286,7 +286,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             FROM    report.recovery_sample AS s
             JOIN    report.recovery AS r ON r.id = s.recovery
             JOIN    geocoder.building b ON b.external_id = s.building_id
-            JOIN    application.attribution AS a ON a.id = r.attribution
+            JOIN    application.attribution AS a ON a.id = r.attribution_id
             JOIN    application.user u ON u.id = a.reviewer_id
             JOIN    application.user u2 ON u2.id = a.creator_id
             JOIN    application.organization o ON o.id = a.owner_id
@@ -323,7 +323,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             SET     reviewer_id = @reviewer,
                     contractor_id = @contractor
             FROM    report.recovery AS r
-            WHERE   a.id = r.attribution
+            WHERE   a.id = r.attribution_id
             AND     r.id = @id
             AND     a.owner_id = @tenant;
             
@@ -336,7 +336,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
                     document_file = @document_file,
                     document_name = @document_name
             FROM 	application.attribution AS a
-            WHERE   a.id = r.attribution
+            WHERE   a.id = r.attribution_id
             AND     r.id = @id
             AND     a.owner_id = @tenant";
 
@@ -359,7 +359,7 @@ internal class RecoveryRepository : DbServiceBase, IRecoveryRepository
             UPDATE  report.recovery AS r
             SET     audit_status = @status
             FROM 	application.attribution AS a
-            WHERE   a.id = r.attribution
+            WHERE   a.id = r.attribution_id
             AND     r.id = @id
             AND     a.owner_id = @tenant";
 

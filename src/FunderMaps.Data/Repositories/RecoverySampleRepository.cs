@@ -108,7 +108,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
             SELECT  COUNT(*)
             FROM    report.recovery_sample AS s
             JOIN    report.recovery AS r ON r.id = s.recovery
-            JOIN    application.attribution AS a ON a.id = r.attribution
+            JOIN    application.attribution AS a ON a.id = r.attribution_id
             WHERE   a.owner_id = @tenant
             AND     r.id = @id";
 
@@ -234,7 +234,7 @@ internal class RecoverySampleRepository : DbServiceBase, IRecoverySampleReposito
             FROM    report.recovery_sample AS s
             JOIN    geocoder.building b ON b.external_id = s.building_id
             JOIN    report.recovery AS r ON r.id = s.recovery
-            JOIN    application.attribution AS a ON a.id = r.attribution
+            JOIN    application.attribution AS a ON a.id = r.attribution_id
             WHERE   a.owner_id = @tenant
             AND     r.id = @id
             ORDER BY s.create_date DESC";
