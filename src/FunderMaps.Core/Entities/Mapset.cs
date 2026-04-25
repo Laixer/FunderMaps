@@ -31,11 +31,6 @@ public sealed class Mapset
     public string Style { get; set; } = default!;
 
     /// <summary>
-    ///     Map layers.
-    /// </summary>
-    public string[]? Layers { get; set; }
-
-    /// <summary>
     ///     Mapset metadata.
     /// </summary>
     public object? Metadata { get; set; }
