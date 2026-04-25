@@ -88,7 +88,7 @@ public enum FoundationDamageCause
     /// <summary>
     ///     Damage due japanese knotweed.
     /// </summary>
-    JapanseKnotweed = 17,
+    JapaneseKnotweed = 17,
 
     /// <summary>
     ///     Groundwater level reduction.
