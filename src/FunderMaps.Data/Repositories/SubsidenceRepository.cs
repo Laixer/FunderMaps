@@ -7,17 +7,17 @@ namespace FunderMaps.Data.Repositories;
 
 internal class SubsidenceRepository : DbServiceBase, ISubsidenceRepository
 {
-    public async IAsyncEnumerable<SubsidenceHistory> ListAllHistoryByIdAsync(string id)
+    public async IAsyncEnumerable<BuildingSubsidenceHistory> ListAllHistoryByIdAsync(string id)
     {
         var sql = @"
             SELECT  velocity,
                     mark_at
-            FROM    data.subsidence_history
+            FROM    data.building_subsidence_history
             WHERE   building_id = @id";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var item in connection.QueryUnbufferedAsync<SubsidenceHistory>(sql, new { id }))
+        await foreach (var item in connection.QueryUnbufferedAsync<BuildingSubsidenceHistory>(sql, new { id }))
         {
             yield return item;
         }

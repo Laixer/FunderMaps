@@ -7,5 +7,5 @@ public interface ISubsidenceRepository
     /// <summary>
     ///    List all history by building id.
     /// </summary>
-    IAsyncEnumerable<SubsidenceHistory> ListAllHistoryByIdAsync(string id);
+    IAsyncEnumerable<BuildingSubsidenceHistory> ListAllHistoryByIdAsync(string id);
 }

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
 
-public sealed class SubsidenceHistory
+public sealed class BuildingSubsidenceHistory
 {
     /// <summary>
     ///     Building velocity.

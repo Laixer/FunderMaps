@@ -9,7 +9,7 @@ namespace FunderMaps.WebApi.Controllers.Model;
 public sealed class SubsidenceController(ISubsidenceRepository subsidenceRepository) : FunderMapsController
 {
     [HttpGet("{id}"), ResponseCache(Duration = 60 * 60 * 12)]
-    public async ValueTask<List<SubsidenceHistory>> GetAllAsync(string id)
+    public async ValueTask<List<BuildingSubsidenceHistory>> GetAllAsync(string id)
     {
         return await subsidenceRepository.ListAllHistoryByIdAsync(id).ToListAsync();
     }
