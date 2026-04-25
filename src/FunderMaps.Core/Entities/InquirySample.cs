@@ -119,9 +119,9 @@ public sealed class InquirySample : RecordControl
     public WoodType? WoodType { get; set; }
 
     /// <summary>
-    ///     Wood encroachement.
+    ///     Wood encroachment.
     /// </summary>
-    public WoodEncroachement? WoodEncroachement { get; set; }
+    public WoodEncroachment? WoodEncroachment { get; set; }
 
     //
     // Foundation Measurement

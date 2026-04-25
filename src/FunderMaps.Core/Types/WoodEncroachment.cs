@@ -1,9 +1,9 @@
 ﻿namespace FunderMaps.Core.Types;
 
 /// <summary>
-///     Wood encroachement.
+///     Wood encroachment.
 /// </summary>
-public enum WoodEncroachement
+public enum WoodEncroachment
 {
     /// <summary>
     ///     Fungus infection.

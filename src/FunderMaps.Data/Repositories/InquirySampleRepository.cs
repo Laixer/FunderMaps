@@ -50,7 +50,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                 damage_characteristics,
                 construction_pile,
                 wood_type,
-                wood_encroachement,
+                wood_encroachment,
                 crack_indoor_restored,
                 crack_indoor_type,
                 crack_indoor_size,
@@ -115,7 +115,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                 @damage_characteristics,
                 @construction_pile,
                 @wood_type,
-                @wood_encroachement,
+                @wood_encroachment,
                 @crack_indoor_restored,
                 @crack_indoor_type,
                 @crack_indoor_size,
@@ -239,7 +239,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
         context.AddParameterWithValue("damage_characteristics", entity.DamageCharacteristics);
         context.AddParameterWithValue("construction_pile", entity.ConstructionPile);
         context.AddParameterWithValue("wood_type", entity.WoodType);
-        context.AddParameterWithValue("wood_encroachement", entity.WoodEncroachement);
+        context.AddParameterWithValue("wood_encroachment", entity.WoodEncroachment);
         context.AddParameterWithValue("crack_indoor_restored", entity.CrackIndoorRestored);
         context.AddParameterWithValue("crack_indoor_type", entity.CrackIndoorType);
         context.AddParameterWithValue("crack_indoor_size", entity.CrackIndoorSize);
@@ -312,7 +312,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
     //         DamageCharacteristics = reader.GetFieldValue<FoundationDamageCharacteristics?>(offset++),
     //         ConstructionPile = reader.GetFieldValue<ConstructionPile?>(offset++),
     //         WoodType = reader.GetFieldValue<WoodType?>(offset++),
-    //         WoodEncroachement = reader.GetFieldValue<WoodEncroachement?>(offset++),
+    //         WoodEncroachment = reader.GetFieldValue<WoodEncroachment?>(offset++),
     //         CrackIndoorRestored = reader.GetSafeBoolean(offset++),
     //         CrackIndoorType = reader.GetFieldValue<CrackType?>(offset++),
     //         CrackIndoorSize = reader.GetSafeInt(offset++),
@@ -394,7 +394,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     s.damage_characteristics,
                     s.construction_pile,
                     s.wood_type,
-                    s.wood_encroachement,
+                    s.wood_encroachment,
 
                     -- Building
                     s.crack_indoor_restored,
@@ -490,7 +490,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     s.damage_characteristics,
                     s.construction_pile,
                     s.wood_type,
-                    s.wood_encroachement,
+                    s.wood_encroachment,
 
                     -- Building
                     s.crack_indoor_restored,
@@ -587,7 +587,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     s.damage_characteristics,
                     s.construction_pile,
                     s.wood_type,
-                    s.wood_encroachement,
+                    s.wood_encroachment,
 
                     -- Building
                     s.crack_indoor_restored,
@@ -682,7 +682,7 @@ internal class InquirySampleRepository : DbServiceBase, IInquirySampleRepository
                     damage_characteristics = @damage_characteristics,
                     construction_pile = @construction_pile,
                     wood_type = @wood_type,
-                    wood_encroachement = @wood_encroachement,
+                    wood_encroachment = @wood_encroachment,
 
                     -- Building
                     crack_indoor_restored = @crack_indoor_restored,

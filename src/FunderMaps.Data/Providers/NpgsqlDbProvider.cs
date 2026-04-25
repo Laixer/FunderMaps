@@ -65,7 +65,7 @@ internal class NpgsqlDbProvider : DbProvider, IDisposable, IAsyncDisposable
         dataSourceBuilder.MapEnum<Reliability>();
         dataSourceBuilder.MapEnum<RotationType>();
         dataSourceBuilder.MapEnum<Substructure>();
-        dataSourceBuilder.MapEnum<WoodEncroachement>();
+        dataSourceBuilder.MapEnum<WoodEncroachment>();
         dataSourceBuilder.MapEnum<WoodQuality>();
         dataSourceBuilder.MapEnum<WoodType>();
 
