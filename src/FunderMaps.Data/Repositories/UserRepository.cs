@@ -106,12 +106,6 @@ internal class UserRepository : DbServiceBase, IUserRepository
     {
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        // Hash-first lookup. Every existing key was backfilled into
-        // application.auth_key.key_hash and new keys (issued via the
-        // TS API management route) dual-write both columns. The
-        // plaintext fallback below is defense-in-depth — should never
-        // hit, but keeps customer auth working if some rogue write
-        // path ever leaves key_hash NULL.
         var keyHash = Sha256Hex(key);
         var user = await connection.QuerySingleOrDefaultAsync<User>(@"
             SELECT  -- User
@@ -126,23 +120,6 @@ internal class UserRepository : DbServiceBase, IUserRepository
             JOIN    application.auth_key ak ON ak.user_id = u.id
             WHERE   ak.key_hash = @keyHash
             LIMIT   1", new { keyHash });
-
-        if (user is null)
-        {
-            user = await connection.QuerySingleOrDefaultAsync<User>(@"
-                SELECT  -- User
-                        u.id,
-                        u.given_name,
-                        u.last_name,
-                        u.email,
-                        u.job_title,
-                        u.phone_number,
-                        u.role
-                FROM    application.user AS u
-                JOIN    application.auth_key ak ON ak.user_id = u.id
-                WHERE   ak.key = @key
-                LIMIT   1", new { key });
-        }
 
         return user ?? throw new EntityNotFoundException(nameof(User));
     }
