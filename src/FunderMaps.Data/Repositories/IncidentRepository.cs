@@ -21,11 +21,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                 neighbor_recovery,
                 foundation_damage_cause,
                 document_file,
-                note,
                 internal_note,
-                contact,
-                contact_name,
-                contact_phone_number,
                 foundation_damage_characteristics,
                 environment_damage_characteristics,
                 building_id,
@@ -40,11 +36,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                 @neighbor_recovery,
                 @foundation_damage_cause,
                 NULLIF(@document_file, '{}'::text[]),
-                NULLIF(trim(@note), ''),
                 NULLIF(trim(@internal_note), ''),
-                trim(lower(@email)),
-                NULLIF(trim(@name), ''),
-                NULLIF(trim(@phone_number), ''),
                 NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
                 NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
                 @building,
@@ -63,13 +55,9 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
         context.AddParameterWithValue("neighbor_recovery", entity.NeighborRecovery);
         context.AddParameterWithValue("foundation_damage_cause", entity.FoundationDamageCause);
         context.AddParameterWithValue("document_file", entity.DocumentFile);
-        context.AddParameterWithValue("note", entity.Note);
         context.AddParameterWithValue("internal_note", entity.InternalNote);
         context.AddParameterWithValue("foundation_damage_characteristics", entity.FoundationDamageCharacteristics);
         context.AddParameterWithValue("environment_damage_characteristics", entity.EnvironmentDamageCharacteristics);
-        context.AddParameterWithValue("email", entity.Email);
-        context.AddParameterWithValue("name", entity.Name);
-        context.AddParameterWithValue("phone_number", entity.PhoneNumber);
         context.AddParameterWithValue("building", entity.Building);
         context.AddParameterWithValue("audit_status", entity.AuditStatus);
         context.AddParameterWithValue("question_type", entity.QuestionType);
@@ -163,11 +151,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     i.neighbor_recovery,
                     i.foundation_damage_cause,
                     i.document_file,
-                    i.note,
                     i.internal_note,
-                    i.contact AS email,
-                    i.contact_name AS name,
-                    i.contact_phone_number AS phone_number,
                     i.create_date,
                     i.update_date,
                     i.delete_date,
@@ -202,11 +186,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     i.neighbor_recovery,
                     i.foundation_damage_cause,
                     i.document_file,
-                    i.note,
                     i.internal_note,
-                    i.contact AS email,
-                    i.contact_name AS name,
-                    i.contact_phone_number AS phone_number,
                     i.create_date,
                     i.update_date,
                     i.delete_date,
@@ -241,11 +221,7 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     i.neighbor_recovery,
                     i.foundation_damage_cause,
                     i.document_file,
-                    i.note,
                     i.internal_note,
-                    i.contact AS email,
-                    i.contact_name AS name,
-                    i.contact_phone_number AS phone_number,
                     i.create_date,
                     i.update_date,
                     i.delete_date,
@@ -281,7 +257,6 @@ internal class IncidentRepository : DbServiceBase, IIncidentRepository
                     neighbor_recovery = @NeighborRecovery,
                     foundation_damage_cause = @FoundationDamageCause,
                     document_file = NULLIF(@DocumentFile, '{}'::text[]),
-                    note = NULLIF(trim(@Note), ''),
                     internal_note = NULLIF(trim(@InternalNote), ''),
                     foundation_damage_characteristics = NULLIF(@FoundationDamageCharacteristics, '{}'::report.foundation_damage_characteristics[]),
                     environment_damage_characteristics = NULLIF(@EnvironmentDamageCharacteristics, '{}'::report.environment_damage_characteristics[]),
