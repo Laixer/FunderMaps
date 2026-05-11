@@ -127,7 +127,7 @@ internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, 
             Email = "service@contoso.com",
             JobTitle = "Service Account",
             PhoneNumber = "+31612345678",
-            Role = ApplicationRole.Service,
+            Role = ApplicationRole.User,
             PasswordHash = passwordHasher.HashPassword("fundermaps"),
             AuthKey = "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW",
         });
