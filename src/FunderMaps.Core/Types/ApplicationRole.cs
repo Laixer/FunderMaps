@@ -14,9 +14,4 @@ public enum ApplicationRole
     ///     User.
     /// </summary>
     User = 1,
-
-    /// <summary>
-    ///     Service.
-    /// </summary>
-    Service = 2,
 }
