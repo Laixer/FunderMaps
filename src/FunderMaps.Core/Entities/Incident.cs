@@ -64,11 +64,6 @@ public sealed class Incident : RecordControl
     public string[]? DocumentFile { get; set; }
 
     /// <summary>
-    ///     Note.
-    /// </summary>
-    public string? Note { get; set; }
-
-    /// <summary>
     ///     Internal note.
     /// </summary>
     public string? InternalNote { get; set; }
@@ -84,24 +79,6 @@ public sealed class Incident : RecordControl
     /// </summary>
     [ArrayEnumDataTypeAttribute(typeof(EnvironmentDamageCharacteristics))]
     public EnvironmentDamageCharacteristics[]? EnvironmentDamageCharacteristics { get; set; }
-
-    /// <summary>
-    ///     Contact email.
-    /// </summary>
-    [Required, EmailAddress]
-    public string Email { get; set; } = default!;
-
-    /// <summary>
-    ///     Contact name.
-    /// </summary>
-    public string? Name { get; set; }
-
-    /// <summary>
-    ///     Contact phone number.
-    /// </summary>
-    [Phone]
-    [StringLength(16)]
-    public string? PhoneNumber { get; set; }
 
     // TODO: Remove this property, replaced by building. Only being used by incidentService.
     /// <summary>
