@@ -39,7 +39,7 @@ When using VS Code the 'debug' section should list all the applications. Just ru
 
 ## Configuration
 
-See the `contrib/etc/_appsettings.{ENV}.json` directory for configuration files for each environment. You can copy these configuration files to the project source directory (`src/{project}`).
+See `contrib/etc/` for the `_appsettings.{ENV}.json` configuration files for each environment. You can copy these configuration files to the project source directory (`src/{project}`).
 
 ## Using the application
 
