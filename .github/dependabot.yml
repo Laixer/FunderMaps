@@ -1,0 +1,34 @@
+# Dependabot version updates.
+# Security updates are enabled repo-wide and are not controlled by this file.
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Monthly, not weekly: the C# stack is on its way out (Webservice EOL end of
+# August 2026), so this is here to catch something that actually matters before
+# then — not to generate a weekly PR nobody will merge.
+
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    # Majors stay ungrouped — they get their own PR and a real review.
+    # (dependency-type grouping is npm-only, so this groups by pattern.)
+    groups:
+      minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "monthly"
