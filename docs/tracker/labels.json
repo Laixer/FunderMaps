@@ -1,0 +1,112 @@
+[
+ {
+  "id": 6963286807,
+  "node_id": "LA_kwDOCiG_Zs8AAAABnwtTFw",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Action",
+  "name": "Action",
+  "color": "232D8C",
+  "default": false,
+  "description": "",
+  "archived_at": null
+ },
+ {
+  "id": 1227515997,
+  "node_id": "MDU6TGFiZWwxMjI3NTE1OTk3",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Bug",
+  "name": "Bug",
+  "color": "d73a4a",
+  "default": false,
+  "description": "Something isn't working",
+  "archived_at": null
+ },
+ {
+  "id": 2239945772,
+  "node_id": "MDU6TGFiZWwyMjM5OTQ1Nzcy",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Database",
+  "name": "Database",
+  "color": "f2baae",
+  "default": false,
+  "description": "Database operation",
+  "archived_at": null
+ },
+ {
+  "id": 4259518615,
+  "node_id": "LA_kwDOCiG_Zs794xiX",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Dependencies",
+  "name": "Dependencies",
+  "color": "0366d6",
+  "default": false,
+  "description": "Pull requests that update a dependency file",
+  "archived_at": null
+ },
+ {
+  "id": 1227515999,
+  "node_id": "MDU6TGFiZWwxMjI3NTE1OTk5",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Enhancement",
+  "name": "Enhancement",
+  "color": "a2eeef",
+  "default": false,
+  "description": "New feature or request",
+  "archived_at": null
+ },
+ {
+  "id": 1694248894,
+  "node_id": "MDU6TGFiZWwxNjk0MjQ4ODk0",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Feature",
+  "name": "Feature",
+  "color": "abbaf2",
+  "default": false,
+  "description": "New features",
+  "archived_at": null
+ },
+ {
+  "id": 2577299925,
+  "node_id": "MDU6TGFiZWwyNTc3Mjk5OTI1",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Map",
+  "name": "Map",
+  "color": "c5def5",
+  "default": false,
+  "description": "Make or adjust Maplayer",
+  "archived_at": null
+ },
+ {
+  "id": 2689387103,
+  "node_id": "MDU6TGFiZWwyNjg5Mzg3MTAz",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Model",
+  "name": "Model",
+  "color": "d4c5f9",
+  "default": false,
+  "description": "Model",
+  "archived_at": null
+ },
+ {
+  "id": 2667328984,
+  "node_id": "MDU6TGFiZWwyNjY3MzI4OTg0",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Release",
+  "name": "Release",
+  "color": "F12E12",
+  "default": false,
+  "description": "New release",
+  "archived_at": null
+ },
+ {
+  "id": 2275582839,
+  "node_id": "MDU6TGFiZWwyMjc1NTgyODM5",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Testing",
+  "name": "Testing",
+  "color": "ea1ea6",
+  "default": false,
+  "description": "Various forms of testing",
+  "archived_at": null
+ },
+ {
+  "id": 2241376784,
+  "node_id": "MDU6TGFiZWwyMjQxMzc2Nzg0",
+  "url": "https://api.github.com/repos/Laixer/FunderMaps/labels/Webservice",
+  "name": "Webservice",
+  "color": "43EAB9",
+  "default": false,
+  "description": "FunderMaps Webservice related",
+  "archived_at": null
+ }
+]

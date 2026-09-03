@@ -1,55 +1,28 @@
-# FunderMaps
+# FunderMaps (legacy C# / .NET) — ARCHIVED
 
-![FunderMaps Ecosystem](https://github.com/Laixer/FunderMaps/workflows/FunderMaps%20Ecosystem/badge.svg)
+**This codebase is retired.** Nothing from it runs anywhere since 2026-08-29, when the
+last component (the `/api/v3` Webservice) was switched off. It is kept read-only as a
+reference for legacy behaviour.
 
-Foundation issues occur and are actively investigated by local government. Gaining insight and acquiring more detailed data, **FunderMaps** enables municipalities and large property owners to register this data at the property level. Enrichment with data from Remote Monitoring or national data layers, various analyzes are performed that provide insight into the risk of foundation damage.
+The platform lives on in TypeScript/Bun services:
 
-## Requirements
+| what | repository | endpoint |
+|---|---|---|
+| platform API (CRUD, auth/OIDC, management) | [FunderMapsApi](https://github.com/Laixer/FunderMapsApi) | api.fundermaps.com |
+| billable product API (`/v4/product/*`) | [FunderMapsWebservice](https://github.com/Laixer/FunderMapsWebservice) | ws.fundermaps.com |
+| schema owner (`schema.sql`), background jobs, BAG loader, tile server | [FunderMapsWorker](https://github.com/Laixer/FunderMapsWorker) | tiles.fundermaps.com |
 
-* .NET 8.0 Runtime and SDK
-* Docker
+**Issues:** this tracker was the product tracker until the archive. The state at
+archive time and a transfer script are in [`docs/tracker/`](docs/tracker/); new
+issues go to the repository that owns the code in question.
 
-See https://docs.microsoft.com/en-us/dotnet/core/install/ for installation instructions of .NET.
+## What was here
 
-## Running the application on localhost
+.NET 8 solution: `FunderMaps.WebApi` (platform API), `FunderMaps.Webservice`
+(product API), `FunderMaps.Core` / `FunderMaps.Data` (domain + Dapper data layer),
+`FunderMaps.AspNetCore`, plus `contrib/` deployment bits. The database schema it
+targeted is the same PostgreSQL/PostGIS database the new services use; the
+authoritative dump is `FunderMapsWorker/schema.sql`, **not** anything in this repo.
 
-After cloning or downloading the application you will be able to run the application on localhost. You will need to run the setup and load scripts to configure the local database.
-
-1. Run from solution directory. This will setup the PostgreSQL instance in a docker container.
-
-```sh
-./scripts/setupdb.sh
-```
-
-2. Wait **5 seconds** before running the database seeder script.
-
-```sh
-./scripts/loaddb.sh
-```
-
-3. Ensure your connection strings in `appsettings.{ENV}.json` point to the local PostgreSQL instance. For example the *FunderMaps.WebApi* would have `Server=localhost;Database=fundermaps;User Id=fundermaps_webapp` where the user id corresponds to the application.
-
-4. Enter the project directory in `src/{project}`.
-
-5. _(Optional)_ Test the application by running `dotnet test`. The tests cover almost all of the application logic. Address any issues before continue the development.
-
-6. Run the application with `ASPNETCORE_ENVIRONMENT={ENV} dotnet run`. The application should keep running in the foreground. The foreground logging shows the connection details.
-
-When using VS Code the 'debug' section should list all the applications. Just run the application (or hit F5).
-
-## Configuration
-
-See `contrib/etc/` for the `_appsettings.{ENV}.json` configuration files for each environment. You can copy these configuration files to the project source directory (`src/{project}`).
-
-## Using the application
-
-See the user table below. All users use the same password: `fundermaps`.
-
-| Name           | Email                 | Function      |
-|----------------|-----------------------|---------------|
-| Administrator  | admin@fundermaps.com  | Administrator |
-|                | Javier40@yahoo.com    | Superuser     |
-| kihn           | Freda@contoso.com     | Reviewer      |
-| Patsy Brekke   | patsy@contoso.com     | Writer        |
-| Lester Bednar  | lester@contoso.com    | Reader        |
-|                | corene@contoso.com    | Reader        |
+Legacy build/run instructions (kept for the record): .NET 8 SDK + Docker,
+`./scripts/setupdb.sh` then `./scripts/loaddb.sh`, `dotnet run --project src/FunderMaps.WebApi`.
