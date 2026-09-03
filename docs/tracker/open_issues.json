@@ -1,0 +1,245 @@
+[
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/432",
+  "number": 432,
+  "title": "Multiple foundationdamage cause  possible",
+  "user": "DonZandbergen",
+  "labels": [
+   "Feature",
+   "Database"
+  ],
+  "state": "open",
+  "assignees": [],
+  "milestone": "Backlog",
+  "comments": 2,
+  "created_at": "2021-01-23T19:23:19Z",
+  "updated_at": "2026-07-27T09:48:59Z",
+  "body": "#### Huidige situatie\n\nBinnen app.fundermaps.com kan voor de velden **\"Oorzaak funderingsschade\"** en **\"Geconstateerde schade\"** momenteel slechts één waarde worden geselecteerd.\n\n#### Gewenste situatie\n\nHet moet mogelijk zijn om meerdere waarden tegelijk te selecteren voor beide velden.\n\n#### Functionele wijziging\n\nWijzig de invoervelden:\n\n* **Oorzaak funderingsschade**\n* **Geconstateerde schade**\n\nvan een single-select naar een multi-select.\n\n#### Voorbeelden\n\n**Oorzaak funderingsschade**\nEen gebruiker moet bijvoorbeeld tegelijkertijd kunnen selecteren:\n\n* Houtrot\n* Negatieve kleef\n* Zetting\n* Grondwaterverlaging\n\n**Geconstateerde schade**\nEen gebruiker moet bijvoorbeeld tegelijkertijd kunnen selecteren:\n\n* Scheurvorming\n* Klemmende deuren en ramen\n* Vloerzakking\n* Gevelvervorming\n\n#### Opslag\n\nDe database en API moeten meerdere geselecteerde waarden ondersteunen. De geselecteerde waarden dienen als afzonderlijke items te worden opgeslagen en teruggeleverd, zodat filtering, rapportages en analyses mogelijk blijven.\n\n#### Rapportage\n\nAlle geselecteerde waarden moeten worden weergegeven in:\n\n* De applicatie\n* Exports\n* PDF-rapportages\n* API-responses\n\n\n![Image](https://github.com/Laixer/FunderMaps/assets/46600362/4150cee0-f148-42a0-ad20-f71eddb15765)\n\n\n"
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/859",
+  "number": 859,
+  "title": "Ensure Orders are Created for Multiple Results in Backend",
+  "user": "DonZandbergen",
+  "labels": [
+   "Enhancement",
+   "Database",
+   "Model"
+  ],
+  "state": "open",
+  "assignees": [
+   "yorickdewid"
+  ],
+  "milestone": "4.3 App-Maps",
+  "comments": 1,
+  "created_at": "2024-05-10T10:35:58Z",
+  "updated_at": "2026-07-23T14:24:59Z",
+  "body": "When a query or action results in more than one result, the backend must generate an order."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/912",
+  "number": 912,
+  "title": "AVG bepalen over RadarSat data",
+  "user": "DonZandbergen",
+  "labels": [
+   "Action"
+  ],
+  "state": "open",
+  "assignees": [
+   "DonZandbergen"
+  ],
+  "milestone": null,
+  "comments": 1,
+  "created_at": "2024-09-24T20:23:49Z",
+  "updated_at": "2026-07-23T14:25:09Z",
+  "body": "Op basis van tijdreeks de AVG bepalen zodat de AVG bepaald wordt op basis van de meetreeks."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/930",
+  "number": 930,
+  "title": "Serve single tileset databases",
+  "user": "yorickdewid",
+  "labels": [
+   "Enhancement"
+  ],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2025-02-20T14:41:02Z",
+  "updated_at": "2025-02-24T14:25:59Z",
+  "body": "Tileset consists of 10k or even 100k files which is hard to manage. A tileserver could serve a single database tileset containing all individual tiles."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/984",
+  "number": 984,
+  "title": "Model V4",
+  "user": "DonZandbergen",
+  "labels": [
+   "Enhancement",
+   "Feature",
+   "Database"
+  ],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-05-20T14:07:33Z",
+  "updated_at": "2026-07-23T14:25:35Z",
+  "body": "Dit model zal naast V3.5 blijven draaien. Daar wordt de komende periode actief aan ontwikkeld. Er zal waarschijnlijk minimaal een jaar overlap zijn waarin zowel V3.5 als V4 ondersteund worden. Hoe de overgang precies gaat verlopen, welke processen wanneer overstappen en welke outputs leidend worden, is nu nog niet vastgesteld.\n\nVoor V4 wil ik het fundamenteel anders aanpakken: veel meer vanuit een data science-benadering, waarbij we expliciet openstaan voor methodieken en inzichten die we nu nog niet volledig overzien.\n\nBelangrijk om te begrijpen is dat funderingsrisico’s sterk afhankelijk zijn van het funderingstype. De beschikbare data geeft daar nu al duidelijke aanwijzingen voor. Een goed uitgangspunt voor verdere modelontwikkeling is daarom het funderingstype zelf. Juist op dat onderdeel beschikken wij inmiddels over aanzienlijk meer data én een hogere datakwaliteit dan voorheen.\n\nDat biedt de mogelijkheid om een andere benadering te kiezen dan het huidige deterministische A–E-model. In plaats van één vaste uitkomst (“point estimate”) willen we naar een probabilistisch model, waarin onzekerheid expliciet onderdeel wordt van de output.\n\nDaarbij denk ik aan een regionale aanpak, gebaseerd op datadichtheid en data-beschikbaarheid. Simpel gezegd: in West-Nederland beschikken we over veel meer vergelijkbare panden en onderzoeksdata dan in Oost-Nederland. Dat verschil moet ook zichtbaar worden in de betrouwbaarheid en nauwkeurigheid van de modeluitkomsten.\n\nDe denkrichting voor V4 bestaat onder andere uit:\n- \n- Een probabilistisch model dat niet één label teruggeeft, maar een kansverdeling.\n- Een calibrated classifier, waarbij de voorspelde kansen ook statistisch betrouwbaar zijn. Bijvoorbeeld: wanneer het model 70% kans aangeeft, moet dat ook daadwerkelijk in circa 70% van de gevallen kloppen.\n- Quantile regression voor het voorspellen van bandbreedtes en percentielen in plaats van één vaste waarde.\n- Prediction intervals (bijvoorbeeld p10–p50–p90) om onzekerheidsmarges inzichtelijk te maken.\n\nHet expliciet onderscheiden van:\n\n- aleatoric uncertainty: inherente onzekerheid en ruis in de data;\n- epistemic uncertainty: onzekerheid door gebrek aan voldoende vergelijkbare data of kennis.\n\nEen parameter data_availability raakt al gedeeltelijk de voorgestelde dichtheid per regio.\n\n\nIn de financiële sector en bij verzekeraars zie je vergelijkbare principes terug in zogenaamde PD-modellen (probability-of-default). In essentie gaat het om dezelfde statistische benadering, maar toegepast op een ander domein.\n\nWat we daarmee nadrukkelijk verlaten, is het huidige deterministische model waarin één vast A–E-label centraal staat. Dat model geeft onvoldoende ruimte voor onzekerheid, regionale verschillen en variatie in datakwaliteit."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/995",
+  "number": 995,
+  "title": "Mapset owner",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 2,
+  "created_at": "2026-06-05T21:13:06Z",
+  "updated_at": "2026-06-09T06:23:07Z",
+  "body": "<img width=\"2190\" height=\"986\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/11af2023-41e7-45c0-aa14-c4ea7c922e28\" />\n\nEr zijn nu 300+ woningcorperaties als owner bekend. Laat de admin kiezen welke in de legenda moeten komen."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/1002",
+  "number": 1002,
+  "title": "Expliciete reason-code toevoegen aan de analysis-productrespons wanneer geen risicoklasse kan worden geleverd",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 1,
+  "created_at": "2026-07-16T06:15:31Z",
+  "updated_at": "2026-07-16T14:47:22Z",
+  "body": "# Expliciete `reason`-code toevoegen aan de analysis-productrespons wanneer geen risicoklasse kan worden geleverd\n\n> **Let op — repo:** dit betreft de **v4-webservice `Laixer/FunderMapsWebservice`** (TypeScript/Bun + Hono), niet de .NET-repo `Laixer/FunderMaps`. De productie-endpoints (`/v4/product/...`) draaien hier en geven platte JSON-fouten terug (`{\"message\": \"...\"}`), geen RFC 7807 `ProblemDetails`.\n\n## Context\n\nVoor de NWWI-koppeling (funderingsrisicorapport in het taxatieproces) moet de aanroepende partij per opvraag geautomatiseerd kunnen bepalen *waarom* er geen risicoklasse is, en welke vervolgstap daarbij hoort:\n\n| Oorzaak | Gewenste vervolgstap aan afnemerskant |\n|---|---|\n| a. Objecttype (geen BAG-pand: ligplaats/woonboot/standplaats) | geen actie — QuickScan niet zinvol |\n| b. Onvoldoende broninformatie (pand bekend, geen klasse) | QuickScan aanvragen |\n| c. Onjuiste/ontbrekende adressering | nieuwe aanvraag met correct adres |\n| d. Technische storing | opnieuw aanbieden (retry/queue) |\n\nOp dit moment kan de afnemer deze vier situaties **niet uit elkaar houden** op basis van de respons: elke \"geen resultaat\"-uitkomst geeft dezelfde 404 met body `{\"message\": \"Not found\"}`.\n\n## Huidig gedrag\n\nEndpoint: `GET /v4/product/analysis/:id` in `src/routes/product.ts`.\n\nDe handler kent **twee aparte 404-takken die vandaag al bestaan**, maar dezelfde body teruggeven:\n\n```ts\nconst externalId = await resolveBuildingExternalId(id);\nif (!externalId) return c.json({ message: \"Not found\" }, 404);   // ① geen pand/adres herleidbaar → categorie a/c\n\nconst rows = await sql`... FROM data.model_risk_static WHERE building_id = ${externalId} LIMIT 1`;\nif (rows.length === 0) return c.json({ message: \"Not found\" }, 404);   // ② pand herleid, geen risicorij → categorie b\n```\n\nDaarnaast bestaat een **derde \"geen klasse\"-uitkomst die géén 404 is**: als er wél een rij is maar niet geclassificeerd, komt er een **200 OK** terug met `foundationType`/de `*Risk`-velden op `null` (de rij uit `model_risk_static` wordt verbatim teruggegeven; die velden zijn nullable).\n\nOverige statussen (contract, voor de volledigheid):\n- **500** `{\"message\": \"Internal server error\"}` — globale `app.onError` in `src/index.ts` (echte storing / DB-fout).\n- **429** `{\"message\": \"Too Many Requests\"}` — `rateLimit()`-middleware bij overschrijding van de billing-/quota-limiet (mét `Retry-After` + `X-RateLimit-*`). Dit is een **quota-limiet, geen storing**.\n\n**Belangrijk (afwijking t.o.v. eerdere aanname):** v4 registreert de misser-gevallen op dit moment **niet**. De usage-tracker (`trackerMiddleware` + `c.set(\"tracker\", ...)`) wordt alleen op de **succes-tak** gezet; beide 404-takken keren vroeg terug zonder tracking. Er is dus (anders dan in de oude .NET-service) **geen** `product_tracker_mismatch`-registratie — de frequentie per oorzaak is nu **niet** meetbaar. Dat moet daarom onderdeel van deze wijziging zijn.\n\n## Gewenst gedrag\n\nVoeg aan de respons een **machine-leesbare `reason`-code** toe, zodat de afnemer zonder de body te interpreteren de juiste vervolgstap kan kiezen — en registreer de misser + reden server-side zodat de frequentie rapporteerbaar wordt.\n\nVoorgestelde enum:\n\n| `reason` | Situatie | Techn. herkomst (v4) | HTTP |\n|---|---|---|---|\n| `NO_BUILDING` | Identifier geldig maar geen BAG-pand (ligplaats/woonboot/standplaats) of geen BAG-match | tak ① (`resolveBuildingExternalId` → null) | 404 |\n| `ADDRESS_INVALID` | Identifier-formaat ongeldig / niet-parsebaar | geocoder (zie open punt) | 404 |\n| `INSUFFICIENT_SOURCE` | Pand bekend, maar geen (volledige) risicoklasse | tak ② (`rows.length === 0`) **óf** 200 met risicovelden `null` | 404 óf 200 |\n| `UPSTREAM_ERROR` | Interne/afhankelijkheidsstoring | `onError` (500) | 500 |\n\n### Waar de code moet landen\n\n1. **Bij de 404/500-fouten:** extra veld op de bestaande platte JSON-body, bijv.:\n   ```json\n   { \"message\": \"Not found\", \"reason\": \"NO_BUILDING\" }\n   ```\n   Concreet in `src/routes/product.ts`: geef in tak ① `NO_BUILDING` mee en in tak ② `INSUFFICIENT_SOURCE`; in `src/index.ts` `onError` → `UPSTREAM_ERROR`. De twee takken maken het onderscheid a/c ↔ b nu al — alleen de body deelt de reden nog niet.\n\n2. **Bij een 200 zonder klasse:** een veld op de analysis-response (bv. `reason: \"INSUFFICIENT_SOURCE\"` of `classified: false`), zodat \"pand bekend maar geen klasse\" óók expliciet is en niet uit null-inspectie hoeft te volgen.\n\n3. **Misser-registratie (nieuw):** leg de 404-missers server-side vast — óf door de tracker ook op de miss-tak te zetten met een `reason`-kolom, óf via een aparte `application.product_tracker_mismatch`-tabel. Zonder dit blijft de frequentie per oorzaak onmeetbaar.\n\n## Acceptatiecriteria\n\n- [ ] Elke respons zonder (volledige) risicoklasse bevat een `reason` uit de vaste enum — zowel bij 404/500 (in de `{\"message\", \"reason\"}`-body) als bij 200-zonder-klasse (veld op de response).\n- [ ] `NO_BUILDING`, `INSUFFICIENT_SOURCE`, `ADDRESS_INVALID` en `UPSTREAM_ERROR` zijn onderling te onderscheiden op basis van uitsluitend de `reason`-waarde.\n- [ ] 404-missers worden server-side geregistreerd (met `reason`), zodat frequentie per oorzaak rapporteerbaar wordt.\n- [ ] De `reason`-waarden zijn stabiel en gedocumenteerd in `MIGRATION.md` (net als de bestaande enum-referenties, met de sync-test-discipline).\n- [ ] Additief: bestaande afnemers die alleen op HTTP-status of op `message` kijken blijven werken (`reason` is een extra veld; `message` blijft ongewijzigd).\n- [ ] `reason` wordt consistent toegepast op alle product-endpoints die \"not found\" kunnen geven (`analysis`, `risk`, `light`, en de nieuwe `quickscan`/`foundation-research`), niet alleen `analysis`.\n\n## Open punten / afstemming\n\n- **`NO_BUILDING` vs `ADDRESS_INVALID`:** `resolveBuildingExternalId(id)` geeft nu alleen `string | null` terug — de reden van een null (ongeldig formaat vs. geldig maar geen pand vs. niet in BAG) is niet zichtbaar. Om deze twee codes te scheiden moet `src/geocoder.ts` een reden meegeven (bv. een discriminated result i.p.v. `null`). `INSUFFICIENT_SOURCE` en `UPSTREAM_ERROR` zijn wél direct beschikbaar zonder geocoder-wijziging.\n- **200 vs 404 bij `INSUFFICIENT_SOURCE`:** willen we het onderscheid \"geen rij\" (404) en \"rij met `null`-risico\" (200) behouden, of beide onder één `reason` scharen?\n- **Eventueel** een aparte code voor de grootste subgroep binnen `INSUFFICIENT_SOURCE` (niet-onderheid + ontbrekende INSAR/grondwater — o.a. de Waddeneilanden), of gewoon onder `INSUFFICIENT_SOURCE` laten.\n\n## Codeverwijzingen (repo `Laixer/FunderMapsWebservice`)\n\n- Endpoint + de twee 404-takken: `src/routes/product.ts` (`/analysis/:id`; idem `/risk/:id`, `/light/:id`).\n- ID-resolutie: `src/geocoder.ts` (`resolveBuildingExternalId`).\n- Globale foutafhandeling (500) en 404-fallback: `src/index.ts` (`app.onError`, `app.notFound`).\n- Usage-tracking + 24u-dedup (relevant voor de miss-registratie): `src/tracker.ts` (`application.product_tracker`).\n- Overbelasting/quota (429, niet 503): `src/rate-limit.ts`.\n- Enum-documentatie + sync-discipline: `src/enums.ts` / `src/enums.test.ts` / `MIGRATION.md`."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/1008",
+  "number": 1008,
+  "title": "Multi org user voorkomt kunnen selecteren van reviewer bij inquiries",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-07-23T21:43:27Z",
+  "updated_at": "2026-07-23T21:43:27Z",
+  "body": null
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/1013",
+  "number": 1013,
+  "title": "Ontbrekend BAG-PAND",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-08-26T07:27:33Z",
+  "updated_at": "2026-08-26T07:27:33Z",
+  "body": "NL.IMBAG.PAND.0632100000033693 ontbreekt in de maps.fundermaps.com weergaven.\nPand geeft wel een 200 in de webserivce,\n\n"
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/1014",
+  "number": 1014,
+  "title": "Healthcheck beschikbaar maken voor NWWI en andere API-afnemers",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 1,
+  "created_at": "2026-08-27T09:54:38Z",
+  "updated_at": "2026-09-01T09:20:16Z",
+  "body": "\nFunderMaps beschikt over een healthcheck, maar deze is momenteel niet beschikbaar voor NWWI. Maak de healthcheck toegankelijk voor NWWI en eventueel voor andere gebruikers van de webservice.\nNeem het endpoint en het gebruik ervan op in de API-documentatie.\n\nAcceptatiecriteria\n- Er is een bereikbaar healthcheck-endpoint.\n- NWWI kan dit endpoint gebruiken om de beschikbaarheid van de webservice te controleren.\n- Er is bepaald of authenticatie noodzakelijk is.\n- De healthcheck geeft een eenduidige HTTP-status en response terug.\n- De healthcheck bevat geen gevoelige technische informatie.\n- Het endpoint, de mogelijke responses en een voorbeeld zijn opgenomen in de API-documentatie."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/1015",
+  "number": 1015,
+  "title": "Errorcode NO_BUILDING toevoegen voor BAG-statussen zonder bestaand pand",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-08-27T09:55:02Z",
+  "updated_at": "2026-08-27T09:55:02Z",
+  "body": "De beschikbare errorcodes zijn recent uitgebreid en aangepast. NWWI wil daarnaast een specifieke errorcode ontvangen wanneer de BAG-status aangeeft dat er nog geen bestaand gebouw is.\nDit betreft in ieder geval situaties waarin een vergunning is aangevraagd/verleend of waarin het pand nog in aanbouw is.\n\nVoeg hiervoor de errorcode NO_BUILDING toe.\n\nAcceptatiecriteria\n- De API retourneert NO_BUILDING wanneer op basis van de BAG-status nog geen bestaand gebouw aanwezig is.\n- De errorcode wordt opgenomen in het bestaande foutmodel.\n- De response bevat een duidelijke, voor gebruikers leesbare toelichting.\n- De errorcode en de bijbehorende BAG-statussen staan in de API-documentatie.\n- Er zijn tests toegevoegd voor iedere BAG-status die tot NO_BUILDING leidt.\n\nOpen punt\n- Bevestig de exacte BAG-statussen die onder NO_BUILDING vallen, waaronder vermoedelijk “bouwvergunning verleend” en “bouw gestart”."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/1016",
+  "number": 1016,
+  "title": "Zoekvoorziening maken voor PandIDs die aan testvoorwaarden voldoen",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-08-27T09:55:23Z",
+  "updated_at": "2026-08-27T09:55:23Z",
+  "body": "NWWI heeft voor testen PandIDs nodig die aan bepaalde voorwaarden voldoen. Deze voorwaarden kunnen bestaan uit combinaties van verschillende eigenschappen en kunnen in de toekomst veranderen.\nMaak een endpoint met een eenvoudige webinterface waarmee NWWI voorwaarden kan combineren en vervolgens één of meer actuele PandIDs kan vinden die daaraan voldoen.\nFunderMaps beheert de voorwaarden en zorgt ervoor dat de getoonde PandIDs op het moment van opvragen daadwerkelijk aan de geselecteerde voorwaarden voldoen.\n\nAcceptatiecriteria\n- Via een webinterface kunnen één of meer voorwaarden worden geselecteerd en gecombineerd.\n- De voorziening gebruikt een endpoint om passende PandIDs op te zoeken.\n- Alleen PandIDs die op het moment van opvragen aan alle geselecteerde voorwaarden voldoen, worden teruggegeven.\n- De lijst met voorwaarden kan worden aangepast wanneer de testbehoefte van NWWI verandert.\n- Er wordt een duidelijke melding getoond wanneer geen passend PandID beschikbaar is.\n- Toegang tot de voorziening is passend beveiligd.\n- Het gebruik van de zoekvoorziening is gedocumenteerd.\n\nNog bijvoegen\n- De lijst met voorwaarden"
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/1017",
+  "number": 1017,
+  "title": "URL van brondocument toevoegen aan quickscan- en funderingsonderzoekresponse",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-08-27T09:55:42Z",
+  "updated_at": "2026-08-27T09:55:42Z",
+  "body": "NWWI verwacht bij de onderstaande endpoints een resource met een URL naar het bijbehorende brondocument in PDF-formaat:\n- /v4/product/quickscan/{id}\n- /v4/product/foundation-research/{id}\nDeze resource ontbreekt momenteel in de response. Voeg de URL toe wanneer een brondocument beschikbaar is en dit document niet ouder is dan twee jaar.\n\nAcceptatiecriteria\n- De response bevat een resource met een URL naar het PDF-brondocument wanneer een geschikt document beschikbaar is.\n- Dit wordt toegepast op beide genoemde endpoints.\n- Een brondocument wordt alleen aangeboden wanneer het maximaal twee jaar oud is.\n- Wanneer geen geschikt document beschikbaar is, wordt resource volgens een eenduidige afspraak weggelaten of als null teruggegeven.\n- De URL geeft toegang tot het juiste document.\n- Het responsemodel en de ouderdomsregel zijn opgenomen in de API-documentatie.\n- Er zijn tests voor een aanwezig, ontbrekend en te oud brondocument."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/1018",
+  "number": 1018,
+  "title": "NWWI gedurende zes maanden informeren over wijzigingen in het funderingsrisicorapport",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-08-27T09:55:57Z",
+  "updated_at": "2026-08-27T09:55:57Z",
+  "body": "Nadat NWWI voor het eerst een dossier bij FunderMaps heeft opgevraagd, wil NWWI gedurende zes maanden een pushnotificatie ontvangen wanneer het bijbehorende funderingsrisicorapport wijzigt.\nDe notificatie hoeft alleen te melden dat er een wijziging is. NWWI vraagt daarna zelf het bijgewerkte rapport opnieuw op.\nVoorkom onnodige notificaties door NWWI dossiers eerder te laten afsluiten. Na afsluiting of na het verstrijken van zes maanden worden geen notificaties meer verstuurd.\n\nAcceptatiecriteria\n- Bij de eerste aanvraag kan een dossier voor wijzigingsnotificaties worden geregistreerd.\n- De bewakingsperiode duurt maximaal zes maanden vanaf de eerste aanvraag.\n- Er wordt alleen een notificatie verstuurd wanneer het funderingsrisicorapport daadwerkelijk is gewijzigd.\n- De notificatie bevat voldoende identificatie om het juiste dossier of object opnieuw op te vragen.\n- Het volledige rapport hoeft niet in de notificatie te staan.\n- NWWI kan een dossier vóór het einde van de zes maanden afsluiten.\n- Na afsluiting of het verstrijken van de bewakingsperiode worden geen notificaties meer verzonden.\n- Dubbele notificaties voor dezelfde wijziging worden voorkomen.\n- Mislukte notificaties worden volgens een vastgestelde retry-strategie opnieuw aangeboden.\n- De werking en beveiliging van de notificaties zijn gedocumenteerd.\n\nAfstemming met NWWI nodig\n- Callback-URL en authenticatiemethode.\n- Te gebruiken dossieridentificatie.\n- Manier waarop NWWI een dossier afsluit.\n- Definitie van een wijziging die een notificatie moet veroorzaken."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/1019",
+  "number": 1019,
+  "title": "Herstelkosten ook op verblijfsobjectniveau berekenen",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-08-27T09:56:21Z",
+  "updated_at": "2026-09-02T14:58:20Z",
+  "body": "De herstelkosten worden momenteel op pandniveau berekend. NWWI wil daarnaast een variant ontvangen voor het aangevraagde verblijfsobject.\nVerdeel hiervoor de herstelkosten van het pand naar rato van het gebruiksoppervlak van het aangevraagde verblijfsobject ten opzichte van het totale gebruiksoppervlak van alle verblijfsobjecten binnen het pand.\nDeze waarde is nodig voor het berekenen van verminderingen in taxaties en voor doorlevering aan banken.\n\nVoorgestelde berekening\nherstelkosten verblijfsobject = herstelkosten pand × oppervlakte aangevraagd verblijfsobject / totale oppervlakte verblijfsobjecten in pand\n\nAcceptatiecriteria\n- De bestaande herstelkosten op pandniveau blijven beschikbaar.\n- Er wordt een afzonderlijke waarde voor het aangevraagde verblijfsobject toegevoegd.\n- De berekening gebruikt de oppervlakte van het aangevraagde verblijfsobject.\n- De noemer bestaat uit de totale oppervlakte van de relevante verblijfsobjecten binnen hetzelfde pand.\n- De gebruikte oppervlakten, eenheden en afrondingsregels zijn eenduidig vastgelegd.\n- Ontbrekende of ongeldige oppervlaktegegevens worden gecontroleerd afgehandeld.\n- De berekening is opgenomen in de documentatie en afgedekt met tests.\n\nOpen punt\n- Bevestig welke BAG-oppervlakte als grondslag wordt gebruikt en hoe verblijfsobjecten zonder geldige oppervlakte worden behandeld."
+ },
+ {
+  "html_url": "https://github.com/Laixer/FunderMaps/issues/1020",
+  "number": 1020,
+  "title": "Melden triage",
+  "user": "DonZandbergen",
+  "labels": [],
+  "state": "open",
+  "assignees": [],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-09-01T10:33:06Z",
+  "updated_at": "2026-09-01T10:33:06Z",
+  "body": "Wat een melder terugverwacht\n\nUitgangspunt — de melder is een particulier of makelaar die onder druk staat. In de kern: bij een verkoop klopt de data naar hun idee niet, en dat vraagt om beoordeling en aanpassing. Nu verdwijnt zijn document in een pijplijn en hoort hij nooit meer iets. Gevolg: dubbele meldingen, wantrouwen over of het wel is aangekomen, en vragen over de status.\n\nDe drie momenten\n\n1. Ontvangstbevestiging — direct, automatisch\n\nKenmerk (FM2026-0000xx), zichtbaar op het scherm én in de notificatiemail. Zonder kenmerk kan hij nergens naar verwijzen.\nWat we ontvangen hebben: bestandsnamen + aantal.\nWat er nu gebeurt, in één zin (\"een medewerker controleert wat we uit uw document hebben gehaald\").\nEen termijn die je waarmaakt (bv. 2 werkdagen) + een adres waarop hij kan reageren.\n\n2. Verwerking\n\nDe AI bepaalt de waarden voor aanpassing. Bepaalde gevallen mogen direct door, andere vragen om menselijke controle: aanlevercontrole, vragen zonder bijlage, en onvoldoende betrouwbare informatie.\nNa verwerking — door AI of door een mens — kan het funderingsrisico wijzigen na de modelrun, maar dat hoeft niet.\n\n3. Afronding — wat is er met mijn melding gedaan (geaccepteerd of afgewezen)\n\nDit is de enige mail die hij écht wil. Per adres: welke velden zijn overgenomen (funderingstype, bouwjaar, kwaliteit), en of dat afwijkt van wat er al geregistreerd stond.\nIs het risico aangepast, en wat is het nieuwe risico?\nWat daar technisch aan vastzit (de eigenlijke werklijst)\nStatusveld op het dossier met weinig waardes: ontvangen / in behandeling / meer info nodig / verwerkt / afgewezen. De mail hangt aan de statusovergang, niet aan de uurlijkse cron.\nIdempotentie. De pipeline draait 1× per uur; hij mag niet bij elke run opnieuw mailen. Leg per dossier vast welke mail wanneer naar wie ging — dat is meteen je verzendlog.\nAntwoorden moeten terugkomen op het dossier. Reply-adres + inbound webhook die het kenmerk of een token uit het onderwerp herkent. De hele historie van een melding is voor ons ook data.\nHandmatige knop in het review-scherm: \"stuur terugkoppeling\", met aanpasbare tekst. De invoerder ziet dingen die het sjabloon niet dekt."
+ }
+]
