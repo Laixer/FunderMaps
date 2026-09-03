@@ -5,7 +5,7 @@
 # GitHub's issue transfer (GraphQL transferIssue) keeps title, body, comments,
 # author attribution and timestamps, and leaves a redirect behind on the old
 # number. Labels and milestones are only kept when the target repo has ones
-# with the SAME NAME, so step 1 recreates them from labels.json / milestones.json.
+# with the same name (labels compare case-insensitively on GitHub), so step 1 recreates them from labels.json / milestones.json.
 #
 # Usage:
 #   docs/tracker/transfer-issues.sh Laixer/<TargetRepo>            # dry run: prints what it would do
@@ -26,7 +26,7 @@ run() { if [[ "$APPLY" == "--apply" ]]; then "$@"; else echo "DRY: $*"; fi; }
 echo "== 1. labels ($SRC -> $DST)"
 jq -c '.[] | {name, color, description}' "$HERE/labels.json" | while read -r l; do
   name=$(jq -r .name <<<"$l"); color=$(jq -r .color <<<"$l"); desc=$(jq -r '.description // ""' <<<"$l")
-  if gh label list -R "$DST" --json name --jq '.[].name' | grep -qxF "$name"; then
+  if gh label list -R "$DST" --json name --jq '.[].name' | grep -qixF "$name"; then
     echo "   exists: $name"
   else
     run gh label create "$name" -R "$DST" --color "$color" --description "$desc"
@@ -34,8 +34,8 @@ jq -c '.[] | {name, color, description}' "$HERE/labels.json" | while read -r l; 
 done
 
 echo "== 2. milestones (only the ones still referenced by an open issue)"
-gh issue list -R "$SRC" --state open --limit 200 --json milestone --jq '.[].milestone.title | select(. != null)' | sort -u | while read -r m; do
-  if gh api "repos/$DST/milestones?state=all&per_page=100" --jq '.[].title' | grep -qxF "$m"; then
+gh issue list -R "$SRC" --state open --limit 200 --json number,milestone --jq '.[] | select(.milestone != null) | .milestone.title' | sort -u | while read -r m; do
+  if gh api "repos/$DST/milestones?state=all&per_page=100" --jq '.[].title' | grep -qixF "$m"; then
     echo "   exists: $m"
   else
     desc=$(jq -r --arg t "$m" '.[] | select(.title==$t) | .description // ""' "$HERE/milestones.json")
